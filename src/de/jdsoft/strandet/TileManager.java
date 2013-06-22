@@ -51,7 +51,6 @@ public class TileManager {
 
         // Find all neighbors
         HashMap<Point, Tile> nei = new HashMap<Point, Tile>();
-        Tile beginTile = null;
         for( Tile tile : tiles) {
             for( Point p : tile.getPoints()) {
                 if( nei.containsKey(p)) {

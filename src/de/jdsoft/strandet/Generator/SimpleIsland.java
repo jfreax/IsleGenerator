@@ -2,7 +2,8 @@ package de.jdsoft.strandet.Generator;
 
 
 import com.marcrh.graph.Point;
-import de.jdsoft.strandet.Tile;
+import de.jdsoft.strandet.Drawing.Tile;
+import de.jdsoft.strandet.TileManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,13 +12,18 @@ import java.util.LinkedList;
 
 public class SimpleIsland extends Generator {
 
+    private int noOfTiles;
+    private ArrayList<Tile> landTiles;
 
-    public SimpleIsland(int width, int height, int noOfTiles) {
-        super(width, height, noOfTiles);
+    public SimpleIsland(int width, int height) {
+        super(width, height);
+
+        landTiles = new ArrayList<Tile>();
     }
 
 
-    public void FillTypes(ArrayList<Tile> tiles) {
+    public void Compute(ArrayList<Tile> tiles) {
+        noOfTiles = tiles.size();
 
         LinkedList<Tile>nexts = new LinkedList<Tile>();
 
@@ -35,6 +41,7 @@ public class SimpleIsland extends Generator {
         FillRecursive(nexts);
     }
 
+
     private void FillRecursive(LinkedList<Tile> nexts ) {
         LinkedList<Tile> nextNexts = new LinkedList<Tile>();
 
@@ -47,6 +54,7 @@ public class SimpleIsland extends Generator {
             FillRecursive(nextNexts);
         }
     }
+
 
     private LinkedList<Tile> changeType(Tile tile) {
         LinkedList<Tile> nextNexts = new LinkedList<Tile>();
@@ -69,24 +77,27 @@ public class SimpleIsland extends Generator {
                 if( isOcean(neighbor)) {
                     neighbor.setType( Tile.WATER );
                     neighbor.setDistance(tile.getDistance() + 1);
-                    //neighbor.setHeight(tile.getHeight() + 1);
 
                     nextNexts.addFirst(neighbor);
 
                 } else { // No water, this is land
-                    //neighbor.setHeight(tile.getHeight() + 1);
                     neighbor.setType(Tile.LAND);
+                    landTiles.add(neighbor);
 
                     nextNexts.addLast(neighbor);
                 }
             } else { // This is land, so the neighbor should be land to, but its heigher
-                int maxHight = 0;
 
+                // Set new height
+                int maxHeight = 0;
                 for( Tile neighbor2 : tile.neighbors) {
-                    maxHight = Math.max(maxHight, neighbor2.getHeight());
+                    maxHeight = Math.max(maxHeight, neighbor2.getHeight());
                 }
-                neighbor.setHeight( maxHight + ((int)(random.nextGaussian()*2) -1) );
+                neighbor.setHeight( maxHeight + ((int)(random.nextGaussian()*2) -1) );
+
+                // Make land!
                 neighbor.setType(Tile.LAND);
+                landTiles.add(neighbor);
 
                 nextNexts.addLast(neighbor);
             }
@@ -112,4 +123,9 @@ public class SimpleIsland extends Generator {
 
         return true;
     }
+
+    public ArrayList<Tile> getLandTiles() {
+        return landTiles;
+    }
+
 }

@@ -5,8 +5,8 @@ import android.graphics.*;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-
-import java.util.Random;
+import de.jdsoft.strandet.Drawing.River;
+import de.jdsoft.strandet.Drawing.Tile;
 
 public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback {
 
@@ -43,6 +43,10 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
 
         for(Tile tile : manager.getTiles() ) {
             tile.draw(canvas);
+        }
+
+        for(River river : manager.getRivers() ) {
+            river.draw(canvas);
         }
 
     }

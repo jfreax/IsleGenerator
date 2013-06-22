@@ -1,10 +1,9 @@
-package de.jdsoft.strandet;
+package de.jdsoft.strandet.Drawing;
 
 
 import android.graphics.*;
 import com.marcrh.graph.Point;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -36,8 +35,8 @@ public class Tile implements Comparable {
         setType(0);
     }
 
-    public void draw(Canvas canvas){
-        if(points.size()<2)
+    public void draw(Canvas canvas) {
+        if( points.size() < 2 )
             return;
 
         Path path = new Path();

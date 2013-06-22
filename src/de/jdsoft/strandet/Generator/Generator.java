@@ -1,7 +1,8 @@
 package de.jdsoft.strandet.Generator;
 
 
-import de.jdsoft.strandet.Tile;
+import de.jdsoft.strandet.Drawing.Tile;
+import de.jdsoft.strandet.TileManager;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -9,16 +10,13 @@ import java.util.Random;
 abstract public class Generator {
     protected Random random = new Random();
 
-
     protected int width;
     protected int height;
-    protected int noOfTiles;
 
-    public Generator(int width, int height, int noOfTiles) {
+    public Generator(int width, int height) {
         this.width = width;
         this.height = height;
-        this.noOfTiles = noOfTiles;
     }
 
-    abstract public void FillTypes(ArrayList<Tile> tiles);
+    abstract public void Compute(ArrayList<Tile> tiles);
 }

@@ -1,12 +1,13 @@
 package de.jdsoft.strandet;
 
 
-import android.graphics.Color;
 import com.marcrh.graph.Point;
 import com.marcrh.graph.Range;
 import com.marcrh.graph.Utils;
 import com.marcrh.graph.delaunay.Voronoi;
-import de.jdsoft.strandet.Generator.Generator;
+import de.jdsoft.strandet.Drawing.River;
+import de.jdsoft.strandet.Drawing.Tile;
+import de.jdsoft.strandet.Generator.MakeRiver;
 import de.jdsoft.strandet.Generator.SimpleIsland;
 
 import java.util.ArrayList;
@@ -22,6 +23,8 @@ public class TileManager {
 
     private int width;
     private int height;
+    private ArrayList<Tile> landTiles;
+    private ArrayList<River> rivers;
 
     public TileManager(int width, int height) {
         this.width = width;
@@ -62,11 +65,20 @@ public class TileManager {
             }
         }
 
-        Generator generator = new SimpleIsland(width, height, points.size());
-        generator.FillTypes(tiles);
+        SimpleIsland generator = new SimpleIsland(width, height);
+        generator.Compute(tiles);
+        landTiles = generator.getLandTiles();
+
+        MakeRiver riverMaker = new MakeRiver(width, height);
+        riverMaker.Compute(landTiles);
+        rivers = riverMaker.getRivers();
     }
 
     public ArrayList<Tile> getTiles() {
         return tiles;
+    }
+
+    public ArrayList<River> getRivers() {
+        return rivers;
     }
 }

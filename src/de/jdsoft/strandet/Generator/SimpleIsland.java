@@ -5,6 +5,7 @@ import com.marcrh.graph.Point;
 import de.jdsoft.strandet.Tile;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 
 
@@ -50,8 +51,11 @@ public class SimpleIsland extends Generator {
         LinkedList<Tile> nextNexts = new LinkedList<Tile>();
 
         for( Tile tile : nexts) {
-            nextNexts.addAll( changeType(tile) );
+            nextNexts.addAll(changeType(tile));
         }
+
+
+        Collections.sort(nextNexts);
 
         if( !nextNexts.isEmpty() ) {
             FillRecursive(nextNexts);
@@ -60,7 +64,6 @@ public class SimpleIsland extends Generator {
 
     private LinkedList<Tile> changeType(Tile tile) {
         LinkedList<Tile> nextNexts = new LinkedList<Tile>();
-        LinkedList<Tile> nextNextsLast = new LinkedList<Tile>();
 
         for( Tile neighbor : tile.neighbors ) {
 
@@ -92,36 +95,21 @@ public class SimpleIsland extends Generator {
                 neighbor.setHeight( tile.getHeight() + 1 );
                 neighbor.setType(Tile.LAND);
 
-                nextNextsLast.addLast(neighbor);
+                nextNexts.addLast(neighbor);
             }
-
-            //changeType(neighbor);
-            //if( neighbor.getType() == Tile.NONE ) {
-
-                // Maybe its an ocean tile?
-//                if( isOcean(neighbor, tile.getDistance())) {
-//                    neighbor.setType( Tile.WATER );
-//                    neighbor.setDistance(tile.getDistance() + 1);
-//                    changeType(neighbor);
-//                    ret = true;
-//                }
-            //}
         }
 
-        nextNexts.addAll(nextNextsLast);
+        nextNexts.addAll(nextNexts);
         return nextNexts;
     }
 
 
     private boolean isOcean(Tile tile, int depth) {
-        //for( Tile nei : tile.neighbors ) {
-        //    if( nei.getType() == Tile.WATER ) {
-                double w = 1.f / Math.log(depth + 3);
-                if( random.nextFloat() < 1.f / Math.log(depth + 3) - 0.2f) {
-                    return true;
-                }
-        //    }
-        //}
+
+        double w = 1.f / Math.log(depth + 3);
+        if( random.nextFloat() < 1.f / Math.log(depth + 3) - 0.2f) {
+            return true;
+        }
 
         return false;
     }

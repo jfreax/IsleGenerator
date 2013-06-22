@@ -5,9 +5,10 @@ import android.graphics.*;
 import com.marcrh.graph.Point;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
-public class Tile {
+public class Tile implements Comparable {
 
     public static final int NONE = 0;
     public static final int WATER = 1;
@@ -24,11 +25,11 @@ public class Tile {
     private int height = 0;
 
     private int color;
-    public ArrayList<Tile> neighbors;
+    public LinkedList<Tile> neighbors;
 
     public Tile(List<Point> points) {
         this.points = points;
-        this.neighbors = new ArrayList<Tile>();
+        this.neighbors = new LinkedList<Tile>();
 
         setType(0);
     }
@@ -79,6 +80,9 @@ public class Tile {
             case 1:
                 color = Color.rgb(227, 232, 202);
                 break;
+            case 2:
+                color = Color.rgb(207, 232, 182);
+                break;
             default:
                 color = Color.rgb(195, 212, 170);
                 break;
@@ -108,4 +112,14 @@ public class Tile {
     }
 
 
+    public int compareTo(Object another) {
+        Tile anotherTile = (Tile)another;
+        if( anotherTile.getType() == Tile.WATER ) {
+            return 1;
+        } else if ( anotherTile.getHeight() < getHeight()) {
+            return 1;
+        } else {
+            return -1;
+        }
+    }
 }

@@ -38,5 +38,10 @@ class PanelThread extends Thread {
                 }
             }
         }
+        try {
+            sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
     }
 }

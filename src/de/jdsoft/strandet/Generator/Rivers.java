@@ -8,14 +8,14 @@ import de.jdsoft.strandet.Drawing.Tile;
 
 import java.util.*;
 
-public class MakeRiver extends Generator {
+public class Rivers extends Generator {
 
     private int noOfTiles;
 
     private ArrayList<River> rivers;
     private HashSet<Tile> visited;
 
-    public MakeRiver(int width, int height) {
+    public Rivers(int width, int height) {
         super(width, height);
 
         rivers = new ArrayList<River>();
@@ -74,9 +74,9 @@ public class MakeRiver extends Generator {
                 // Mark as visited
                 visited.add(neighbor);
 
-                //if ( neighbor.getRiver() != null ) {
-                //    return false;
-                //}
+                if ( neighbor.getRiver() != null ) {
+                    return false;
+                }
 
                 // Is this the end of the river?
                 if ( neighbor.getType() == Tile.WATER || neighbor.getRiver() != null ) {

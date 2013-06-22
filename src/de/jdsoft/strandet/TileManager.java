@@ -7,8 +7,8 @@ import com.marcrh.graph.Utils;
 import com.marcrh.graph.delaunay.Voronoi;
 import de.jdsoft.strandet.Drawing.River;
 import de.jdsoft.strandet.Drawing.Tile;
-import de.jdsoft.strandet.Generator.MakeRiver;
-import de.jdsoft.strandet.Generator.SimpleIsland;
+import de.jdsoft.strandet.Generator.Islands;
+import de.jdsoft.strandet.Generator.Rivers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -65,11 +65,11 @@ public class TileManager {
             }
         }
 
-        SimpleIsland generator = new SimpleIsland(width, height);
+        Islands generator = new Islands(width, height);
         generator.Compute(tiles);
         landTiles = generator.getLandTiles();
 
-        MakeRiver riverMaker = new MakeRiver(width, height);
+        Rivers riverMaker = new Rivers(width, height);
         riverMaker.Compute(landTiles);
         rivers = riverMaker.getRivers();
     }

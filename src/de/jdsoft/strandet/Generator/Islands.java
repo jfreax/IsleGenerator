@@ -10,12 +10,12 @@ import java.util.Collections;
 import java.util.LinkedList;
 
 
-public class SimpleIsland extends Generator {
+public class Islands extends Generator {
 
     private int noOfTiles;
     private ArrayList<Tile> landTiles;
 
-    public SimpleIsland(int width, int height) {
+    public Islands(int width, int height) {
         super(width, height);
 
         landTiles = new ArrayList<Tile>();

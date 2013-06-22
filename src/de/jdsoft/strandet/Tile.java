@@ -20,11 +20,13 @@ public class Tile implements Comparable {
 
     // approximately distance from border
     private int distance = 1;
+    public int waterNeighbors = 0;
 
     // Map height -> 0 is ocean level
     private int height = 0;
 
     private int color;
+    private boolean onBorder;
     public LinkedList<Tile> neighbors;
 
     public Tile(List<Point> points) {
@@ -60,6 +62,11 @@ public class Tile implements Comparable {
         return points;
     }
 
+    // Todo return true center position
+    public Point getPosition() {
+        return points.get(0);
+    }
+
     public void setType(int type) {
         this.type = type;
         switch (type) {
@@ -87,6 +94,8 @@ public class Tile implements Comparable {
                 color = Color.rgb(195, 212, 170);
                 break;
         }
+
+        color = Color.rgb(10 + getHeight()*3, 20 + getHeight()*3, getHeight()*3);
     }
 
     public int getType() {
@@ -114,12 +123,30 @@ public class Tile implements Comparable {
 
     public int compareTo(Object another) {
         Tile anotherTile = (Tile)another;
-        if( anotherTile.getType() == Tile.WATER ) {
+//        if( anotherTile.getType() == Tile.WATER ) {
+//            if ( getType() == Tile.WATER) {
+//                return 0;
+//            } else {
+//                return 1;
+//            }
+//        } if ( getType() == Tile.WATER) {
+//            return -1;
+//        }
+
+        if ( anotherTile.getHeight() > getHeight()) {
             return 1;
-        } else if ( anotherTile.getHeight() < getHeight()) {
-            return 1;
+        } else if ( anotherTile.getHeight() == getHeight()) {
+            return 0;
         } else {
             return -1;
         }
+    }
+
+    public boolean isOnBorder() {
+        return onBorder;
+    }
+
+    public void isOnBorder(boolean b) {
+        onBorder = b;
     }
 }

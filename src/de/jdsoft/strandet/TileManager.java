@@ -33,7 +33,7 @@ public class TileManager {
         int left = 0;
 
         Range r = new Range(new Point(top,left),new Point(top+width, left+height));
-        points = Utils.generateRandomPoints(200, r);
+        points = Utils.generateRandomPoints(5000, r);
         voronoi.generate(points, r);
 
         Initialize();
@@ -62,7 +62,7 @@ public class TileManager {
             }
         }
 
-        Generator generator = new SimpleIsland(width, height);
+        Generator generator = new SimpleIsland(width, height, points.size());
         generator.FillTypes(tiles);
     }
 

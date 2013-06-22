@@ -51,6 +51,8 @@ public class MakeRiver extends Generator {
         visited = new HashSet<Tile>();
         visited.add(tile);
 
+        int riverWidth = 0;
+
         // Add rest of river
         // extendRiver(tile, points);
         while(true) {
@@ -70,7 +72,7 @@ public class MakeRiver extends Generator {
                 // Is this the end of the river?
                 if ( neighbor.getType() == Tile.WATER || neighbor.getRiver() != null ) {
                     // Ignore to short rivers
-                    if( points.size() <= 3 ) {
+                    if( points.size() <= 5 ) {
                         return false;
                     }
                     points.add(neighbor.getPosition());
@@ -87,7 +89,6 @@ public class MakeRiver extends Generator {
                 }
 
 
-
                 if( neighbor.getHeight() < minHeight ) {
                     minHeight = neighbor.getHeight();
                     minTile = neighbor;
@@ -96,10 +97,13 @@ public class MakeRiver extends Generator {
 
             if( minTile != null ) {
                 // Save river info on tile
-                //minTile.setRiver( river );
                 tilesWithNewRiver.add(minTile);
 
-                points.add(minTile.getPosition());
+                // Make river wider
+                riverWidth++;
+
+                Point p = new Point(minTile.getPosition().x, minTile.getPosition().y, riverWidth);
+                points.add(p);
                 tile = minTile;
 
             } else {

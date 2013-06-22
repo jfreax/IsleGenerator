@@ -3,10 +3,11 @@ package de.jdsoft.strandet.Drawing;
 
 import android.graphics.*;
 import com.marcrh.graph.Point;
+import de.jdsoft.strandet.Constants;
 
 import java.util.List;
 
-public class River {
+public class River implements Constants {
     private List<Point> points;
 
 
@@ -24,14 +25,16 @@ public class River {
 
         Paint paint = new Paint();
         paint.setStyle(Paint.Style.STROKE);
-        paint.setColor( Color.rgb(49, 58, 92) );
+        paint.setColor( RIVER_COLOR );
         paint.setStrokeWidth(2);
         paint.setAntiAlias(true);
         paint.setStrokeJoin(Paint.Join.ROUND);
 
 
         for(int i = 0; i < points.size()-2; i++) {
-            paint.setColor( Color.rgb(49 +(points.size()-i)*5, 58+(points.size()-i)*5, 92+(points.size()-i)*5) );
+            //paint.setColor( Color.rgb(49 +(points.size()-i+2)*2, 58+(points.size()-i+2)*2, 92+(points.size()-i+2)*2) );
+            paint.setStrokeWidth((float)Math.ceil(points.get(i).z / 3.f)); // TODO divide with maximum river lenght?
+
             Path path = new Path();
             path.moveTo((float)points.get(i).x, (float)points.get(i).y);
             path.lineTo((float)points.get(i+1).x, (float)points.get(i+1).y);

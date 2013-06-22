@@ -21,6 +21,9 @@ public class Tile implements Comparable {
     private int distance = 1;
     public int waterNeighbors = 0;
 
+    // River on this tile
+    public River river = null;
+
     // Map height -> 0 is ocean level
     private int height = 0;
 
@@ -39,6 +42,7 @@ public class Tile implements Comparable {
         if( points.size() < 2 )
             return;
 
+
         Path path = new Path();
         path.moveTo((float)points.get(0).x, (float)points.get(0).y);
 
@@ -52,18 +56,25 @@ public class Tile implements Comparable {
         Paint paint = new Paint();
         paint.setStyle(Paint.Style.FILL);
         paint.setColor( color );
-        paint.setAntiAlias(true);
+        //paint.setAntiAlias(true);
 
         canvas.drawPath(path, paint);
     }
+
 
     public List<Point> getPoints() {
         return points;
     }
 
-    // Todo return true center position
+
     public Point getPosition() {
-        return points.get(0);
+        long gesX = 0L;
+        long gesY = 0L;
+        for( Point p : points ) {
+            gesX += p.x;
+            gesY += p.y;
+        }
+        return new Point(gesX / points.size(), gesY / points.size(), 0);
     }
 
     public void setType(int type) {
@@ -122,15 +133,15 @@ public class Tile implements Comparable {
 
     public int compareTo(Object another) {
         Tile anotherTile = (Tile)another;
-//        if( anotherTile.getType() == Tile.WATER ) {
-//            if ( getType() == Tile.WATER) {
-//                return 0;
-//            } else {
-//                return 1;
-//            }
-//        } if ( getType() == Tile.WATER) {
-//            return -1;
-//        }
+        if( anotherTile.getType() == Tile.WATER ) {
+            if ( getType() == Tile.WATER) {
+                return 0;
+            } else {
+                return 1;
+            }
+        } if ( getType() == Tile.WATER) {
+            return -1;
+        }
 
         if ( anotherTile.getHeight() > getHeight()) {
             return 1;
@@ -147,5 +158,13 @@ public class Tile implements Comparable {
 
     public void isOnBorder(boolean b) {
         onBorder = b;
+    }
+
+    public River getRiver() {
+        return river;
+    }
+
+    public void setRiver(River river) {
+        this.river = river;
     }
 }

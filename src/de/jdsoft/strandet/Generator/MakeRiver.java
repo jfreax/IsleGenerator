@@ -26,7 +26,7 @@ public class MakeRiver extends Generator {
         noOfTiles = tiles.size();
 
         Collections.shuffle(tiles);
-        for( int i = random.nextInt(25)+15; i >= 0; i--) {
+        for( int i = Math.min( random.nextInt(20)+40, tiles.size()-1 ); i >= 0; i--) {
             beginNewRiver(tiles.get(i));
         }
 
@@ -42,6 +42,10 @@ public class MakeRiver extends Generator {
             return false;
         }
 
+        if ( tile.getRiver() != null ) {
+            return false;
+        }
+
         River river = new River();
 
         // River source
@@ -53,12 +57,13 @@ public class MakeRiver extends Generator {
 
         int riverWidth = 0;
 
+        ArrayList<Tile> tilesWithNewRiver = new ArrayList<Tile>();
+
         // Add rest of river
         // extendRiver(tile, points);
         while(true) {
             int minHeight = Integer.MAX_VALUE;
             Tile minTile = null;
-            ArrayList<Tile> tilesWithNewRiver = new ArrayList<Tile>();
 
             for( Tile neighbor : tile.neighbors) {
 
@@ -68,6 +73,10 @@ public class MakeRiver extends Generator {
                 }
                 // Mark as visited
                 visited.add(neighbor);
+
+                //if ( neighbor.getRiver() != null ) {
+                //    return false;
+                //}
 
                 // Is this the end of the river?
                 if ( neighbor.getType() == Tile.WATER || neighbor.getRiver() != null ) {
@@ -85,6 +94,7 @@ public class MakeRiver extends Generator {
                     for( Tile tileRiver : tilesWithNewRiver ) {
                         tileRiver.setRiver(river);
                     }
+                    tilesWithNewRiver.clear();
                     return true;
                 }
 

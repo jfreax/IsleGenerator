@@ -22,7 +22,7 @@ public class Tile implements Comparable {
     public int waterNeighbors = 0;
 
     // River on this tile
-    public River river = null;
+    private River river = null;
 
     // Map height -> 0 is ocean level
     private int height = 0;
@@ -46,7 +46,7 @@ public class Tile implements Comparable {
         Path path = new Path();
         path.moveTo((float)points.get(0).x, (float)points.get(0).y);
 
-        for(int i=1;i<points.size();i++){
+        for( int i = 1; i < points.size(); i++ ){
             path.lineTo((float)points.get(i).x, (float)points.get(i).y);
         }
 

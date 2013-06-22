@@ -117,7 +117,7 @@ public class Tile implements Comparable {
     }
 
     public void setHeight(int height) {
-        this.height = height;
+        this.height = Math.max(height, 0);
     }
 
 

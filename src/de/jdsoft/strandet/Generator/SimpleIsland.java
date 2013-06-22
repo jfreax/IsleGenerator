@@ -33,42 +33,6 @@ public class SimpleIsland extends Generator {
         }
 
         FillRecursive(nexts);
-
-        // Destroy mini islands and mini lakes
-//        for( Tile tile : tiles) {
-//////            int waterNeighbors = 0;
-//////            int notWaterNeighbors = 0;
-//////            for( Tile neighbor : tile.neighbors) {
-//////                if( neighbor.getType() != Tile.WATER) {
-//////                    notWaterNeighbors++;
-//////                } else {
-//////                    waterNeighbors++;
-//////                }
-//////            }
-//////            if ( notWaterNeighbors <= 3 ) {
-//////                tile.setType(Tile.WATER);
-//////            }
-//////            if ( !tile.isOnBorder() && waterNeighbors <= 2 ) {
-//////                tile.setType(Tile.LAND);
-//////            }
-////
-//            if ( tile.waterNeighbors  >=  ) {
-//                tile.setType(Tile.WATER);
-//            }
-//        }
-
-//            if( tile.getType() == Tile.WATER) {
-//                for( Tile neighbor : tile.neighbors) {
-//                    if( neighbor.getType() != Tile.WATER) {
-//                        if( isOcean(tile)) {
-//                            neighbor.setType( Tile.WATER );
-//                        } else if( maybeStrand(tile) ) {
-//
-//                        }
-//                    }
-//                }
-//            }
-        //}
     }
 
     private void FillRecursive(LinkedList<Tile> nexts ) {
@@ -115,14 +79,13 @@ public class SimpleIsland extends Generator {
 
                     nextNexts.addLast(neighbor);
                 }
-
-
             } else { // This is land, so the neighbor should be land to, but its heigher
                 int maxHight = 0;
+
                 for( Tile neighbor2 : tile.neighbors) {
                     maxHight = Math.max(maxHight, neighbor2.getHeight());
                 }
-                neighbor.setHeight( maxHight + 1 );
+                neighbor.setHeight( maxHight + ((int)(random.nextGaussian()*2) -1) );
                 neighbor.setType(Tile.LAND);
 
                 nextNexts.addLast(neighbor);
@@ -135,9 +98,6 @@ public class SimpleIsland extends Generator {
 
 
     private boolean isOcean(Tile tile) {
-
-        //if ( random.nextFloat() > 0.996f) {
-
         // probability to generate new island
         if ( (float)random.nextInt(noOfTiles) / (float)noOfTiles <= 0.005f ) {
             return false;
@@ -151,10 +111,5 @@ public class SimpleIsland extends Generator {
         }
 
         return true;
-    }
-
-
-    private boolean maybeStrand(Tile tile) {
-        return false;
     }
 }

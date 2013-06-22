@@ -6,6 +6,8 @@ import com.marcrh.graph.Point;
 import com.marcrh.graph.Range;
 import com.marcrh.graph.Utils;
 import com.marcrh.graph.delaunay.Voronoi;
+import de.jdsoft.strandet.Generator.Generator;
+import de.jdsoft.strandet.Generator.SimpleIsland;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,7 +33,7 @@ public class TileManager {
         int left = 0;
 
         Range r = new Range(new Point(top,left),new Point(top+width, left+height));
-        points = Utils.generateRandomPoints(100, r);
+        points = Utils.generateRandomPoints(200, r);
         voronoi.generate(points, r);
 
         Initialize();
@@ -52,13 +54,6 @@ public class TileManager {
         Tile beginTile = null;
         for( Tile tile : tiles) {
             for( Point p : tile.getPoints()) {
-                if( p.x == 0 || p.y == 0 || p.x == width || p.y == height ) {
-                    tile.setType(Tile.WATER);
-                    if( p.x == 0 && p.y == 0 ) {
-                        beginTile = tile;
-                    }
-                }
-
                 if( nei.containsKey(p)) {
                     nei.get(p).neighbors.add(tile);
                     tile.neighbors.add(nei.get(p));
@@ -68,15 +63,8 @@ public class TileManager {
             }
         }
 
-        for( Tile tile : tiles) {
-            if( tile.getType() == Tile.WATER) {
-                for( Tile neighbor : tile.neighbors) {
-                    if( neighbor.getType() != Tile.WATER) {
-                        neighbor.setType( Tile.COAST );
-                    }
-                }
-            }
-        }
+        Generator generator = new SimpleIsland(width, height);
+        generator.FillTypes(tiles);
     }
 
     public ArrayList<Tile> getTiles() {

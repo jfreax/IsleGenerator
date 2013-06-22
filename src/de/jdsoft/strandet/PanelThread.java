@@ -28,10 +28,8 @@ class PanelThread extends Thread {
                 c = _surfaceHolder.lockCanvas(null);
                 synchronized (_surfaceHolder) {
 
-
                     //Insert methods to modify positions of items in onDraw()
                     _panel.postInvalidate();
-
 
                 }
             } finally {

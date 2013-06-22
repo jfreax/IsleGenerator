@@ -5,15 +5,7 @@ import android.graphics.*;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.ViewGroup;
-import android.view.WindowManager;
-import com.marcrh.graph.Point;
-import com.marcrh.graph.Range;
-import com.marcrh.graph.Utils;
-import com.marcrh.graph.delaunay.Voronoi;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback {
@@ -21,7 +13,6 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
     private PanelThread thread;
     TileManager manager;
 
-    Random random = new Random();
 
 
     public DrawingPanel(Context context) {

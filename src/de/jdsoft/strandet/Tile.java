@@ -1,10 +1,7 @@
 package de.jdsoft.strandet;
 
 
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Path;
+import android.graphics.*;
 import com.marcrh.graph.Point;
 
 import java.util.ArrayList;
@@ -12,22 +9,28 @@ import java.util.List;
 
 public class Tile {
 
-    public static final int WATER = 0;
-    public static final int LAND = 1;
-    public static final int COAST = 2;
+    public static final int NONE = 0;
+    public static final int WATER = 1;
+    public static final int LAND = 2;
 
 
     private List<Point> points;
-    private int type;
-    private int color;
+    private int type = Tile.NONE;
 
+    // approximately distance from border
+    private int distance = 1;
+
+    // Map height -> 0 is ocean level
+    private int height = 0;
+
+    private int color;
     public ArrayList<Tile> neighbors;
 
     public Tile(List<Point> points) {
         this.points = points;
         this.neighbors = new ArrayList<Tile>();
 
-        setType(1);
+        setType(0);
     }
 
     public void draw(Canvas canvas){
@@ -47,6 +50,7 @@ public class Tile {
         Paint paint = new Paint();
         paint.setStyle(Paint.Style.FILL);
         paint.setColor( color );
+        paint.setAntiAlias(true);
 
         canvas.drawPath(path, paint);
     }
@@ -58,14 +62,25 @@ public class Tile {
     public void setType(int type) {
         this.type = type;
         switch (type) {
+            case NONE:
+                color = Color.rgb(0, 0, 0);
+                break;
             case WATER:
                 color = Color.rgb(49, 58, 92);
                 break;
             case LAND:
-                color = Color.rgb(195, 212, 170);
+                setLandColor();
                 break;
-            case COAST:
+        }
+    }
+
+    private void setLandColor() {
+        switch (getHeight()) {
+            case 1:
                 color = Color.rgb(227, 232, 202);
+                break;
+            default:
+                color = Color.rgb(195, 212, 170);
                 break;
         }
     }
@@ -73,5 +88,24 @@ public class Tile {
     public int getType() {
         return type;
     }
+
+    public void setDistance(int depth) {
+        if( depth < 1 )
+            this.distance = 1;
+        this.distance = depth;
+    }
+
+    public int getDistance() {
+        return distance;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
 
 }

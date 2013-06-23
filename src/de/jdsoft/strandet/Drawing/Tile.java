@@ -57,6 +57,7 @@ public class Tile implements Comparable {
         paint.setStyle(Paint.Style.FILL);
         paint.setColor( color );
         //paint.setAntiAlias(true);
+        //paint.setMaskFilter(new BlurMaskFilter(1, BlurMaskFilter.Blur.SOLID));
 
         canvas.drawPath(path, paint);
     }

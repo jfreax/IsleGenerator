@@ -24,7 +24,7 @@ public class Rivers extends Generator {
     public void Compute(ArrayList<Tile> tiles) {
         noOfTiles = tiles.size();
 
-        //Collections.shuffle(tiles);
+        // Most river sources are on montains
         Collections.sort(tiles, new Comparator<Tile>() {
             public int compare(Tile lhs, Tile rhs) {
                 if( lhs.getHeight() > rhs.getHeight() ) {
@@ -37,10 +37,18 @@ public class Rivers extends Generator {
             }
         } );
 
-        int maxI = Math.min( random.nextInt(40)+60, tiles.size()-1 );
+        int maxI = Math.min( random.nextInt(30)+20, tiles.size()-1 );
         for( int i = 0; i < maxI; i++ ) {
             beginNewRiver(tiles.get(i));
         }
+
+        // But some rivers are from lower land parts
+        Collections.shuffle(tiles);
+        maxI = Math.min( random.nextInt(30)+30, tiles.size()-1 );
+        for( int i = 0; i < maxI; i++ ) {
+            beginNewRiver(tiles.get(i));
+        }
+
 
 //        for( Tile tile : tiles ) {
 //            if( (float)random.nextInt(1000) / (float)noOfTiles <= 0.02f ) {

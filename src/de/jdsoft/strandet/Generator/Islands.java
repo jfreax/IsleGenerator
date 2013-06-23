@@ -40,11 +40,10 @@ public class Islands extends Generator {
         }
 
         FillRecursive(nexts);
-        generateBonusMountain(tiles);
-        generateBonusMountain(tiles);
-        generateBonusMountain(tiles);
-        generateBonusMountain(tiles);
-        generateBonusMountain(tiles);
+
+        for( int i = random.nextInt(12)+5; i >= 0; i-- ) {
+            generateBonusMountain(tiles, random.nextInt(7)+3, 0.3f);
+        }
     }
 
 
@@ -145,9 +144,8 @@ public class Islands extends Generator {
     }
 
 
-    // TODO change maximum height
-    private void generateBonusMountain(ArrayList<Tile> tiles) {
-        float incHeight = 5;
+    private void generateBonusMountain(ArrayList<Tile> tiles, int mountainHeight, float decay) {
+        float incHeight = mountainHeight;
 
         // Select random land tile
         Tile randomTile = null;
@@ -189,9 +187,13 @@ public class Islands extends Generator {
 
                 neighbor.incHeight(incHeight);
                 toVisedNext.addAll(neighbor.neighbors);
+                
+                if(neighbor.getHeight() > getAbsoluteMaxHeight()) {
+                    setAbsoluteMaxHeight(neighbor.getHeight());
+                }
             }
 
-            incHeight -= 0.3;
+            incHeight -= random.nextFloat() * decay;
 
             if(incHeight <= 0.) {
                 break;
@@ -207,5 +209,9 @@ public class Islands extends Generator {
 
     public float getAbsoluteMaxHeight() {
         return absoluteMaxHeight;
+    }
+
+    public void setAbsoluteMaxHeight(float absoluteMaxHeight) {
+        this.absoluteMaxHeight = absoluteMaxHeight;
     }
 }

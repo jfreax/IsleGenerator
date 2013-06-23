@@ -2,6 +2,7 @@ package de.jdsoft.strandet.Drawing;
 
 
 import android.graphics.*;
+import android.util.Log;
 import com.marcrh.graph.Point;
 import de.jdsoft.strandet.Constants;
 import de.jdsoft.strandet.Generator.Biome;
@@ -65,8 +66,8 @@ public class Tile implements Comparable, Constants {
         paint.setStyle(Paint.Style.FILL);
         //paint.setColor( color );
         paint.setColor(getColor(tileManager));
-        //paint.setAntiAlias(true);
-        //paint.setMaskFilter(new BlurMaskFilter(1, BlurMaskFilter.Blur.SOLID));
+        paint.setAntiAlias(true);
+        paint.setMaskFilter(new BlurMaskFilter(1, BlurMaskFilter.Blur.SOLID));
 
         canvas.drawPath(path, paint);
     }
@@ -75,6 +76,12 @@ public class Tile implements Comparable, Constants {
         if( getType() == WATER ) {
             return Color.rgb(49, 58, 92);
         } else {
+            int normHeight = (int)getNormalizedHeight(getHeight(), tileManager.getMaxHeight());
+//            if(normHeight > 2 ) {
+//                Log.e("Strandet", ""+normHeight + "\t - " + getNormalizedHeight(getHeight(), tileManager.getMaxHeight()));
+//            }
+            //return Color.rgb(10 + normHeight*15, 20 + normHeight*15, normHeight*15);
+            //return Color.rgb(10 + getWet()*30, 20 + getWet()*30, getWet()*30);
             return BIOME_COLOR[ Biome.BIOME_MAP[getWet()][(int)getNormalizedHeight(getHeight(), (int)tileManager.getMaxHeight())] ];
         }
     }
@@ -216,9 +223,10 @@ public class Tile implements Comparable, Constants {
     }
 
     public static float getNormalizedHeight(float height, float maxHeight) {
-        float norm = (float)Math.ceil( height * (3.f / maxHeight));
+        //float norm = (float)Math.ceil( height * (3.f / maxHeight));
+        float norm = (height / maxHeight) * 3.9f;
 
-        return Math.min(norm, 3.0f);
+        return Math.min(norm, 3.9f);
     }
 
     public void incHeight(float i) {

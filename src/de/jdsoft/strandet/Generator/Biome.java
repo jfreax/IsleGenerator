@@ -1,6 +1,7 @@
 package de.jdsoft.strandet.Generator;
 
 
+import android.util.Log;
 import de.jdsoft.strandet.Constants;
 import de.jdsoft.strandet.Drawing.Tile;
 
@@ -44,26 +45,29 @@ public class Biome extends Generator implements Constants {
     public void ComputeWet(ArrayList<Tile> tiles) {
         for( Tile tile : tiles ) {
             // TODO lakes!
-            if( !tile.isRiverSource() ) {
+            if( tile.getRiver() == null ) {
                 continue;
             }
 
             random.setSeed(System.nanoTime());
 
-            int currentWet = 5;
-            tile.setWet(currentWet);
+            // Set start wet
+            float currentWet = 3.5f;
+            if( tile.isRiverSource() ) {
+                currentWet = 5.9f;
+            }
+            tile.setWet((int)currentWet);
 
             HashSet<Tile> visited = new HashSet<Tile>();
             visited.add(tile);
 
             LinkedList<Tile> toVisit = new LinkedList<Tile>();
-            LinkedList<Tile> toVisitNext = new LinkedList<Tile>();
-
             toVisit.addAll(tile.neighbors);
 
             boolean end = false;
             while( !end ) {
                 end = true;
+                LinkedList<Tile> toVisitNext = new LinkedList<Tile>();
 
                 for( Tile neighbor : toVisit ) {
                     // Test if already visited
@@ -73,24 +77,25 @@ public class Biome extends Generator implements Constants {
                     // Mark as visited
                     visited.add(neighbor);
 
-                    if( random.nextInt(tile.getRiver().getPoints().size()*2) <= 1 ) {
-                        currentWet -= 1;
-                    }
+                    //Log.e("Strandet", "" + random.nextGaussian());
+                    //if( random.nextInt(tile.getRiver().getPoints().size()*3) <= 1 ) {
+                    //    currentWet -= Math.abs(random.nextGaussian()) / 30.f;
+                    //}
+                    currentWet -= random.nextFloat() / 20.f;
 
-                    if( currentWet == 0 ) {
+                    if( currentWet <= 0 ) {
                         break;
                     }
 
                     end = false;
-                    if ( currentWet > neighbor.getWet() ) {
-                        neighbor.setWet(currentWet);
-                    } else {
-                        neighbor.setWet(neighbor.getWet()+1);
-                    }
-                    toVisitNext.addAll(neighbor.neighbors);
 
+                    if ( currentWet > neighbor.getWet() ) {
+                        neighbor.setWet((int)currentWet);
+                    }
+
+                    toVisitNext.addAll(neighbor.neighbors);
                 }
-                toVisit = (LinkedList<Tile>)toVisitNext.clone();
+                toVisit = toVisitNext;
             }
         }
     }

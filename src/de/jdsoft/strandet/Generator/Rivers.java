@@ -25,8 +25,21 @@ public class Rivers extends Generator {
     public void Compute(ArrayList<Tile> tiles) {
         noOfTiles = tiles.size();
 
-        Collections.shuffle(tiles);
-        for( int i = Math.min( random.nextInt(20)+40, tiles.size()-1 ); i >= 0; i--) {
+        //Collections.shuffle(tiles);
+        Collections.sort(tiles, new Comparator<Tile>() {
+            public int compare(Tile lhs, Tile rhs) {
+                if( lhs.getHeight() > rhs.getHeight() ) {
+                    return -1;
+                } else if( lhs.getHeight() == rhs.getHeight() ) {
+                    return 0;
+                } else {
+                    return 1;
+                }
+            }
+        } );
+
+        int maxI = Math.min( random.nextInt(20)+40, tiles.size()-1 );
+        for( int i = 0; i < maxI; i++ ) {
             beginNewRiver(tiles.get(i));
         }
 

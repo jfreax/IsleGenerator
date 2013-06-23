@@ -33,17 +33,33 @@ public class River implements Constants {
         paint.setAntiAlias(true);
         paint.setStrokeJoin(Paint.Join.ROUND);
 
+        //paint.setMaskFilter(new BlurMaskFilter(1, BlurMaskFilter.Blur.SOLID));
+
+
 
         //paint.setPathEffect(new CornerPathEffect(10) );
-        Path path = new Path();
-        path.moveTo((float)points.get(points.size()-1).x, (float)points.get(points.size()-1).y);
-        for(int i = points.size()-1; i > 1; i -= 2) {
+//        Path path = new Path();
+//        path.moveTo((float)points.get(points.size()-1).x, (float)points.get(points.size()-1).y);
+//        for(int i = points.size()-1; i > 1; i -= 2) {
+//
+//            //paint.setColor( Color.rgb(49 +(points.size()-i+2)*2, 58+(points.size()-i+2)*2, 92+(points.size()-i+2)*2) );
+//            paint.setStrokeWidth((float)Math.ceil(points.get(i).z / 6.f) + 1.f); // TODO divide with maximum river length?
+//
+//            path.cubicTo((float) points.get(i).x, (float) points.get(i).y, (float) points.get(i - 1).x, (float) points.get(i - 1).y, (float) points.get(i - 2).x, (float) points.get(i - 2).y);
+//            canvas.drawPath(path, paint);
+//        }
+
+
+        Path path2 = new Path();
+        path2.moveTo((float)points.get(points.size()-1).x, (float)points.get(points.size()-1).y);
+        for(int i = points.size()-1; i > 1; i--) {
 
             //paint.setColor( Color.rgb(49 +(points.size()-i+2)*2, 58+(points.size()-i+2)*2, 92+(points.size()-i+2)*2) );
-            paint.setStrokeWidth((float)Math.ceil(points.get(i).z / 4.f) + 2.f); // TODO divide with maximum river length?
+            paint.setStrokeWidth((float)Math.ceil(points.get(i).z / 4.f) + 1.f); // TODO divide with maximum river length?
 
-            path.cubicTo((float) points.get(i).x, (float) points.get(i).y, (float) points.get(i - 1).x, (float) points.get(i - 1).y, (float) points.get(i - 2).x, (float) points.get(i - 2).y);
-            canvas.drawPath(path, paint);
+            //path.cubicTo((float) points.get(i).x, (float) points.get(i).y, (float) points.get(i - 1).x, (float) points.get(i - 1).y, (float) points.get(i - 2).x, (float) points.get(i - 2).y);
+            path2.lineTo((float)points.get(i).x, (float)points.get(i).y);
+            canvas.drawPath(path2, paint);
         }
 
 /*

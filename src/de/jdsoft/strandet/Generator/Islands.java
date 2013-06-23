@@ -1,13 +1,11 @@
 package de.jdsoft.strandet.Generator;
 
 
+import android.util.Log;
 import com.marcrh.graph.Point;
 import de.jdsoft.strandet.Drawing.Tile;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.Random;
+import java.util.*;
 
 
 public class Islands extends Generator {
@@ -42,6 +40,11 @@ public class Islands extends Generator {
         }
 
         FillRecursive(nexts);
+        generateBonusMountain(tiles);
+        generateBonusMountain(tiles);
+        generateBonusMountain(tiles);
+        generateBonusMountain(tiles);
+        generateBonusMountain(tiles);
     }
 
 
@@ -123,7 +126,8 @@ public class Islands extends Generator {
             return false;
         }
 
-        if( random.nextInt(1000) <= 10 ) {
+        //if( random.nextInt(noOfTiles) <= 0.95 / noOfTiles ) {
+        if( random.nextInt(1000) <= 8) {
             return false;
         }
 
@@ -138,6 +142,63 @@ public class Islands extends Generator {
         }
 
         return true;
+    }
+
+
+    // TODO change maximum height
+    private void generateBonusMountain(ArrayList<Tile> tiles) {
+        float incHeight = 5;
+
+        // Select random land tile
+        Tile randomTile = null;
+        for(int i = tiles.size()-1; i > 0; i--) {
+            int rand = random.nextInt(tiles.size()-1);
+
+            randomTile = tiles.get(rand);
+            if( randomTile.getType() == Tile.LAND) {
+                if( randomTile.getHeight() < getAbsoluteMaxHeight() - incHeight) {
+                    break;
+                }
+            }
+        }
+
+        // No fitting tile found
+        if( randomTile == null ) {
+            return;
+        }
+
+        LinkedList<Tile> toVised = new LinkedList<Tile>();
+        toVised.add(randomTile);
+        toVised.addAll(randomTile.neighbors);
+
+        HashSet<Tile> visited = new HashSet<Tile>();
+        visited.add(randomTile);
+
+
+        while(true) {
+            LinkedList<Tile> toVisedNext = new LinkedList<Tile>();
+
+            for( Tile neighbor : toVised ) {
+
+                if( visited.contains(neighbor) ) {
+                    continue;
+                }
+
+                // Mark as visited
+                visited.add(neighbor);
+
+                neighbor.incHeight(incHeight);
+                toVisedNext.addAll(neighbor.neighbors);
+            }
+
+            incHeight -= 0.3;
+
+            if(incHeight <= 0.) {
+                break;
+            }
+
+            toVised = toVisedNext;
+        }
     }
 
     public ArrayList<Tile> getLandTiles() {

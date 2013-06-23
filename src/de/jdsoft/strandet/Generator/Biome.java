@@ -73,7 +73,7 @@ public class Biome extends Generator implements Constants {
                     // Mark as visited
                     visited.add(neighbor);
 
-                    if( random.nextInt(tile.getRiver().getPoints().size()*5) <= 1 ) {
+                    if( random.nextInt(tile.getRiver().getPoints().size()*2) <= 1 ) {
                         currentWet -= 1;
                     }
 

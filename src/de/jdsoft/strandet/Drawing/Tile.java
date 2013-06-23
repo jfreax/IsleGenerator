@@ -220,4 +220,8 @@ public class Tile implements Comparable, Constants {
 
         return Math.min(norm, 3.0f);
     }
+
+    public void incHeight(float i) {
+        setHeight(getHeight()+i);
+    }
 }

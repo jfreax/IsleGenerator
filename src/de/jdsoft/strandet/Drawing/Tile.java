@@ -3,11 +3,14 @@ package de.jdsoft.strandet.Drawing;
 
 import android.graphics.*;
 import com.marcrh.graph.Point;
+import de.jdsoft.strandet.Constants;
+import de.jdsoft.strandet.Generator.Biome;
+import de.jdsoft.strandet.TileManager;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public class Tile implements Comparable {
+public class Tile implements Comparable, Constants {
 
     public static final int NONE = 0;
     public static final int WATER = 1;
@@ -43,7 +46,7 @@ public class Tile implements Comparable {
         setType(0);
     }
 
-    public void draw(Canvas canvas) {
+    public void draw(Canvas canvas, TileManager tileManager) {
         if( points.size() < 2 )
             return;
 
@@ -60,11 +63,20 @@ public class Tile implements Comparable {
 
         Paint paint = new Paint();
         paint.setStyle(Paint.Style.FILL);
-        paint.setColor( color );
+        //paint.setColor( color );
+        paint.setColor(getColor(tileManager));
         //paint.setAntiAlias(true);
         //paint.setMaskFilter(new BlurMaskFilter(1, BlurMaskFilter.Blur.SOLID));
 
         canvas.drawPath(path, paint);
+    }
+
+    private int getColor(TileManager tileManager) {
+        if( getType() == WATER ) {
+            return Color.rgb(49, 58, 92);
+        } else {
+            return BIOME_COLOR[ Biome.BIOME_MAP[getWet()][(int)getNormalizedHeight(getHeight(), (int)tileManager.getMaxHeight())] ];
+        }
     }
 
 
@@ -111,9 +123,9 @@ public class Tile implements Comparable {
 //                break;
 //        }
 
-        color = Color.rgb(10 + (int)getHeight()*3, 20 + (int)getHeight()*3, (int)getHeight()*3);
+        //color = Color.rgb(10 + (int)getHeight()*3, 20 + (int)getHeight()*3, (int)getHeight()*3);
         //color = Color.rgb(10 + getWet()*3, 20 + getWet()*3, getWet()*3);
-        //color = Color.rgb(10 + getBiome()*8, 20 + getBiome()*8, getBiome()*8);
+        color = Color.rgb(10 + getBiome()*8, 20 + getBiome()*8, getBiome()*8);
     }
 
     public int getType() {
@@ -201,5 +213,11 @@ public class Tile implements Comparable {
     public void setBiome(int biome) {
         this.biome = biome;
         setLandColor();
+    }
+
+    public static float getNormalizedHeight(float height, float maxHeight) {
+        float norm = (float)Math.ceil( height * (3.f / maxHeight));
+
+        return Math.min(norm, 3.0f);
     }
 }

@@ -87,4 +87,8 @@ public class TileManager {
     public ArrayList<River> getRivers() {
         return rivers;
     }
+
+    public float getMaxHeight() {
+        return maxHeight;
+    }
 }

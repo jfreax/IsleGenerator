@@ -42,7 +42,7 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
         //canvas.translate(getHeight()/2, 0);
 
         for(Tile tile : manager.getTiles() ) {
-            tile.draw(canvas);
+            tile.draw(canvas, manager);
         }
 
         for(River river : manager.getRivers() ) {

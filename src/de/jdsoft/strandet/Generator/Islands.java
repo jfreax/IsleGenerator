@@ -96,7 +96,7 @@ public class Islands extends Generator {
                 for( Tile neighbor2 : tile.neighbors) {
                     maxHeight = Math.max(maxHeight, neighbor2.getHeight());
                 }
-                neighbor.setHeight( maxHeight + ( (float)(randomHeight.nextGaussian()*1.5f) - 1.f) );
+                neighbor.setHeight( maxHeight + ( (float)(randomHeight.nextGaussian()*2.f) - 1.2f) );
 
                 if( neighbor.getHeight() > absoluteMaxHeight ) {
                     absoluteMaxHeight = neighbor.getHeight();

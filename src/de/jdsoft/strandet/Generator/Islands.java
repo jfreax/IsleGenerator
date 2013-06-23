@@ -3,17 +3,20 @@ package de.jdsoft.strandet.Generator;
 
 import com.marcrh.graph.Point;
 import de.jdsoft.strandet.Drawing.Tile;
-import de.jdsoft.strandet.TileManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.Random;
 
 
 public class Islands extends Generator {
 
+    private float absoluteMaxHeight = 0;
+
     private int noOfTiles;
     private ArrayList<Tile> landTiles;
+    private Random randomHeight = new Random();
 
     public Islands(int width, int height) {
         super(width, height);
@@ -89,11 +92,15 @@ public class Islands extends Generator {
             } else { // This is land, so the neighbor should be land to, but its heigher
 
                 // Set new height
-                int maxHeight = 0;
+                float maxHeight = 0.f;
                 for( Tile neighbor2 : tile.neighbors) {
                     maxHeight = Math.max(maxHeight, neighbor2.getHeight());
                 }
-                neighbor.setHeight( maxHeight + ((int)(random.nextGaussian()*2) -1) );
+                neighbor.setHeight( maxHeight + ( (float)(randomHeight.nextGaussian()*1.5f) - 1.f) );
+
+                if( neighbor.getHeight() > absoluteMaxHeight ) {
+                    absoluteMaxHeight = neighbor.getHeight();
+                }
 
                 // Make land!
                 neighbor.setType(Tile.LAND);
@@ -137,4 +144,7 @@ public class Islands extends Generator {
         return landTiles;
     }
 
+    public float getAbsoluteMaxHeight() {
+        return absoluteMaxHeight;
+    }
 }

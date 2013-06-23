@@ -26,7 +26,7 @@ public class TileManager {
     private int height;
     private ArrayList<Tile> landTiles;
     private ArrayList<River> rivers;
-    private int maxHeight;
+    private float maxHeight;
 
     public TileManager(int width, int height) {
         this.width = width;

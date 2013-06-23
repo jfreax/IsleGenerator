@@ -36,9 +36,9 @@ public class Biome extends Generator {
 
 
     private Random random = new Random();
-    private int maxHeight;
+    private float maxHeight;
 
-    public Biome(int width, int height, int maxHeight) {
+    public Biome(int width, int height, float maxHeight) {
         super(width, height);
 
         this.maxHeight = maxHeight;

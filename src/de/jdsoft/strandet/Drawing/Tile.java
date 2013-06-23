@@ -15,7 +15,12 @@ public class Tile implements Comparable {
 
 
     private List<Point> points;
+
     private int type = Tile.NONE;
+    private int wet = 0;
+    private int biome = 0;
+
+    private boolean isRiverSource = false;
 
     // approximately distance from border
     private int distance = 1;
@@ -25,7 +30,7 @@ public class Tile implements Comparable {
     private River river = null;
 
     // Map height -> 0 is ocean level
-    private int height = 0;
+    private float height = 0;
 
     private int color;
     private boolean onBorder;
@@ -47,7 +52,7 @@ public class Tile implements Comparable {
         path.moveTo((float)points.get(0).x, (float)points.get(0).y);
 
         for( int i = 1; i < points.size(); i++ ){
-            path.lineTo((float)points.get(i).x, (float)points.get(i).y);
+            path.lineTo((float) points.get(i).x, (float) points.get(i).y);
         }
 
         path.lineTo((float)points.get(0).x, (float)points.get(0).y);
@@ -94,19 +99,21 @@ public class Tile implements Comparable {
     }
 
     private void setLandColor() {
-        switch (getHeight()) {
-            case 1:
-                color = Color.rgb(227, 232, 202);
-                break;
-            case 2:
-                color = Color.rgb(207, 232, 182);
-                break;
-            default:
-                color = Color.rgb(195, 212, 170);
-                break;
-        }
+//        switch (getHeight()) {
+//            case 1:
+//                color = Color.rgb(227, 232, 202);
+//                break;
+//            case 2:
+//                color = Color.rgb(207, 232, 182);
+//                break;
+//            default:
+//                color = Color.rgb(195, 212, 170);
+//                break;
+//        }
 
-        color = Color.rgb(10 + getHeight()*3, 20 + getHeight()*3, getHeight()*3);
+        color = Color.rgb(10 + (int)getHeight()*3, 20 + (int)getHeight()*3, (int)getHeight()*3);
+        //color = Color.rgb(10 + getWet()*3, 20 + getWet()*3, getWet()*3);
+        //color = Color.rgb(10 + getBiome()*8, 20 + getBiome()*8, getBiome()*8);
     }
 
     public int getType() {
@@ -123,12 +130,12 @@ public class Tile implements Comparable {
         return distance;
     }
 
-    public int getHeight() {
+    public float getHeight() {
         return height;
     }
 
-    public void setHeight(int height) {
-        this.height = Math.max(height, 0);
+    public void setHeight(float height) {
+        this.height = Math.max(height, 0.f);
     }
 
 
@@ -167,5 +174,32 @@ public class Tile implements Comparable {
 
     public void setRiver(River river) {
         this.river = river;
+    }
+
+    public int getWet() {
+        return wet;
+    }
+
+    public void setWet(int wet) {
+        this.wet = wet < 0 ? 0 : wet;
+        this.wet = this.wet > 5 ? 5 : this.wet;
+        setLandColor();
+    }
+
+    public boolean isRiverSource() {
+        return isRiverSource;
+    }
+
+    public void isRiverSource(boolean riverSource) {
+        isRiverSource = riverSource;
+    }
+
+    public int getBiome() {
+        return biome;
+    }
+
+    public void setBiome(int biome) {
+        this.biome = biome;
+        setLandColor();
     }
 }

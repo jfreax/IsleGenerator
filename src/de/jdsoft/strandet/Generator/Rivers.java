@@ -1,7 +1,6 @@
 package de.jdsoft.strandet.Generator;
 
 
-import android.util.Log;
 import com.marcrh.graph.Point;
 import de.jdsoft.strandet.Drawing.River;
 import de.jdsoft.strandet.Drawing.Tile;
@@ -38,7 +37,7 @@ public class Rivers extends Generator {
             }
         } );
 
-        int maxI = Math.min( random.nextInt(20)+40, tiles.size()-1 );
+        int maxI = Math.min( random.nextInt(40)+60, tiles.size()-1 );
         for( int i = 0; i < maxI; i++ ) {
             beginNewRiver(tiles.get(i));
         }
@@ -75,7 +74,7 @@ public class Rivers extends Generator {
         // Add rest of river
         // extendRiver(tile, points);
         while(true) {
-            int minHeight = Integer.MAX_VALUE;
+            float minHeight = Integer.MAX_VALUE;
             Tile minTile = null;
 
             for( Tile neighbor : tile.neighbors) {
@@ -87,9 +86,9 @@ public class Rivers extends Generator {
                 // Mark as visited
                 visited.add(neighbor);
 
-                if ( neighbor.getRiver() != null ) {
-                    return false;
-                }
+                //if ( neighbor.getRiver() != null ) {
+                //    return false;
+                //}
 
                 // Is this the end of the river?
                 if ( neighbor.getType() == Tile.WATER || neighbor.getRiver() != null ) {
@@ -107,18 +106,20 @@ public class Rivers extends Generator {
                     for( Tile tileRiver : tilesWithNewRiver ) {
                         tileRiver.setRiver(river);
                     }
+                    tilesWithNewRiver.get(0).isRiverSource(true);
+
                     tilesWithNewRiver.clear();
                     return true;
                 }
 
 
-                if( neighbor.getHeight() < minHeight ) {
+                if( neighbor.getHeight() < minHeight) {
                     minHeight = neighbor.getHeight();
                     minTile = neighbor;
                 }
             }
 
-            if( minTile != null ) {
+            if( minTile != null && minHeight -5 <= tile.getHeight() ) {
                 // Save river info on tile
                 tilesWithNewRiver.add(minTile);
 
@@ -139,7 +140,7 @@ public class Rivers extends Generator {
     }
 
     private void extendRiver(Tile tile, List<Point> points) {
-        int minHeight = Integer.MAX_VALUE;
+        float minHeight = Integer.MAX_VALUE;
         Tile minTile = null;
         for( Tile neighbor : tile.neighbors) {
 

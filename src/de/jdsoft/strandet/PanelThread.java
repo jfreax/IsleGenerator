@@ -37,11 +37,13 @@ class PanelThread extends Thread {
                     _surfaceHolder.unlockCanvasAndPost(c);
                 }
             }
+
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
         }
-        try {
-            sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
+
     }
 }

@@ -5,8 +5,10 @@ import android.graphics.*;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import de.jdsoft.strandet.Drawing.River;
-import de.jdsoft.strandet.Drawing.Tile;
+import de.jdsoft.strandet.Entity.River;
+import de.jdsoft.strandet.Entity.Tile;
+import de.jdsoft.strandet.Render.RenderRiver;
+import de.jdsoft.strandet.Render.RenderTile;
 
 public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback {
 
@@ -42,11 +44,12 @@ public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback 
         //canvas.translate(getHeight()/2, 0);
 
         for(Tile tile : manager.getTiles() ) {
-            tile.draw(canvas, manager);
+            RenderTile.draw(canvas, manager, tile);
+            //tile.draw(canvas, manager);
         }
 
         for(River river : manager.getRivers() ) {
-            river.draw(canvas);
+            RenderRiver.draw(canvas, manager, river);
         }
 
     }

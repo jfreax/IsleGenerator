@@ -5,8 +5,8 @@ import com.marcrh.graph.Point;
 import com.marcrh.graph.Range;
 import com.marcrh.graph.Utils;
 import com.marcrh.graph.delaunay.Voronoi;
-import de.jdsoft.strandet.Drawing.River;
-import de.jdsoft.strandet.Drawing.Tile;
+import de.jdsoft.strandet.Entity.River;
+import de.jdsoft.strandet.Entity.Tile;
 import de.jdsoft.strandet.Generator.Biome;
 import de.jdsoft.strandet.Generator.Islands;
 import de.jdsoft.strandet.Generator.Rivers;
@@ -28,6 +28,8 @@ public class TileManager {
     private ArrayList<River> rivers;
     private float maxHeight;
 
+    public float maxHeightDifference;
+
     public TileManager(int width, int height) {
         this.width = width;
         this.height = height;
@@ -38,7 +40,7 @@ public class TileManager {
         int left = 0;
 
         Range r = new Range(new Point(top,left),new Point(top+width, left+height));
-        points = Utils.generateRandomPoints(6000, r);
+        points = Utils.generateRandomPoints(2000, r);
         voronoi.generate(points, r);
 
         Initialize();
@@ -71,6 +73,7 @@ public class TileManager {
         generator.Compute(tiles);
         landTiles = generator.getLandTiles();
         maxHeight = generator.getAbsoluteMaxHeight();
+        maxHeightDifference = generator.maxHeightDifference;
 
         Rivers riverMaker = new Rivers(width, height);
         riverMaker.Compute(landTiles);

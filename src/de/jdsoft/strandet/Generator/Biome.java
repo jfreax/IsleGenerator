@@ -1,9 +1,8 @@
 package de.jdsoft.strandet.Generator;
 
 
-import android.util.Log;
 import de.jdsoft.strandet.Constants;
-import de.jdsoft.strandet.Drawing.Tile;
+import de.jdsoft.strandet.Entity.Tile;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -37,7 +36,7 @@ public class Biome extends Generator implements Constants {
         ComputeWet(tiles);
 
         for( Tile tile : tiles ) {
-            tile.setBiome(BIOME_MAP[tile.getWet()][(int)Tile.getNormalizedHeight(tile.getHeight(), maxHeight)]);
+            tile.setBiome(BIOME_MAP[tile.getWet()][(int) Tile.getNormalizedHeight(tile.getHeight(), maxHeight)]);
         }
     }
 

@@ -1,26 +1,20 @@
-package de.jdsoft.strandet.Drawing;
+package de.jdsoft.strandet.Render;
 
 
-import android.graphics.*;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Path;
 import com.marcrh.graph.Point;
-import de.jdsoft.strandet.Constants;
+import de.jdsoft.strandet.Entity.River;
+import de.jdsoft.strandet.TileManager;
 
 import java.util.List;
 import java.util.Random;
 
-public class River implements Constants {
-    private List<Point> points;
+public class RenderRiver {
+    static public void draw(Canvas canvas, TileManager tileManager, River river) {
+        List<Point> points = river.getPoints();
 
-
-    public River(List<Point> points) {
-        this.points = points;
-    }
-
-    // Empty, do not forget to set points!
-    public River() {
-    }
-
-    public void draw(Canvas canvas) {
         if( points.size() < 2 )
             return;
 
@@ -28,7 +22,7 @@ public class River implements Constants {
 
         Paint paint = new Paint();
         paint.setStyle(Paint.Style.STROKE);
-        paint.setColor( RIVER_COLOR );
+        paint.setColor( river.RIVER_COLOR );
         paint.setStrokeWidth(2);
         paint.setAntiAlias(true);
         paint.setStrokeJoin(Paint.Join.ROUND);
@@ -143,13 +137,5 @@ public class River implements Constants {
         }
 
         canvas.drawPath(path, paint);*/
-    }
-
-    public List<Point> getPoints() {
-        return points;
-    }
-
-    public void setPoints(List<Point> points) {
-        this.points = points;
     }
 }

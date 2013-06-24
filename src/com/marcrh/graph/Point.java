@@ -2,7 +2,7 @@ package com.marcrh.graph;
 
 import android.graphics.Color;
 
-public class Point {
+public class Point implements Comparable<Point> {
 
 	/**
 	 * Z coordinate (altitude usually).
@@ -282,4 +282,21 @@ public class Point {
 		}
 		return false;
 	}
+
+    @Override
+    public int compareTo(Point another) {
+        if (x > another.x) {
+            return -1;
+        } else if (x == another.x) {
+            if (y > another.y) {
+                return -1;
+            } else if (y == another.y) {
+                return 0;
+            } else {
+                return 1;
+            }
+        } else {
+            return 1;
+        }
+    }
 }

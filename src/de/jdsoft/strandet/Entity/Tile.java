@@ -1,35 +1,36 @@
-package de.jdsoft.strandet.Drawing;
+package de.jdsoft.strandet.Entity;
 
 
 import android.graphics.*;
-import android.util.Log;
 import com.marcrh.graph.Point;
 import de.jdsoft.strandet.Constants;
 import de.jdsoft.strandet.Generator.Biome;
 import de.jdsoft.strandet.TileManager;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Tile implements Comparable, Constants {
 
     public static final int NONE = 0;
     public static final int WATER = 1;
     public static final int LAND = 2;
-    private int type = Tile.NONE;
+    protected int type = Tile.NONE;
 
     public static final int RIVER_SOURCE = 5;
     public static final int LAKE = 6;
     public static final int BEACH = 7;
-    private int specificType = Tile.NONE;
+    protected int specificType = Tile.NONE;
 
-    private List<Point> points;
-    private int wet = 0;
-    private int biome = 0;
+    protected List<Point> points;
+    protected int wet = 0;
+    protected int biome = 0;
+
+    public float goesDownFrom = 0.f;
+    public float goesUpTo = 0.f;
+
 
     // approximately distance from border
-    private int distance = 1;
+    protected int distance = 1;
     public int waterNeighbors = 0;
 
     // River on this tile
@@ -49,32 +50,7 @@ public class Tile implements Comparable, Constants {
         setType(0);
     }
 
-    public void draw(Canvas canvas, TileManager tileManager) {
-        if( points.size() < 2 )
-            return;
-
-
-        Path path = new Path();
-        path.moveTo((float)points.get(0).x, (float)points.get(0).y);
-
-        for( int i = 1; i < points.size(); i++ ){
-            path.lineTo((float) points.get(i).x, (float) points.get(i).y);
-        }
-
-        path.lineTo((float)points.get(0).x, (float)points.get(0).y);
-        path.close();
-
-        Paint paint = new Paint();
-        paint.setStyle(Paint.Style.FILL);
-        //paint.setColor( color );
-        paint.setColor(getColor(tileManager));
-        //paint.setAntiAlias(true);
-        //paint.setMaskFilter(new BlurMaskFilter(8, BlurMaskFilter.Blur.SOLID));
-
-        canvas.drawPath(path, paint);
-    }
-
-    private int getColor(TileManager tileManager) {
+    public int getColor(TileManager tileManager) {
         if( getType() == WATER ) {
             if( isLake() ) {
                 return LAKE_COLOR;
@@ -91,17 +67,28 @@ public class Tile implements Comparable, Constants {
     //            }
                 //return Color.rgb(10 + normHeight*15, 20 + normHeight*15, normHeight*15);
                 //return Color.rgb(10 + getWet()*30, 20 + getWet()*30, getWet()*30);
-                return colorJitter(BIOME_COLOR[ Biome.BIOME_MAP[getWet()][(int)getNormalizedHeight(getHeight(), (int)tileManager.getMaxHeight())] ]);
+                //return colorJitter(BIOME_COLOR[ Biome.BIOME_MAP[getWet()][(int)getNormalizedHeight(getHeight(), (int)tileManager.getMaxHeight())] ]);
+                return BIOME_COLOR[ Biome.BIOME_MAP[getWet()][(int)getNormalizedHeight(getHeight(), (int)tileManager.getMaxHeight())] ];
             }
         }
     }
 
-    private int colorJitter(int color) {
+    protected int colorJitter(int color) {
         Random random = new Random();
         color += (random.nextInt(10)-5) << 16;
         color += (random.nextInt(10)-5) << 8;
         color += random.nextInt(10)-5;
         return color;
+    }
+
+    protected int colorDarker(int color, float factor) {
+        float[] hsv = new float[3];
+        Color.RGBToHSV(Color.red(color), Color.green(color), Color.blue(color), hsv);
+
+        hsv[0] *= (1+factor);
+
+        //return Color.HSVToColor(hsv);
+        return Color.rgb((int)(Color.red(color) + factor), (int)(Color.green(color) + factor), (int)(Color.blue(color) + factor));
     }
 
 

@@ -44,6 +44,8 @@ public class Islands extends Generator {
         for( int i = random.nextInt(12)+5; i >= 0; i-- ) {
             generateBonusMountain(tiles, random.nextInt(7)+3, 0.3f);
         }
+
+        generateBonusLakes(tiles);
     }
 
 
@@ -87,6 +89,8 @@ public class Islands extends Generator {
 
                 } else { // No water, this is land
                     neighbor.setType(Tile.LAND);
+                    neighbor.setSpecificType(Tile.BEACH);
+
                     landTiles.add(neighbor);
 
                     nextNexts.addLast(neighbor);
@@ -118,14 +122,13 @@ public class Islands extends Generator {
 
     private boolean first = true;
     private boolean isOcean(Tile tile) {
-        // probability to generate new island
-        //if ( (float)random.nextInt(noOfTiles) / (float)noOfTiles <= 0.005f ) {
         if ( first ) {
             first = false;
             return false;
         }
 
-        //if( random.nextInt(noOfTiles) <= 0.95 / noOfTiles ) {
+
+        // probability to generate new island
         if( random.nextInt(1000) <= 8) {
             return false;
         }
@@ -133,10 +136,6 @@ public class Islands extends Generator {
         for( Tile neighbor : tile.neighbors) {
             if( neighbor.getType() == Tile.LAND ) {
                 return false;
-
-                //return landTiles.size() < noOfTiles * 0.2;
-
-                //return (float)random.nextInt(noOfTiles) / (float)noOfTiles <= 0.1f;
             }
         }
 
@@ -197,6 +196,76 @@ public class Islands extends Generator {
 
             if(incHeight <= 0.) {
                 break;
+            }
+
+            toVised = toVisedNext;
+        }
+    }
+
+    private void generateBonusLakes( ArrayList<Tile> tiles ) {
+        float lakeSize = 5;
+
+        // Select "random" land tile
+        Tile randomTile = null;
+        for( Tile tile : tiles) {
+            if( tile.getType() == Tile.WATER ) {
+                continue;
+            }
+
+            boolean foundGood = true;
+            for( Tile neighbor : tile.neighbors ) {
+                if( neighbor.getType() == Tile.WATER || neighbor.getSpecificType() == Tile.BEACH ) {
+                    foundGood = false;
+                    break;
+                }
+            }
+            // Take only maybe
+            if( foundGood ) {
+                randomTile = tile;
+                break;
+            }
+        }
+
+        // No fitting tile found
+        if( randomTile == null ) {
+            return;
+        }
+
+        float lakeHeight = randomTile.getHeight();
+
+        LinkedList<Tile> toVised = new LinkedList<Tile>();
+        toVised.add(randomTile);
+        toVised.addAll(randomTile.neighbors);
+
+        HashSet<Tile> visited = new HashSet<Tile>();
+        //visited.add(randomTile);
+
+        for(int i = random.nextInt(4)+1; i >= 0; i--) {
+            LinkedList<Tile> toVisedNext = new LinkedList<Tile>();
+
+            for( Tile neighbor : toVised ) {
+
+                if( visited.contains(neighbor) ) {
+                    continue;
+                }
+
+                if( neighbor.getType() == Tile.WATER || neighbor.getSpecificType() == Tile.BEACH ) {
+                    continue;
+                }
+
+                if ( Math.abs(neighbor.getHeight() - lakeHeight) > 0.1f * absoluteMaxHeight ) {
+                    continue;
+                }
+
+                // Mark as visited
+                visited.add(neighbor);
+
+                if( random.nextFloat() > 0.3f) {
+                    toVisedNext.addAll(neighbor.neighbors);
+                }
+
+                neighbor.setType(Tile.WATER);
+                neighbor.setSpecificType(Tile.LAKE);
             }
 
             toVised = toVisedNext;

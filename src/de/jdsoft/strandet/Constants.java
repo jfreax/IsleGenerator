@@ -39,4 +39,7 @@ public interface Constants {
         0xffa9cca4, // TROPICAL_SEASONAL_FOREST
         0xffe9ddc7  // SUBTROPICAL_DESERT
     };
+
+    static final int BEACH_COLOR = 0xffe2e6c8;
+    static final int LAKE_COLOR = 0xff636C8E;
 }

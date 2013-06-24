@@ -10,21 +10,23 @@ import de.jdsoft.strandet.TileManager;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 public class Tile implements Comparable, Constants {
 
     public static final int NONE = 0;
     public static final int WATER = 1;
     public static final int LAND = 2;
+    private int type = Tile.NONE;
 
+    public static final int RIVER_SOURCE = 5;
+    public static final int LAKE = 6;
+    public static final int BEACH = 7;
+    private int specificType = Tile.NONE;
 
     private List<Point> points;
-
-    private int type = Tile.NONE;
     private int wet = 0;
     private int biome = 0;
-
-    private boolean isRiverSource = false;
 
     // approximately distance from border
     private int distance = 1;
@@ -36,7 +38,7 @@ public class Tile implements Comparable, Constants {
     // Map height -> 0 is ocean level
     private float height = 0;
 
-    private int color;
+    //private int color;
     private boolean onBorder;
     public LinkedList<Tile> neighbors;
 
@@ -66,24 +68,40 @@ public class Tile implements Comparable, Constants {
         paint.setStyle(Paint.Style.FILL);
         //paint.setColor( color );
         paint.setColor(getColor(tileManager));
-        paint.setAntiAlias(true);
-        paint.setMaskFilter(new BlurMaskFilter(1, BlurMaskFilter.Blur.SOLID));
+        //paint.setAntiAlias(true);
+        //paint.setMaskFilter(new BlurMaskFilter(8, BlurMaskFilter.Blur.SOLID));
 
         canvas.drawPath(path, paint);
     }
 
     private int getColor(TileManager tileManager) {
         if( getType() == WATER ) {
-            return Color.rgb(49, 58, 92);
-        } else {
-            int normHeight = (int)getNormalizedHeight(getHeight(), tileManager.getMaxHeight());
-//            if(normHeight > 2 ) {
-//                Log.e("Strandet", ""+normHeight + "\t - " + getNormalizedHeight(getHeight(), tileManager.getMaxHeight()));
-//            }
-            //return Color.rgb(10 + normHeight*15, 20 + normHeight*15, normHeight*15);
-            //return Color.rgb(10 + getWet()*30, 20 + getWet()*30, getWet()*30);
-            return BIOME_COLOR[ Biome.BIOME_MAP[getWet()][(int)getNormalizedHeight(getHeight(), (int)tileManager.getMaxHeight())] ];
+            if( isLake() ) {
+                return LAKE_COLOR;
+            } else {
+                return Color.rgb(49, 58, 92);
+            }
+        } else { // LAND
+            if( getSpecificType() == BEACH) {
+                return BEACH_COLOR;
+            } else {
+                int normHeight = (int)getNormalizedHeight(getHeight(), tileManager.getMaxHeight());
+    //            if(normHeight > 2 ) {
+    //                Log.e("Strandet", ""+normHeight + "\t - " + getNormalizedHeight(getHeight(), tileManager.getMaxHeight()));
+    //            }
+                //return Color.rgb(10 + normHeight*15, 20 + normHeight*15, normHeight*15);
+                //return Color.rgb(10 + getWet()*30, 20 + getWet()*30, getWet()*30);
+                return colorJitter(BIOME_COLOR[ Biome.BIOME_MAP[getWet()][(int)getNormalizedHeight(getHeight(), (int)tileManager.getMaxHeight())] ]);
+            }
         }
+    }
+
+    private int colorJitter(int color) {
+        Random random = new Random();
+        color += (random.nextInt(10)-5) << 16;
+        color += (random.nextInt(10)-5) << 8;
+        color += random.nextInt(10)-5;
+        return color;
     }
 
 
@@ -104,17 +122,17 @@ public class Tile implements Comparable, Constants {
 
     public void setType(int type) {
         this.type = type;
-        switch (type) {
-            case NONE:
-                color = Color.rgb(0, 0, 0);
-                break;
-            case WATER:
-                color = Color.rgb(49, 58, 92);
-                break;
-            case LAND:
-                setLandColor();
-                break;
-        }
+//        switch (type) {
+//            case NONE:
+//                color = Color.rgb(0, 0, 0);
+//                break;
+//            case WATER:
+//                color = Color.rgb(49, 58, 92);
+//                break;
+//            case LAND:
+//                setLandColor();
+//                break;
+//        }
     }
 
     private void setLandColor() {
@@ -132,7 +150,7 @@ public class Tile implements Comparable, Constants {
 
         //color = Color.rgb(10 + (int)getHeight()*3, 20 + (int)getHeight()*3, (int)getHeight()*3);
         //color = Color.rgb(10 + getWet()*3, 20 + getWet()*3, getWet()*3);
-        color = Color.rgb(10 + getBiome()*8, 20 + getBiome()*8, getBiome()*8);
+        //color = Color.rgb(10 + getBiome()*8, 20 + getBiome()*8, getBiome()*8);
     }
 
     public int getType() {
@@ -206,11 +224,7 @@ public class Tile implements Comparable, Constants {
     }
 
     public boolean isRiverSource() {
-        return isRiverSource;
-    }
-
-    public void isRiverSource(boolean riverSource) {
-        isRiverSource = riverSource;
+        return getSpecificType() == RIVER_SOURCE;
     }
 
     public int getBiome() {
@@ -231,5 +245,17 @@ public class Tile implements Comparable, Constants {
 
     public void incHeight(float i) {
         setHeight(getHeight()+i);
+    }
+
+    public boolean isLake() {
+        return getSpecificType() == LAKE;
+    }
+
+    public int getSpecificType() {
+        return specificType;
+    }
+
+    public void setSpecificType(int specificType) {
+        this.specificType = specificType;
     }
 }

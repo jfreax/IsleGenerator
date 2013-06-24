@@ -114,7 +114,7 @@ public class Rivers extends Generator {
                     for( Tile tileRiver : tilesWithNewRiver ) {
                         tileRiver.setRiver(river);
                     }
-                    tilesWithNewRiver.get(0).isRiverSource(true);
+                    tilesWithNewRiver.get(0).setSpecificType(Tile.RIVER_SOURCE);
 
                     tilesWithNewRiver.clear();
                     return true;

@@ -8,9 +8,7 @@ import android.view.SurfaceView;
 import de.jdsoft.strandet.Entity.River;
 import de.jdsoft.strandet.Entity.Tile;
 import de.jdsoft.strandet.Map.TileManager;
-import de.jdsoft.strandet.PanelThread;
-import de.jdsoft.strandet.Render.RenderRiver;
-import de.jdsoft.strandet.Render.RenderTile;
+
 
 public class DrawingPanel extends SurfaceView implements SurfaceHolder.Callback {
 

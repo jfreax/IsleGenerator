@@ -1,4 +1,4 @@
-package de.jdsoft.strandet;
+package de.jdsoft.strandet.Map;
 
 
 import com.marcrh.graph.Point;

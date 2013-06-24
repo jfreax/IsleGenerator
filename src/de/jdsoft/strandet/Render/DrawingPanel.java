@@ -1,4 +1,4 @@
-package de.jdsoft.strandet;
+package de.jdsoft.strandet.Render;
 
 import android.content.Context;
 import android.graphics.*;
@@ -7,6 +7,8 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import de.jdsoft.strandet.Entity.River;
 import de.jdsoft.strandet.Entity.Tile;
+import de.jdsoft.strandet.Map.TileManager;
+import de.jdsoft.strandet.PanelThread;
 import de.jdsoft.strandet.Render.RenderRiver;
 import de.jdsoft.strandet.Render.RenderTile;
 

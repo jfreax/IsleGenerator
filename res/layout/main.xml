@@ -7,11 +7,11 @@
                 tools:context=".MainActivity" >
 
 
-<de.jdsoft.strandet.DrawingPanel xmlns:android="http://schemas.android.com/apk/res/android"
+<de.jdsoft.strandet.Render.DrawingPanel xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/SurfaceView01"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:maxHeight="40dip">
-</de.jdsoft.strandet.DrawingPanel>
+</de.jdsoft.strandet.Render.DrawingPanel>
 
 </RelativeLayout>

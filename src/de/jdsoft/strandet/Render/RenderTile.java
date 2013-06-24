@@ -6,7 +6,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import com.marcrh.graph.Point;
 import de.jdsoft.strandet.Entity.Tile;
-import de.jdsoft.strandet.TileManager;
+import de.jdsoft.strandet.Map.TileManager;
 
 import java.util.List;
 

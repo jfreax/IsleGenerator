@@ -1,7 +1,8 @@
-package de.jdsoft.strandet;
+package de.jdsoft.strandet.Render;
 
 import android.graphics.Canvas;
 import android.view.SurfaceHolder;
+import de.jdsoft.strandet.Render.DrawingPanel;
 
 class PanelThread extends Thread {
     private SurfaceHolder _surfaceHolder;

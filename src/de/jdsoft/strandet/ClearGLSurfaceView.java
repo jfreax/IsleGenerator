@@ -4,6 +4,7 @@ package de.jdsoft.strandet;
 import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.view.MotionEvent;
+import de.jdsoft.strandet.Render.OGLRenderer;
 
 public class ClearGLSurfaceView extends GLSurfaceView {
     public ClearGLSurfaceView(Context context) {

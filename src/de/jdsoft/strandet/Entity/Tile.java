@@ -5,7 +5,7 @@ import android.graphics.*;
 import com.marcrh.graph.Point;
 import de.jdsoft.strandet.Constants;
 import de.jdsoft.strandet.Generator.Biome;
-import de.jdsoft.strandet.TileManager;
+import de.jdsoft.strandet.Map.TileManager;
 
 import java.util.*;
 

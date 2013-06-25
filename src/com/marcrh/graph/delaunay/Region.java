@@ -11,6 +11,7 @@ public class Region {
 	int inputIndex;
 	ArrayList<Point> points;
 	ArrayList<Integer> outputRelation;
+    ArrayList<Triad> triads;
 
     public int color = 0;
 	
@@ -81,4 +82,12 @@ public class Region {
 		}
 		return output;
 	}
+
+    public ArrayList<Triad> getTriads() {
+        return triads;
+    }
+
+    public void setTriads(ArrayList<Triad> triads) {
+        this.triads = triads;
+    }
 }

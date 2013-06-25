@@ -83,6 +83,8 @@ public class Voronoi {
 		}else{
 			clipRegion(tr, region, index);
 		}
+
+        region.setTriads(tr);
 		return region;
 	}
 	

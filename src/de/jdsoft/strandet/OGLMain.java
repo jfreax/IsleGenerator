@@ -4,11 +4,13 @@ import android.opengl.GLSurfaceView;
 
 import android.app.Activity;
 import android.os.Bundle;
+import de.jdsoft.strandet.Map.TileManager;
 
 public class OGLMain extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         mGLView = new ClearGLSurfaceView(this);
         setContentView(mGLView);
     }

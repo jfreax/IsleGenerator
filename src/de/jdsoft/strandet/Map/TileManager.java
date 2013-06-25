@@ -4,6 +4,8 @@ package de.jdsoft.strandet.Map;
 import com.marcrh.graph.Point;
 import com.marcrh.graph.Range;
 import com.marcrh.graph.Utils;
+import com.marcrh.graph.delaunay.Region;
+import com.marcrh.graph.delaunay.Triad;
 import com.marcrh.graph.delaunay.Voronoi;
 import de.jdsoft.strandet.Entity.River;
 import de.jdsoft.strandet.Entity.Tile;
@@ -13,6 +15,7 @@ import de.jdsoft.strandet.Generator.Rivers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 public class TileManager {
@@ -40,7 +43,7 @@ public class TileManager {
         int left = 0;
 
         Range r = new Range(new Point(top,left),new Point(top+width, left+height));
-        points = Utils.generateRandomPoints(2000, r);
+        points = Utils.generateRandomPoints(1000, r);
         voronoi.generate(points, r);
 
         Initialize();
@@ -50,15 +53,43 @@ public class TileManager {
         tiles = new ArrayList<Tile>();
 
         for( int i=0; i < points.size(); i++ ) {
-            List<Point> p = voronoi.getRegion(i).getPoints();
+            Region r = voronoi.getRegion(i);
 
-            Tile tile = new Tile(p);
+            Tile tile = new Tile(r);
             tiles.add(tile);
         }
+//        voronoi.getRegion(1).getEdgePoints(0)
+//
+//        List<Triad> triads = voronoi.getTriads();
+//        for (Triad triad : triads) {
+//            List<Point> p = new ArrayList<Point>();
+//            p.add(points.get(triad.a));
+//            p.add(points.get(triad.b));
+//            p.add(points.get(triad.c));
+//
+//            Tile tile = new Tile(p);
+//            tiles.add(tile);
+//        }
 
         // Find all neighbors
         HashMap<Point, Tile> nei = new HashMap<Point, Tile>();
         for( Tile tile : tiles) {
+//            for( int i = tile.getRegion().getSize()-1; i >= 0; i-- ) {
+//                Point p = tile.getRegion().getPoint(i);
+//                Point p2 = tile.getRegion().getPoint(i+1 > tile.getRegion().getSize()-1 ? 0 : i+1);
+//                if( nei.containsKey(p)) {
+//                    if( nei.containsKey(p2) ) {
+//                        if( nei.get(p) == nei.get(p2)) {
+//                    nei.get(p).neighbors.add(tile);
+//                    tile.neighbors.add(nei.get(p));
+//                        }
+//                    } else {
+//                        nei.put(p, tile);
+//                    }
+//                } else {
+//                    nei.put(p, tile);
+//                }
+//            }
             for( Point p : tile.getPoints()) {
                 if( nei.containsKey(p)) {
                     nei.get(p).neighbors.add(tile);

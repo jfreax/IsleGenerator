@@ -18,6 +18,7 @@ public class ClearGLSurfaceView extends GLSurfaceView {
             public void run() {
                 mRenderer.setColor(event.getX() / getWidth(),
                         event.getY() / getHeight(), 1.0f);
+                mRenderer.no = (int)event.getX();
             }});
         return true;
     }

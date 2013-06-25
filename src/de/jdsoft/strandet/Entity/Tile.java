@@ -3,6 +3,7 @@ package de.jdsoft.strandet.Entity;
 
 import android.graphics.*;
 import com.marcrh.graph.Point;
+import com.marcrh.graph.delaunay.Region;
 import de.jdsoft.strandet.Constants;
 import de.jdsoft.strandet.Generator.Biome;
 import de.jdsoft.strandet.Map.TileManager;
@@ -22,6 +23,7 @@ public class Tile implements Comparable, Constants {
     protected int specificType = Tile.NONE;
 
     protected List<Point> points;
+    protected Region region;
     protected int wet = 0;
     protected int biome = 0;
 
@@ -43,8 +45,9 @@ public class Tile implements Comparable, Constants {
     private boolean onBorder;
     public LinkedList<Tile> neighbors;
 
-    public Tile(List<Point> points) {
-        this.points = points;
+    public Tile(Region region) {
+        this.region = region;
+        this.points = region.getPoints();
         this.neighbors = new LinkedList<Tile>();
 
         setType(0);
@@ -105,6 +108,25 @@ public class Tile implements Comparable, Constants {
             gesY += p.y;
         }
         return new Point(gesX / points.size(), gesY / points.size(), 0);
+    }
+
+    public float[] getVertices() {
+        float[] vertices = new float[points.size()*3];
+
+        int i = 0;
+        for( Point p : points ) {
+            vertices[i++] = (float)(2.f / p.x) - 1.f;
+            vertices[i++] = (float)(2.f / p.y) - 1.f;
+            vertices[i++] = (float)(2.f / p.z) - 1.f;
+        }
+
+//        float[] vertices = {  // Vertices of the triangle
+//                0.0f,  0.5f, 1.0f, // 0. top
+//                -1.0f, -1.0f, 1.0f, // 1. left-bottom
+//                1.0f, -1.0f, 1.0f  // 2. right-bottom
+//        };
+
+        return vertices;
     }
 
     public void setType(int type) {
@@ -244,5 +266,9 @@ public class Tile implements Comparable, Constants {
 
     public void setSpecificType(int specificType) {
         this.specificType = specificType;
+    }
+
+    public Region getRegion() {
+        return region;
     }
 }

@@ -43,15 +43,60 @@ public class OGLRenderer implements GLSurfaceView.Renderer {
         gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);  // nice perspective view
         gl.glShadeModel(GL10.GL_SMOOTH);   // Enable smooth shading of color
         gl.glDisable(GL10.GL_DITHER);      // Disable dithering for better performance
+
     }
 
     public void onSurfaceChanged(GL10 gl, int width, int height) {
-        gl.glViewport(0, 0, width, height);
+        //gl.glViewport(0, 0, width, height);
 
         surfaceSize.set(width, height);
 
-        tileManager = new TileManager(width, height);
+        gl.glViewport(0, 0, width, height);
 
+        // make adjustments for screen ratio
+        float ratio = (float) width / height;
+        gl.glMatrixMode(GL10.GL_PROJECTION);        // set matrix to projection mode
+        gl.glLoadIdentity();                        // reset the matrix to its default state
+        gl.glFrustumf(-ratio, ratio, -1, 1, 1, 100);  // apply the projection matrix
+
+        //gl.glViewport(0, 0, (int)surfaceSize.x, (int)surfaceSize.y);
+
+/*
+        float ratio = width / height;
+        float zoom = 1.0f;
+
+
+        // Sets the current view port to the new size.
+        gl.glViewport(0, 0, width, height);
+        // Select the projection matrix
+        gl.glMatrixMode(GL10.GL_PROJECTION);
+        // Reset the projection matrix
+        gl.glLoadIdentity();
+        // Calculate the aspect ratio of the window
+        GLU.gluPerspective(gl, 45.0f, (float) width / (float) height, -1, 1.0f);
+        //gl.glFrustumf(-ratio, ratio, -1, 1, zoom, 25);
+
+        // Select the modelview matrix
+        gl.glMatrixMode(GL10.GL_MODELVIEW);
+        // Reset the modelview matrix
+        gl.glLoadIdentity(); //- See more at: http://blog.uncle.se/2012/02/opengl-es-tutorial-for-android-part-i-setting-up-the-view/#sthash.Z5fVTFqN.dpuf
+*/
+
+
+
+//        gl.glMatrixMode(GL10.GL_PROJECTION);
+//        gl.glLoadIdentity();
+//        //GLU.gluOrtho2D(gl, 0, (int)surfaceSize.x, (int)surfaceSize.y, 0);
+//        //GLU.gluLookAt(gl,);
+//
+//        GLU.gluPerspective(gl, 45.0f, width/height, -100, 1);
+//
+//
+//        gl.glMatrixMode(GL10.GL_MODELVIEW);
+//        gl.glLoadIdentity();
+
+
+        tileManager = new TileManager(width, height);
 //
 //
 //        // Disable a few things we are not going to use.
@@ -79,30 +124,48 @@ public class OGLRenderer implements GLSurfaceView.Renderer {
 //        // Points rendered to z=0 will be exactly at the frustum's
 //        // (farZ - nearZ) / 2 so the actual dimension of the triangle should be
 //        // half
-//        gl.glTranslatef(-surfaceSize.x, -surfaceSize.y, -1);
-
+//        gl.glTranslatef(9, 0, -1);
+//
 //        gl.glViewport(0, 0, width, height);
-//        // for a fixed camera, set the projection too
+        // for a fixed camera, set the projection too
 //        float ratio = (float) width / height;
 //        gl.glMatrixMode(GL10.GL_PROJECTION);
 //        gl.glLoadIdentity();
 //        //gl.glFrustumf(-ratio, ratio, -1, 1, 1, 10);
 //        gl.glFrustumf(-ratio, ratio, -1, 1, 3, 7);
+
+//        float[] ambient = {0.1f, 1, 1, 1};
+//        float[] position = {0, 0, 1, 1};
+//        float[] direction = {0, 0, -1};
+//        gl.glEnable(GL10.GL_LIGHTING);
+//        gl.glEnable(GL10.GL_LIGHT1);
+//        gl.glLightfv(GL10.GL_LIGHT1, GL10.GL_AMBIENT, ambient, 0 );
+//        gl.glLightfv(GL10.GL_LIGHT1, GL10.GL_POSITION, position, 0);
+//        gl.glLightfv(GL10.GL_LIGHT1, GL10.GL_SPOT_DIRECTION, direction, 0);
+//        gl.glLightf(GL10.GL_LIGHT1, GL10.GL_SPOT_CUTOFF, 30.0f);
     }
 
     public void onDrawFrame(GL10 gl) {
-        gl.glViewport(0, 0, (int)surfaceSize.x, (int)surfaceSize.y);
-
-        gl.glMatrixMode(GL10.GL_PROJECTION);
-        gl.glLoadIdentity();
-        GLU.gluOrtho2D(gl, 0, (int)surfaceSize.x, (int)surfaceSize.y, 0);
-
-        gl.glMatrixMode(GL10.GL_MODELVIEW);
-        gl.glLoadIdentity();
 
 
         gl.glClearColor(mRed, mGreen, mBlue, 1.0f);
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+
+//        gl.glMatrixMode(GL10.GL_MODELVIEW);
+//        gl.glLoadIdentity();
+//
+
+        // Set GL_MODELVIEW transformation mode
+        gl.glMatrixMode(GL10.GL_MODELVIEW);
+        gl.glLoadIdentity();                      // reset the matrix to its default state
+
+        // When using GL_MODELVIEW, you must set the camera view
+        GLU.gluLookAt(gl, 0, -(no/200.f), -3, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
+
+        //gl.glRotatef(-0.1f, 0, 0, 0);
+        gl.glTranslatef(-1.5f, -2.25f, 0.f);
+
+
 
         //gl.glFrontFace(GL10.GL_CW);
 
@@ -164,9 +227,9 @@ public class OGLRenderer implements GLSurfaceView.Renderer {
 
         int i = 0;
         for( Point p : points ) {
-            vertices[i++] = (float) p.x;
-            vertices[i++] = (float) p.y;
-            vertices[i++] = 1.0f;
+            vertices[i++] = ((float) p.x / surfaceSize.x) * 3;
+            vertices[i++] = ((float) p.y / surfaceSize.x) * 3;
+            vertices[i++] = -(float) p.z * 1;
         }
                 //gl.glColor4f(tile.getPoints().get(0)., random.nextFloat(), random.nextFloat(), random.nextFloat());
 

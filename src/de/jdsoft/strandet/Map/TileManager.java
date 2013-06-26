@@ -43,7 +43,7 @@ public class TileManager {
         int left = 0;
 
         Range r = new Range(new Point(top,left),new Point(top+width, left+height));
-        points = Utils.generateRandomPoints(1000, r);
+        points = Utils.generateRandomPoints(5000, r);
         voronoi.generate(points, r);
 
         Initialize();

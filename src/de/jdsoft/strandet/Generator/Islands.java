@@ -46,8 +46,47 @@ public class Islands extends Generator {
 
         generateBonusLakes(tiles);
 
+        //computeShadowHeight(tiles);
 
-        computeShadowHeight(tiles);
+        HashMap<Point, List<Tile> > nei = new HashMap<Point, List<Tile> >();
+        for( Tile tile : tiles ) {
+            for( Point p : tile.getPoints()) {
+                //p.z = tile.getHeight() / getAbsoluteMaxHeight();
+                if( nei.containsKey(p)) {
+                    nei.get(p).add(tile);
+                } else {
+                    nei.put(p, new LinkedList<Tile>());
+                }
+            }
+        }
+
+        for (Map.Entry<Point, List<Tile> > entry : nei.entrySet()) {
+            System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+
+            float meanHeight = 0.f;
+            boolean isOneWater = false;
+            for( Tile tile : entry.getValue()) {
+                if( tile.getType() == Tile.WATER ) {
+                    isOneWater = true;
+                    break;
+                }
+                if( tile.getSpecificType() == Tile.BEACH ) {
+
+                } else {
+                    meanHeight += tile.getHeight();
+                }
+            }
+
+            if( isOneWater ) {
+                entry.getKey().z = 0.f;
+                continue;
+            }
+
+            meanHeight /= entry.getValue().size();
+            meanHeight /= getAbsoluteMaxHeight();
+
+            entry.getKey().z = meanHeight;
+        }
     }
 
 

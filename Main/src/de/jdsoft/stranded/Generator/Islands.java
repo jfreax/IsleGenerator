@@ -61,7 +61,7 @@ public class Islands extends Generator {
         }
 
         for (Map.Entry<Point, List<Tile> > entry : nei.entrySet()) {
-            System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+            //System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
 
             float meanHeight = 0.f;
             boolean isOneWater = false;

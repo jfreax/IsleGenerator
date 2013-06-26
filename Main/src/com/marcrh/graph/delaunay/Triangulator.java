@@ -60,8 +60,8 @@ public class Triangulator {
 			}
 		}
 
-		System.out.println((points.size() - nump)
-				+ " duplicate points rejected");
+		//System.out.println((points.size() - nump)
+		//		+ " duplicate points rejected");
 
 		if (nump < 3)
 			throw new RuntimeException(

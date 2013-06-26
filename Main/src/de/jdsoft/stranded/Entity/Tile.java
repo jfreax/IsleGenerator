@@ -57,7 +57,8 @@ public class Tile implements Comparable, Constants {
             if( isLake() ) {
                 return Constants.LAKE_COLOR;
             } else {
-                return Color.rgb(49, 58, 92);
+                //return Color.rgb(49, 58, 92);
+                return 3456;
             }
         } else { // LAND
             if( getSpecificType() == BEACH) {
@@ -98,6 +99,19 @@ public class Tile implements Comparable, Constants {
         return points;
     }
 
+    public float[] getVertices() {
+        float[] vertices = new float[getPoints().size() * 3];
+
+        int i = 0;
+        for( Point p : getPoints()) {
+            vertices[i++] = (float)p.x;
+            vertices[i++] = (float)p.y;
+            vertices[i++] = (float)p.x;
+        }
+
+        return vertices;
+    }
+
 
     public Point getPosition() {
         long gesX = 0L;
@@ -109,24 +123,6 @@ public class Tile implements Comparable, Constants {
         return new Point(gesX / points.size(), gesY / points.size(), 0);
     }
 
-    public float[] getVertices() {
-        float[] vertices = new float[points.size()*3];
-
-        int i = 0;
-        for( Point p : points ) {
-            vertices[i++] = (float)(2.f / p.x) - 1.f;
-            vertices[i++] = (float)(2.f / p.y) - 1.f;
-            vertices[i++] = (float)(2.f / p.z) - 1.f;
-        }
-
-//        float[] vertices = {  // Vertices of the triangle
-//                0.0f,  0.5f, 1.0f, // 0. top
-//                -1.0f, -1.0f, 1.0f, // 1. left-bottom
-//                1.0f, -1.0f, 1.0f  // 2. right-bottom
-//        };
-
-        return vertices;
-    }
 
     public void setType(int type) {
         this.type = type;

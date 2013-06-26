@@ -1,7 +1,7 @@
-package de.jdsoft.strandet.Generator;
+package de.jdsoft.stranded.Generator;
 
 
-import de.jdsoft.strandet.Entity.Tile;
+import de.jdsoft.stranded.Entity.Tile;
 
 import java.util.ArrayList;
 import java.util.Random;

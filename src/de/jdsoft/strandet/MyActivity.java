@@ -7,8 +7,6 @@ import com.marcrh.graph.Range;
 import com.marcrh.graph.Utils;
 import com.marcrh.graph.delaunay.Voronoi;
 
-import java.util.ArrayList;
-
 public class MyActivity extends Activity
 {
     /** Called when the activity is first created. */

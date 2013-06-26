@@ -1,4 +1,4 @@
-package de.jdsoft.strandet;
+package de.jdsoft.stranded;
 
 
 import android.graphics.Color;

@@ -1,8 +1,8 @@
-package de.jdsoft.strandet.Generator;
+package de.jdsoft.stranded.Generator;
 
 
-import de.jdsoft.strandet.Constants;
-import de.jdsoft.strandet.Entity.Tile;
+import de.jdsoft.stranded.Constants;
+import de.jdsoft.stranded.Entity.Tile;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -13,12 +13,12 @@ public class Biome extends Generator implements Constants {
 
     // Wet | High
     static final public int[][] BIOME_MAP = {
-            {SUBTROPICAL_DESERT, TEMPERATE_DESERT, TEMPERATE_DESERT, SCORCHED},
-            {GRASSLAND, GRASSLAND, TEMPERATE_DESERT, BARE},
-            {TROPICAL_SEASONAL_FOREST, GRASSLAND, SHRUBLAND, TUNDRA},
-            {TROPICAL_SEASONAL_FOREST, TEMPERATE_DECIDUOUS_FOREST, SHRUBLAND, SNOW},
-            {TROPICAL_RAIN_FOREST, TEMPERATE_DECIDUOUS_FOREST, TAIGA, SNOW},
-            {TROPICAL_RAIN_FOREST, TEMPERATE_RAIN_FOREST, TAIGA, SNOW}
+            {Constants.SUBTROPICAL_DESERT, Constants.TEMPERATE_DESERT, Constants.TEMPERATE_DESERT, Constants.SCORCHED},
+            {Constants.GRASSLAND, Constants.GRASSLAND, Constants.TEMPERATE_DESERT, Constants.BARE},
+            {Constants.TROPICAL_SEASONAL_FOREST, Constants.GRASSLAND, Constants.SHRUBLAND, Constants.TUNDRA},
+            {Constants.TROPICAL_SEASONAL_FOREST, Constants.TEMPERATE_DECIDUOUS_FOREST, Constants.SHRUBLAND, Constants.SNOW},
+            {Constants.TROPICAL_RAIN_FOREST, Constants.TEMPERATE_DECIDUOUS_FOREST, Constants.TAIGA, Constants.SNOW},
+            {Constants.TROPICAL_RAIN_FOREST, Constants.TEMPERATE_RAIN_FOREST, Constants.TAIGA, Constants.SNOW}
     };
 
 

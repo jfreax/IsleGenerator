@@ -1,22 +1,19 @@
-package de.jdsoft.strandet.Map;
+package de.jdsoft.stranded.Map;
 
 
 import com.marcrh.graph.Point;
 import com.marcrh.graph.Range;
 import com.marcrh.graph.Utils;
 import com.marcrh.graph.delaunay.Region;
-import com.marcrh.graph.delaunay.Triad;
 import com.marcrh.graph.delaunay.Voronoi;
-import de.jdsoft.strandet.Entity.River;
-import de.jdsoft.strandet.Entity.Tile;
-import de.jdsoft.strandet.Generator.Biome;
-import de.jdsoft.strandet.Generator.Islands;
-import de.jdsoft.strandet.Generator.Rivers;
+import de.jdsoft.stranded.Generator.Rivers;
+import de.jdsoft.stranded.Entity.River;
+import de.jdsoft.stranded.Entity.Tile;
+import de.jdsoft.stranded.Generator.Biome;
+import de.jdsoft.stranded.Generator.Islands;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 
 public class TileManager {
 

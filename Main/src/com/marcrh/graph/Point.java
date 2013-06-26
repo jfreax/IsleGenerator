@@ -1,7 +1,5 @@
 package com.marcrh.graph;
 
-import android.graphics.Color;
-
 public class Point implements Comparable<Point> {
 
 	/**

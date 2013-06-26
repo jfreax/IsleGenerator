@@ -1,12 +1,11 @@
-package de.jdsoft.strandet.Entity;
+package de.jdsoft.stranded.Entity;
 
-
-import android.graphics.*;
+import android.graphics.Color;
 import com.marcrh.graph.Point;
 import com.marcrh.graph.delaunay.Region;
-import de.jdsoft.strandet.Constants;
-import de.jdsoft.strandet.Generator.Biome;
-import de.jdsoft.strandet.Map.TileManager;
+import de.jdsoft.stranded.Generator.Biome;
+import de.jdsoft.stranded.Map.TileManager;
+import de.jdsoft.stranded.Constants;
 
 import java.util.*;
 
@@ -56,13 +55,13 @@ public class Tile implements Comparable, Constants {
     public int getColor(TileManager tileManager) {
         if( getType() == WATER ) {
             if( isLake() ) {
-                return LAKE_COLOR;
+                return Constants.LAKE_COLOR;
             } else {
                 return Color.rgb(49, 58, 92);
             }
         } else { // LAND
             if( getSpecificType() == BEACH) {
-                return BEACH_COLOR;
+                return Constants.BEACH_COLOR;
             } else {
                 int normHeight = (int)getNormalizedHeight(getHeight(), tileManager.getMaxHeight());
     //            if(normHeight > 2 ) {
@@ -71,7 +70,7 @@ public class Tile implements Comparable, Constants {
                 //return Color.rgb(10 + normHeight*15, 20 + normHeight*15, normHeight*15);
                 //return Color.rgb(10 + getWet()*30, 20 + getWet()*30, getWet()*30);
                 //return colorJitter(BIOME_COLOR[ Biome.BIOME_MAP[getWet()][(int)getNormalizedHeight(getHeight(), (int)tileManager.getMaxHeight())] ]);
-                return BIOME_COLOR[ Biome.BIOME_MAP[getWet()][(int)getNormalizedHeight(getHeight(), (int)tileManager.getMaxHeight())] ];
+                return Constants.BIOME_COLOR[ Biome.BIOME_MAP[getWet()][(int)getNormalizedHeight(getHeight(), (int)tileManager.getMaxHeight())] ];
             }
         }
     }

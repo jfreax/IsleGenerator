@@ -1,12 +1,10 @@
-package de.jdsoft.strandet.Entity;
+package de.jdsoft.stranded.Entity;
 
 
-import android.graphics.*;
 import com.marcrh.graph.Point;
-import de.jdsoft.strandet.Constants;
+import de.jdsoft.stranded.Constants;
 
 import java.util.List;
-import java.util.Random;
 
 public class River implements Constants {
     protected List<Point> points;
@@ -20,7 +18,6 @@ public class River implements Constants {
     public River() {
     }
 
-    public void draw(Canvas canvas) {};
 
 
     public List<Point> getPoints() {

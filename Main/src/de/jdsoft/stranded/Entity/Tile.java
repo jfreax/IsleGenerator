@@ -1,6 +1,7 @@
 package de.jdsoft.stranded.Entity;
 
-import android.graphics.Color;
+
+import com.badlogic.gdx.graphics.Color;
 import com.marcrh.graph.Point;
 import com.marcrh.graph.delaunay.Region;
 import de.jdsoft.stranded.Generator.Biome;
@@ -69,9 +70,10 @@ public class Tile implements Comparable, Constants {
     //                Log.e("Strandet", ""+normHeight + "\t - " + getNormalizedHeight(getHeight(), tileManager.getMaxHeight()));
     //            }
                 //return Color.rgb(10 + normHeight*15, 20 + normHeight*15, normHeight*15);
+                return Color.rgba4444(10 + normHeight*15, 20 + normHeight*15, normHeight*15, 0);
                 //return Color.rgb(10 + getWet()*30, 20 + getWet()*30, getWet()*30);
                 //return colorJitter(BIOME_COLOR[ Biome.BIOME_MAP[getWet()][(int)getNormalizedHeight(getHeight(), (int)tileManager.getMaxHeight())] ]);
-                return Constants.BIOME_COLOR[ Biome.BIOME_MAP[getWet()][(int)getNormalizedHeight(getHeight(), (int)tileManager.getMaxHeight())] ];
+                //return Constants.BIOME_COLOR[ Biome.BIOME_MAP[getWet()][(int)getNormalizedHeight(getHeight(), (int)tileManager.getMaxHeight())] ];
             }
         }
     }
@@ -84,7 +86,7 @@ public class Tile implements Comparable, Constants {
         return color;
     }
 
-    protected int colorDarker(int color, float factor) {
+/*    protected int colorDarker(int color, float factor) {
         float[] hsv = new float[3];
         Color.RGBToHSV(Color.red(color), Color.green(color), Color.blue(color), hsv);
 
@@ -92,7 +94,7 @@ public class Tile implements Comparable, Constants {
 
         //return Color.HSVToColor(hsv);
         return Color.rgb((int)(Color.red(color) + factor), (int)(Color.green(color) + factor), (int)(Color.blue(color) + factor));
-    }
+    }*/
 
 
     public List<Point> getPoints() {

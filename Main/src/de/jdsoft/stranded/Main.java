@@ -7,7 +7,11 @@ import com.badlogic.gdx.graphics.g3d.lights.Lights;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.marcrh.graph.Point;
+import de.jdsoft.stranded.Entity.Tile;
 import de.jdsoft.stranded.Map.TileManager;
+
+import java.util.List;
 
 
 public class Main extends Game {
@@ -36,7 +40,7 @@ public class Main extends Game {
                 "varying vec4 v_color;" +
                 "void main()                  \n" +
                 "{                            \n" +
-                "   v_color = vec4(1, 1, 1, 1); \n" +
+                "   v_color = a_color; \n" +
                 "   gl_Position =  u_worldView * a_position;  \n"      +
                 "}                            \n" ;
         String fragmentShader = "#ifdef GL_ES\n" +
@@ -63,8 +67,9 @@ public class Main extends Game {
 
 
         cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        cam.position.set(10f, 10f, 10f);
-        cam.lookAt(0,0,0);
+        cam.position.set(-10f, 0f, 10f);
+        //cam.lookAt(Gdx.graphics.getWidth() / 2, 0, Gdx.graphics.getHeight() / 2);
+        cam.lookAt(0, 0, 0);
         cam.near = 0.1f;
         cam.far = 300f;
         cam.update();
@@ -89,19 +94,50 @@ public class Main extends Game {
         Gdx.graphics.getGL20().glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 
-        mesh = new Mesh(true, 3, 3,
-                new VertexAttribute(VertexAttributes.Usage.Position, 3, "a_position"));
+        mesh = new Mesh(true, 30, 30,
+                new VertexAttribute(VertexAttributes.Usage.Position, 3, "a_position"),
+                new VertexAttribute(VertexAttributes.Usage.ColorPacked, 4, "a_color"));
 
-        mesh.setVertices(new float[] { -0.5f, -0.5f, 0,
-                0.5f, -0.5f, 0,
-                0,     0.5f, 0 });
-        mesh.setIndices(new short[] { 0, 1, 2 });
+//        mesh.setVertices(new float[] { -0.5f, -0.5f, 0,
+//                0.5f, -0.5f, 0,
+//                0,     0.5f, 0 });
+//        mesh.setIndices(new short[] { 0, 1, 2 });
+//
+//
+//        shaderProgram.begin();
+//        shaderProgram.setUniformMatrix("u_worldView", cam.combined);
+//        mesh.render(shaderProgram, GL20.GL_TRIANGLES);
+//        shaderProgram.end();
 
 
-        shaderProgram.begin();
-        shaderProgram.setUniformMatrix("u_worldView", cam.combined);
-        mesh.render(shaderProgram, GL20.GL_TRIANGLES);
-        shaderProgram.end();
+        List<Tile> tiles = tileManager.getTiles();
+        for( Tile tile : tiles) {
+
+            short[] indices = new short[tile.getPoints().size()];
+            for( short ind = 0; ind < indices.length; ind++ ) {
+                indices[ind] = ind;
+            }
+
+            List<Point> points = tile.getPoints();
+            int i = 0;
+            float[] vertices = new float[tile.getPoints().size()*4];
+            for( Point p : points ) {
+                vertices[i++] = (float) p.x / 100;
+                vertices[i++] = (float) p.y / 100;
+                vertices[i++] = 0f; // (float) p.z * 1;
+                vertices[i++] = (new Color(tile.getColor(tileManager))).toFloatBits();
+            }
+
+            mesh.setVertices(vertices, 0, vertices.length);
+            mesh.setIndices(indices, 0, indices.length);
+
+
+            shaderProgram.begin();
+            shaderProgram.setUniformMatrix("u_worldView", cam.combined);
+            mesh.render(shaderProgram, GL20.GL_TRIANGLE_FAN);
+            shaderProgram.end();
+
+        }
 
     }
 

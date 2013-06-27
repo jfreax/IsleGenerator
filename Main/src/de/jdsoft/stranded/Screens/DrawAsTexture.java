@@ -77,7 +77,7 @@ public class DrawAsTexture implements Screen {
         SetupShader();
 
         // Sphere mesh
-        mesh = new Mesh(true, verticesCount, verticesCount / 5,
+        mesh = new Mesh(true, verticesCount, verticesCount / 6,
                 new VertexAttribute(VertexAttributes.Usage.Position, 3, "a_position"),
                 new VertexAttribute(VertexAttributes.Usage.ColorPacked, 4, "a_color"),
                 new VertexAttribute(VertexAttributes.Usage.TextureCoordinates, 2, "a_texCoord0"));
@@ -210,7 +210,7 @@ public class DrawAsTexture implements Screen {
         }
 
         // Sphere indices
-        short[] indices = new short[vertices.length / 5];
+        short[] indices = new short[vertices.length / 6];
         for( short ind = 0; ind < indices.length; ind++ ) {
             indices[ind] = ind;
         }

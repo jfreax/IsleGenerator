@@ -59,21 +59,24 @@ public class Tile implements Comparable, Constants {
                 return Constants.LAKE_COLOR;
             } else {
                 //return Color.rgb(49, 58, 92);
-                return 3456;
+                return (49 << 24) | (58 << 16) | (92 << 8) | 255;
             }
         } else { // LAND
             if( getSpecificType() == BEACH) {
                 return Constants.BEACH_COLOR;
             } else {
                 int normHeight = (int)getNormalizedHeight(getHeight(), tileManager.getMaxHeight());
+                int wet = getWet();
     //            if(normHeight > 2 ) {
     //                Log.e("Strandet", ""+normHeight + "\t - " + getNormalizedHeight(getHeight(), tileManager.getMaxHeight()));
     //            }
                 //return Color.rgb(10 + normHeight*15, 20 + normHeight*15, normHeight*15);
-                return Color.rgba4444(10 + normHeight*15, 20 + normHeight*15, normHeight*15, 0);
+                //return  ((10 + normHeight*15) << 24) | ((20 + normHeight*15) << 16) | ((normHeight*15) << 8) | 255;
+                //return Color.rgba8888(10 + normHeight*15, 20 + normHeight*15, normHeight*15, 255);
                 //return Color.rgb(10 + getWet()*30, 20 + getWet()*30, getWet()*30);
                 //return colorJitter(BIOME_COLOR[ Biome.BIOME_MAP[getWet()][(int)getNormalizedHeight(getHeight(), (int)tileManager.getMaxHeight())] ]);
-                //return Constants.BIOME_COLOR[ Biome.BIOME_MAP[getWet()][(int)getNormalizedHeight(getHeight(), (int)tileManager.getMaxHeight())] ];
+                int biomeID = Biome.BIOME_MAP[ wet ][ normHeight ];
+                return BIOME_COLOR[ biomeID ];
             }
         }
     }

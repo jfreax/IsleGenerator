@@ -67,9 +67,9 @@ public class Main extends Game {
 
 
         cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        cam.position.set(-10f, 0f, 10f);
+        cam.position.set(3.f, 3.f, 10f);
         //cam.lookAt(Gdx.graphics.getWidth() / 2, 0, Gdx.graphics.getHeight() / 2);
-        cam.lookAt(0, 0, 0);
+        cam.lookAt(3.f, 3.f, 0);
         cam.near = 0.1f;
         cam.far = 300f;
         cam.update();

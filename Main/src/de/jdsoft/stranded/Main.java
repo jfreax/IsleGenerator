@@ -103,7 +103,7 @@ public class Main extends Game {
 
         // Create new tilemanager and create new random map
         //tileManager = new TileManager((int)((360-space) / space), (int)((180-space)/space));
-        tileManager = new TileManager(360, 180);
+        tileManager = new TileManager(360, 360);
         //tileManager = new TileManager(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
 
@@ -142,9 +142,9 @@ public class Main extends Game {
 //                vertices[i++] = (float) p.x / 100;
 //                vertices[i++] = (float) p.y / 100;
 //                vertices[i++] = 0.f; //(float) Math.sqrt( p.z*p.z*p.z ); // * 2.4f;
-                vertices[i++] = R * (float)Math.sin((p.x) / 180.f * PI) * (float)Math.sin((p.y) / 180.f * PI);
-                vertices[i++] = R * (float)Math.cos((p.x) / 180.f * PI) * (float)Math.sin((p.y) / 180.f * PI);
-                vertices[i++] = R * (float)Math.cos((p.y) / 180.f * PI);
+                vertices[i++] = R * (float)Math.sin((p.x) / 180.f * PI) * (float)Math.sin((p.y/2) / 180.f * PI);
+                vertices[i++] = R * (float)Math.cos((p.x) / 180.f * PI) * (float)Math.sin((p.y/2) / 180.f * PI);
+                vertices[i++] = R * (float)Math.cos((p.y/2) / 180.f * PI);
                 vertices[i++] = (new Color(tile.getColor(tileManager))).toFloatBits();
             }
 
@@ -159,19 +159,6 @@ public class Main extends Game {
 
         }
 
- /*       float r = 1.f;
-        int i = 0;
-        float[] vertices = new float[4000];
-        for( float thita = 0.f; thita < 6.28f; thita += 0.1f ) {
-            for( float fy = 0.f; fy < 3.14f; fy += 0.2f ) {
-                vertices[i++] = 0.f;
-                vertices[i++]= r * (float)(Math.sin(thita) * Math.cos(fy));
-                vertices[i++]= r * (float)(Math.sin(thita) * Math.sin(fy));
-                vertices[i++]= r * (float)Math.cos(thita);
-                vertices[i++]= (int)Math.cos(thita)*255 << 24;
-            }
-        }
-*/
 
 /*        int n = 0;
         float R = 5, H = 0, K = 0, Z = 0;
@@ -243,6 +230,8 @@ public class Main extends Game {
 
     @Override
     public void resize(int width, int height) {
+        cam.viewportHeight = height;
+        cam.viewportWidth = width;
     }
 
     @Override

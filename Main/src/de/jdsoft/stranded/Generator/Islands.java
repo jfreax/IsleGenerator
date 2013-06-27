@@ -185,6 +185,10 @@ public class Islands extends Generator {
             return false;
         }
 
+        if( random.nextInt(1000) <= 80) {
+            return true;
+        }
+
         for( Tile neighbor : tile.neighbors) {
             if( neighbor.getType() == Tile.LAND ) {
                 return false;

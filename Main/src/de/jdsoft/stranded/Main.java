@@ -26,7 +26,7 @@ public class Main extends Game {
     Lights lights;
 
     double PI = 3.1415926535897;
-    float space = 10;
+    float space = 6;
     int verticesCount = (180 / (int)space) * (360 / (int)space) * 4 * 4;
 
 
@@ -77,9 +77,9 @@ public class Main extends Game {
 
         // Set camera
         cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        cam.position.set(3.f, 3.f, 10f);
+        cam.position.set(0.f, 0.f, 10f);
         //cam.lookAt(Gdx.graphics.getWidth() / 2, 0, Gdx.graphics.getHeight() / 2);
-        cam.lookAt(3.f, 3.f, 0);
+        cam.lookAt(0.f, 0.f, 0);
         cam.near = 0.1f;
         cam.far = 300f;
         cam.update();
@@ -91,7 +91,7 @@ public class Main extends Game {
         // Enable opengl features
         Gdx.graphics.getGL20().glEnable(GL20.GL_TEXTURE_2D);
         Gdx.graphics.getGL20().glEnable(GL20.GL_BLEND);
-        Gdx.graphics.getGL20().glBlendFunc(GL20.GL_ONE, GL20.GL_ONE);
+        //Gdx.graphics.getGL20().glBlendFunc(GL20.GL_ONE, GL20.GL_ONE);
         //Gdx.graphics.getGL20().glEnable(GL20.GL_DEPTH_TEST);
 
         // Enable face culling- be careful with spriteBatch, might cull sprites as well!
@@ -102,7 +102,9 @@ public class Main extends Game {
 
 
         // Create new tilemanager and create new random map
-        tileManager = new TileManager(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        //tileManager = new TileManager((int)((360-space) / space), (int)((180-space)/space));
+        tileManager = new TileManager(360, 180);
+        //tileManager = new TileManager(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
 
     @Override
@@ -124,7 +126,7 @@ public class Main extends Game {
 //        mesh.render(shaderProgram, GL20.GL_TRIANGLES);
 //        shaderProgram.end();
 
-/*
+
         List<Tile> tiles = tileManager.getTiles();
         for( Tile tile : tiles) {
 
@@ -134,12 +136,15 @@ public class Main extends Game {
             }
 
             List<Point> points = tile.getPoints();
-            int i = 0;
+            int i = 0, R = 5;
             float[] vertices = new float[tile.getPoints().size()*4];
             for( Point p : points ) {
-                vertices[i++] = (float) p.x / 100;
-                vertices[i++] = (float) p.y / 100;
-                vertices[i++] = (float) Math.sqrt( p.z*p.z*p.z ); // * 2.4f;
+//                vertices[i++] = (float) p.x / 100;
+//                vertices[i++] = (float) p.y / 100;
+//                vertices[i++] = 0.f; //(float) Math.sqrt( p.z*p.z*p.z ); // * 2.4f;
+                vertices[i++] = R * (float)Math.sin((p.x) / 180.f * PI) * (float)Math.sin((p.y) / 180.f * PI);
+                vertices[i++] = R * (float)Math.cos((p.x) / 180.f * PI) * (float)Math.sin((p.y) / 180.f * PI);
+                vertices[i++] = R * (float)Math.cos((p.y) / 180.f * PI);
                 vertices[i++] = (new Color(tile.getColor(tileManager))).toFloatBits();
             }
 
@@ -152,25 +157,27 @@ public class Main extends Game {
             mesh.render(shaderProgram, GL20.GL_TRIANGLE_FAN);
             shaderProgram.end();
 
-        }*/
+        }
 
-//        float r = 1.f;
-//        int i = 0;
-//        float[] vertices = new float[4000];
-//        for( float thita = 0.f; thita < 6.28f; thita += 0.1f ) {
-//            for( float fy = 0.f; fy < 3.14f; fy += 0.2f ) {
-//                vertices[i++] = 0.f;
-//                vertices[i++]= r * (float)(Math.sin(thita) * Math.cos(fy));
-//                vertices[i++]= r * (float)(Math.sin(thita) * Math.sin(fy));
-//                vertices[i++]= r * (float)Math.cos(thita);
-//                vertices[i++]= (int)Math.cos(thita)*255 << 24;
-//            }
-//        }
-        int n = 0;
+ /*       float r = 1.f;
+        int i = 0;
+        float[] vertices = new float[4000];
+        for( float thita = 0.f; thita < 6.28f; thita += 0.1f ) {
+            for( float fy = 0.f; fy < 3.14f; fy += 0.2f ) {
+                vertices[i++] = 0.f;
+                vertices[i++]= r * (float)(Math.sin(thita) * Math.cos(fy));
+                vertices[i++]= r * (float)(Math.sin(thita) * Math.sin(fy));
+                vertices[i++]= r * (float)Math.cos(thita);
+                vertices[i++]= (int)Math.cos(thita)*255 << 24;
+            }
+        }
+*/
+
+/*        int n = 0;
         float R = 5, H = 0, K = 0, Z = 0;
         float[] vertices = new float[verticesCount];
-        for( float b = 0; b <= 180 - space; b+=space){
-            for( float a = 0; a <= 360 - space; a+=space){
+        for( float b = 0; b <= 180 - space; b+=space) {
+            for( float a = 0; a <= 360 - space; a+=space) {
 
                 vertices[n++] = R * (float)Math.sin((a) / 180.f * PI) * (float)Math.sin((b) / 180.f * PI) - H;
                 vertices[n++] = R * (float)Math.cos((a) / 180.f * PI) * (float)Math.sin((b) / 180.f * PI) + K;
@@ -197,10 +204,22 @@ public class Main extends Game {
                 vertices[n++] = (a + space) / 360.f;
 
             }
-
         }
 
+        List<Tile> tiles = tileManager.getTiles();
+        for( Tile tile : tiles) {
+            //for( Point p : tile.getPoints() ) {
+                int pos = (int)((tile.getPosition().y) + tile.getPosition().x * (180.f/space)) * 16 + 3;
 
+                vertices[pos] = (new Color(tile.getColor(tileManager))).toFloatBits();
+                vertices[pos+4] = (new Color(tile.getColor(tileManager))).toFloatBits();
+                vertices[pos+8] = (new Color(tile.getColor(tileManager))).toFloatBits();
+                vertices[pos+12] = (new Color(tile.getColor(tileManager))).toFloatBits();
+
+            //}
+        } */
+
+/*
         short[] indices = new short[vertices.length / 4];
         for( short ind = 0; ind < indices.length; ind++ ) {
             indices[ind] = ind;
@@ -214,7 +233,7 @@ public class Main extends Game {
         shaderProgram.setUniformMatrix("u_worldView", cam.combined);
         mesh.render(shaderProgram, GL20.GL_TRIANGLE_STRIP);
         shaderProgram.end();
-
+*/
     }
 
     @Override

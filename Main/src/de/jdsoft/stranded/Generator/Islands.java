@@ -51,11 +51,14 @@ public class Islands extends Generator {
         HashMap<Point, List<Tile> > nei = new HashMap<Point, List<Tile> >();
         for( Tile tile : tiles ) {
             for( Point p : tile.getPoints()) {
-                //p.z = tile.getHeight() / getAbsoluteMaxHeight();
+                //if( tile.getType() != Tile.WATER && tile.getSpecificType() != Tile.BEACH ) {
+                //    p.z = tile.getHeight() / getAbsoluteMaxHeight();
+                //}
                 if( nei.containsKey(p)) {
                     nei.get(p).add(tile);
                 } else {
                     nei.put(p, new LinkedList<Tile>());
+                    nei.get(p).add(tile);
                 }
             }
         }
@@ -64,6 +67,7 @@ public class Islands extends Generator {
             //System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
 
             float meanHeight = 0.f;
+            float minHeight = 99999;
             boolean isOneWater = false;
             for( Tile tile : entry.getValue()) {
                 if( tile.getType() == Tile.WATER ) {
@@ -71,10 +75,13 @@ public class Islands extends Generator {
                     break;
                 }
                 if( tile.getSpecificType() == Tile.BEACH ) {
-
-                } else {
-                    meanHeight += tile.getHeight();
+                    isOneWater = true;
+                    break;
                 }
+
+                minHeight = Math.min(minHeight, tile.getHeight());
+                meanHeight += tile.getHeight();
+
             }
 
             if( isOneWater ) {
@@ -82,11 +89,15 @@ public class Islands extends Generator {
                 continue;
             }
 
-            meanHeight /= entry.getValue().size();
+            //meanHeight /= entry.getValue().size();
+            meanHeight = minHeight;
             meanHeight /= getAbsoluteMaxHeight();
 
             entry.getKey().z = meanHeight;
+
         }
+
+
     }
 
 
@@ -345,6 +356,7 @@ public class Islands extends Generator {
 
                 neighbor.setType(Tile.WATER);
                 neighbor.setSpecificType(Tile.LAKE);
+                neighbor.setHeight(lakeHeight);
             }
 
             toVised = toVisedNext;

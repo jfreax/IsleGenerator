@@ -5,6 +5,7 @@ import com.marcrh.graph.Point;
 import com.marcrh.graph.Range;
 import com.marcrh.graph.Utils;
 import com.marcrh.graph.delaunay.Region;
+import com.marcrh.graph.delaunay.Triad;
 import com.marcrh.graph.delaunay.Voronoi;
 import de.jdsoft.stranded.Generator.Rivers;
 import de.jdsoft.stranded.Entity.River;
@@ -36,7 +37,7 @@ public class TileManager {
 
         voronoi = new Voronoi();
 
-        int top = 0;
+        int top = -0;
         int left = 0;
 
         Range r = new Range(new Point(top,left),new Point(top+width, left+height));
@@ -109,6 +110,16 @@ public class TileManager {
 
         Biome biome = new Biome(width, height, maxHeight);
         biome.Compute(landTiles);
+
+/*        ArrayList<Triad> triads = voronoi.getTriads();
+        for( Triad tr : triads ) {
+            Triad neighbor1 = tr.getNeighbour( triads, Triad.TR_EDGE_AB );
+            Triad neighbor2 = tr.getNeighbour( triads, Triad.TR_EDGE_BC );
+            Triad neighbor3 = tr.getNeighbour( triads, Triad.TR_EDGE_AC );
+            float mean = (float) (tr.z + neighbor1.z + neighbor2.z + neighbor3.z) / 4.f;
+
+            tr.z = mean;
+        }*/
     }
 
     public ArrayList<Tile> getTiles() {

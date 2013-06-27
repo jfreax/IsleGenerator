@@ -7,7 +7,11 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
+import com.marcrh.graph.Point;
+import de.jdsoft.stranded.Entity.Tile;
 import de.jdsoft.stranded.Map.TileManager;
+
+import java.util.List;
 
 public class DrawAsTexture implements Screen {
 
@@ -54,39 +58,38 @@ public class DrawAsTexture implements Screen {
 
 
         // Create new tilemanager and create new random map
-        tileManager = new TileManager(360, 360);
+        int mapWidth = 512;
+        int mapHeight = 512;
+
+        tileManager = new TileManager(mapWidth, mapHeight);
 
         // Initialize
-        pixmap = new Pixmap(800, 480, Pixmap.Format.RGBA8888); // Pixmap.Format.RGBA8888);
+        pixmap = new Pixmap(mapWidth, mapHeight, Pixmap.Format.RGBA8888); // Pixmap.Format.RGBA8888);
 
         // Create a texture to contain the pixmap
-        texture = new Texture(1024, 1024, Pixmap.Format.RGBA8888); // Pixmap.Format.RGBA8888);
+        texture = new Texture(mapWidth, mapHeight, Pixmap.Format.RGBA8888); // Pixmap.Format.RGBA8888);
         texture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Linear);
         texture.setWrap(Texture.TextureWrap.ClampToEdge, Texture.TextureWrap.ClampToEdge);
 
-        pixmap.setColor(1.0f, 0.0f, 0.0f, 1.0f); // Red
-        pixmap.drawLine(0, 0, 100, 100);
+        List<Tile> tiles = tileManager.getTiles();
+        for( Tile tile : tiles) {
 
-        pixmap.setColor(0.0f, 0.0f, 1.0f, 1.0f); // Blue
-        pixmap.drawLine(100, 100, 200, 0);
+            pixmap.setColor(tile.getColor(tileManager));
 
-        pixmap.setColor(0.0f, 1.0f, 0.0f, 1.0f); // Green
-        pixmap.drawLine(100, 0, 100, 100);
-
-        pixmap.setColor(1.0f, 1.0f, 1.0f, 1.0f); // White
-        pixmap.drawCircle(400, 300, 100);
+            List<Point> points = tile.getPoints();
+            Point startPoint = points.get(0);
+            for( int i = 1; i < points.size()-1; i++ ) {
+                pixmap.fillTriangle(
+                        (int)startPoint.x,      (int)startPoint.y,
+                        (int)points.get(i).x,   (int)points.get(i).y,
+                        (int)points.get(i+1).x, (int)points.get(i+1).y);
+            }
+        }
 
         // Blit the composited overlay to a texture
         texture.draw(pixmap, 0, 0);
-        region = new TextureRegion(texture, 0, 0, 800, 480);
         batch = new SpriteBatch();
 
-        Pixmap pixmap = new Pixmap(512, 1024, Pixmap.Format.RGBA8888);
-        for (int y = 0; y < pixmap.getHeight(); y++) { // 1024
-            for (int x = 0; x < pixmap.getWidth(); x++) { // 512
-                pixmap.getPixel(x, y);
-            }
-        }
         pixmap.dispose();
     }
 
@@ -99,9 +102,9 @@ public class DrawAsTexture implements Screen {
         Gdx.graphics.getGL20().glClearColor(0.2f, 0.2f, 0.2f, 1);
         Gdx.graphics.getGL20().glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        batch.setProjectionMatrix(cam.combined);
+        //batch.setProjectionMatrix(cam.combined);
         batch.begin();
-        batch.draw(region, 0, 0);
+        batch.draw(texture, 0, 0);
         batch.end();
     }
 

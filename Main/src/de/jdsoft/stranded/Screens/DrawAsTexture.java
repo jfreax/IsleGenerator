@@ -175,37 +175,29 @@ public class DrawAsTexture implements Screen {
                 vertices[n++] = R * (float)Math.cos((a) / 180.f * PI) * (float)Math.sin((b) / 180.f * PI) + K;
                 vertices[n++] = R * (float)Math.cos((b) / 180.f * PI) - Z;
                 vertices[n++] = new Color(Color.rgba8888(1f, 1, 1, 0)).toFloatBits();
-                vertices[n++] = ((float)Math.sin((a) / 180.f * PI) * (float)Math.sin((b) / 180.f * PI) + 1.f) / 2.f;
-                vertices[n++] = ((float)Math.cos((a) / 180.f * PI) * (float)Math.sin((b) / 180.f * PI) + 1.f) / 2.f;
-                //vertices[n++] = (2.f * b) / 360.f;
-                //vertices[n++] = (a) / 360.f;
+                vertices[n++] = b / 180.f;
+                vertices[n++] = a / 360.f;
 
                 vertices[n++] = R * (float)Math.sin((a) / 180.f * PI) * (float)Math.sin((b + space) / 180.f * PI) - H;
                 vertices[n++] = R * (float)Math.cos((a) / 180.f * PI) * (float)Math.sin((b + space) / 180.f * PI) + K;
                 vertices[n++] = R * (float)Math.cos((b + space) / 180.f * PI) - Z;
                 vertices[n++] = new Color(Color.rgba8888(1, 1, 1, 0)).toFloatBits();
-                vertices[n++] = ((float)Math.sin((a) / 180.f * PI) * (float)Math.sin((b) / 180.f * PI) + 1.f) / 2.f;
-                vertices[n++] = ((float)Math.cos((a) / 180.f * PI) * (float)Math.sin((b) / 180.f * PI) + 1.f) / 2.f;
-                //vertices[n++] = (2.f * (b + space)) / 360.f;
-                //vertices[n++] = (a) / 360.f;
+                vertices[n++] = (b + space) / 180.f;
+                vertices[n++] = a / 360.f;
 
                 vertices[n++] = R * (float)Math.sin((a + space) / 180.f * PI) * (float)Math.sin((b) / 180.f * PI) - H;
                 vertices[n++] = R * (float)Math.cos((a + space) / 180.f * PI) * (float)Math.sin((b) / 180.f * PI) + K;
                 vertices[n++] = R * (float)Math.cos((b) / 180.f * PI) - Z;
                 vertices[n++] = new Color(Color.rgba8888(1, 1, 1, 0)).toFloatBits();
-                vertices[n++] = ((float)Math.sin((a) / 180.f * PI) * (float)Math.sin((b) / 180.f * PI) + 1.f) / 2.f;
-                vertices[n++] = ((float)Math.cos((a) / 180.f * PI) * (float)Math.sin((b) / 180.f * PI) + 1.f) / 2.f;
-                //vertices[n++] = (2.f * b) / 360.f;
-                //vertices[n++] = (a + space) / 360.f;
+                vertices[n++] = b / 180.f;
+                vertices[n++] = (a + space) / 360.f;
 
                 vertices[n++] = R * (float)Math.sin((a + space) / 180.f * PI) * (float)Math.sin((b + space) / 180.f * PI) - H;
                 vertices[n++] = R * (float)Math.cos((a + space) / 180.f * PI) * (float)Math.sin((b + space) / 180.f * PI) + K;
                 vertices[n++] = R * (float)Math.cos((b + space) / 180.f * PI) - Z;
                 vertices[n++] = new Color(Color.rgba8888(1, 1, 1, 0)).toFloatBits();
-                vertices[n++] = ((float)Math.sin((a) / 180.f * PI) * (float)Math.sin((b) / 180.f * PI) + 1.f) / 2.f;
-                vertices[n++] = ((float)Math.cos((a) / 180.f * PI) * (float)Math.sin((b) / 180.f * PI) + 1.f) / 2.f;
-                //vertices[n++] = (2.f * (b + space)) / 360.f;
-                //vertices[n++] = (a + space) / 360.f;
+                vertices[n++] = (b + space) / 180.f;
+                vertices[n++] = (a + space) / 360.f;
             }
         }
 

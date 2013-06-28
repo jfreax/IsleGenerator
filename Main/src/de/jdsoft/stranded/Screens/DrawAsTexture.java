@@ -58,11 +58,13 @@ public class DrawAsTexture implements Screen {
         // Enable opengl features
         Gdx.graphics.getGL20().glEnable(GL20.GL_TEXTURE_2D);
         Gdx.graphics.getGL20().glEnable(GL20.GL_BLEND);
-        Gdx.graphics.getGL20().glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+        Gdx.graphics.getGL20().glBlendFunc(GL20.GL_SRC_COLOR, GL20.GL_ONE);
         //Gdx.graphics.getGL20().glEnable(GL20.GL_DEPTH_TEST);
 
         Gdx.graphics.getGL20().glDisable(GL20.GL_DEPTH_TEST);
 
+        //Gdx.gl.glDepthMask(false);
+        //Gdx.graphics.getGL20().glDisable(GL10.GL_BLEND);
 
 
         // Enable face culling- be careful with spriteBatch, might cull sprites as well!
@@ -97,19 +99,8 @@ public class DrawAsTexture implements Screen {
         angle += delta*3;
         angle %= 360;
 
-
-        Gdx.graphics.getGL20().glClearColor(0.2f, 0.2f, 0.2f, 1);
+        Gdx.graphics.getGL20().glClearColor(0.2f, 0.2f, 0.2f, 0.4f);
         Gdx.graphics.getGL20().glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        Gdx.gl.glDepthMask(false);
-        Gdx.graphics.getGL20().glDisable(GL10.GL_BLEND);
-
-        //batch.setProjectionMatrix(cam.combined);
-//        batch.begin();
-//        batch.draw(texture, 0, 0);
-//        batch.end();
-
-
 
         Gdx.gl20.glActiveTexture(GL20.GL_TEXTURE0);
         texture.bind();

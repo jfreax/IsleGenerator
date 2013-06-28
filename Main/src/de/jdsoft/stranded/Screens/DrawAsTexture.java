@@ -140,12 +140,6 @@ public class DrawAsTexture implements Screen {
 
         pixmap = new Pixmap(mapWidth, mapHeight, Pixmap.Format.RGBA8888); // Pixmap.Format.RGBA8888);
 
-        // Create a texture to contain the pixmap
-        texture = new Texture(mapWidth, mapHeight, Pixmap.Format.RGBA8888); // Pixmap.Format.RGBA8888);
-
-        texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        texture.setWrap(Texture.TextureWrap.ClampToEdge, Texture.TextureWrap.ClampToEdge);
-
         List<Tile> tiles = tileManager.getTiles();
         for( Tile tile : tiles) {
 
@@ -161,14 +155,21 @@ public class DrawAsTexture implements Screen {
             }
         }
 
-        Pixmap blurred = BlurUtils.blur(pixmap, 1, 1, true);
+        //Pixmap blurred = BlurUtils.blur(pixmap, 1, 1, true);
+
+        // Create a texture to contain the pixmap
+        //texture = new Texture(mapWidth, mapHeight, Pixmap.Format.RGBA8888); // Pixmap.Format.RGBA8888);
+        texture = new Texture(pixmap, true);
+
+        texture.setFilter(Texture.TextureFilter.MipMapLinearNearest, Texture.TextureFilter.MipMapLinearNearest);
+        texture.setWrap(Texture.TextureWrap.ClampToEdge, Texture.TextureWrap.ClampToEdge);
 
         // Blit the composited overlay to a texture
-        texture.draw(blurred, 0, 0);
+        //texture.draw(blurred, 0, 0);
         batch = new SpriteBatch();
 
-        blurred.dispose();
-        //pixmap.dispose();
+        //blurred.dispose();
+        pixmap.dispose();
     }
 
 

@@ -30,7 +30,6 @@ public class DrawAllTest implements Screen {
     float space = 6;
     int verticesCount = (180 / (int)space) * (360 / (int)space) * 4 * 4;
 
-
     @Override
     public void render(float delta) {
         camController.update();
@@ -74,7 +73,6 @@ public class DrawAllTest implements Screen {
 
             mesh.setVertices(vertices, 0, vertices.length);
             mesh.setIndices(indices, 0, indices.length);
-
 
             shaderProgram.begin();
             shaderProgram.setUniformMatrix("u_worldView", cam.combined);

@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.marcrh.graph.Point;
 import de.jdsoft.stranded.Entity.Tile;
 import de.jdsoft.stranded.Map.TileManager;
+import de.jdsoft.stranded.Utils.BlurUtils;
 
 import java.util.List;
 
@@ -86,10 +87,15 @@ public class DrawAsTexture implements Screen {
 
     }
 
+    float angle = 0.f;
+
     @Override
     public void render(float delta) {
         camController.update();
         cam.update();
+
+        angle += delta*3;
+        angle %= 360;
 
 
         Gdx.graphics.getGL20().glClearColor(0.2f, 0.2f, 0.2f, 1);
@@ -109,7 +115,7 @@ public class DrawAsTexture implements Screen {
         texture.bind();
 
         shader.begin();
-        shader.setUniformMatrix("u_projTrans", cam.combined);
+        shader.setUniformMatrix("u_projTrans", cam.combined.rotate(0,0,1.f, angle));
         shader.setUniformi("u_texture", 0);
         mesh.render(shader, GL20.GL_TRIANGLE_STRIP);
         shader.end();
@@ -137,7 +143,7 @@ public class DrawAsTexture implements Screen {
         // Create a texture to contain the pixmap
         texture = new Texture(mapWidth, mapHeight, Pixmap.Format.RGBA8888); // Pixmap.Format.RGBA8888);
 
-        texture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Linear);
+        texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         texture.setWrap(Texture.TextureWrap.ClampToEdge, Texture.TextureWrap.ClampToEdge);
 
         List<Tile> tiles = tileManager.getTiles();
@@ -155,11 +161,14 @@ public class DrawAsTexture implements Screen {
             }
         }
 
+        Pixmap blurred = BlurUtils.blur(pixmap, 1, 1, true);
+
         // Blit the composited overlay to a texture
-        texture.draw(pixmap, 0, 0);
+        texture.draw(blurred, 0, 0);
         batch = new SpriteBatch();
 
-        pixmap.dispose();
+        blurred.dispose();
+        //pixmap.dispose();
     }
 
 

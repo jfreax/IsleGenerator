@@ -17,6 +17,8 @@ import com.badlogic.gdx.utils.FloatArray;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.ShortArray;
 
+import java.util.Random;
+
 public class SphereBuilder {
 
     /** The vertex attributes of the resulting mesh */
@@ -62,11 +64,11 @@ public class SphereBuilder {
     private int primitiveType;
 
 
-    static public Model createNew(String id, long attribute, float width, float height, float depth, int divisionsU, int divisionsV, Texture texture) {
+    static public Model createNew(Texture texture, Pixmap heightmap, String id, long attribute, float width, float height, float depth, int divisionsU, int divisionsV) {
         SphereBuilder sb = new SphereBuilder();
         sb.begin(attribute);
         sb.part(id, GL10.GL_TRIANGLES);
-        sb.sphere(width, height, depth, divisionsU, divisionsV);
+        sb.sphere(width, height, depth, divisionsU, divisionsV, heightmap);
         Mesh mesh = sb.end();
 
         ModelBuilder modelBuilder = new ModelBuilder();
@@ -194,7 +196,19 @@ public class SphereBuilder {
     }
 
     public void sphere(float width, float height, float depth, int divisionsU, int divisionsV) {
-        // FIXME create better sphere method (- only one vertex for each pole, - partial sphere, - position)
+        sphere(width, height, depth, divisionsU, divisionsV, null);
+    }
+
+
+    public void sphere(float width, float height, float depth, int divisionsU, int divisionsV, Pixmap heightmap) {
+        Random rand = new Random();
+
+        float hmw = 0.f, hmh = 0.f;
+        if( heightmap != null ) {
+            hmw = heightmap.getWidth();
+            hmh = heightmap.getHeight();
+        }
+
         final float hw = width * 0.5f;
         final float hh = height * 0.5f;
         final float hd = depth * 0.5f;
@@ -202,10 +216,7 @@ public class SphereBuilder {
         final float stepV = MathUtils.PI / divisionsV;
         final float us = 1f / divisionsU;
         final float vs = 1f / divisionsV;
-        float u = 0f;
-        float v = 0f;
-        float angleU = 0f;
-        float angleV = 0f;
+        float u, v, angleU, angleV;
         MeshPartBuilder.VertexInfo curr1 = vertTmp3.set(null, null, null, null);
         curr1.hasUV = curr1.hasPosition = curr1.hasNormal = true;
         for (int i = 0; i <= divisionsU; i++) {
@@ -217,7 +228,40 @@ public class SphereBuilder {
                 v = vs * j;
                 final float t = MathUtils.sin(angleV);
                 curr1.position.set(tempV1.x * t, MathUtils.cos(angleV) * hh, tempV1.z * t);
-                curr1.normal.set(curr1.position).nor();
+
+                if( heightmap == null ) {
+                    curr1.normal.set(curr1.position).nor();
+                } else {
+                    Vector2 hmPos = new Vector2(i, j);
+
+                    hmPos.x *= hmw / divisionsU;
+                    hmPos.y *= hmh / divisionsV;
+
+                    float stepw = (hmw / divisionsU) / 2.f;
+                    float steph = (hmh / divisionsV) / 2.f;
+
+                    // Boundaries
+                    hmPos.x = Math.max(hmPos.x, stepw);
+                    hmPos.x = Math.min(hmPos.x, hmw - stepw);
+                    hmPos.y = Math.max(hmPos.y, steph);
+                    hmPos.y = Math.min(hmPos.y, hmh - steph);
+
+                    float n1 = (heightmap.getPixel((int)hmPos.x, (int)(hmPos.y - steph)) & 0xff) / 255.f;
+                    float n2 = (heightmap.getPixel((int)(hmPos.x - stepw), (int)hmPos.y) & 0xff) / 255.f;
+                    float n3 = (heightmap.getPixel((int)(hmPos.x + stepw), (int)hmPos.y) & 0xff) / 255.f;
+                    float n4 = (heightmap.getPixel((int)hmPos.x, (int)(hmPos.y + steph)) & 0xff) / 255.f;
+
+                    float sx = n2 - n3;
+                    float sy = n1 - n4;
+
+                    Vector3 normVec = curr1.position.cpy();
+                    normVec.add(new Vector3(-sx*9, sy*9, 0));
+//                    curr1.normal.set(new Vector3(sx, 0, sy)).nor();
+
+                    //normVec.add(rand.nextFloat());
+                    curr1.normal.set(normVec).nor();
+                    //curr1.normal.set(sx, -sy, 0).nor();
+                }
                 curr1.uv.set(u, v);
                 vertex(curr1);
                 if (i == 0 || j == 0)

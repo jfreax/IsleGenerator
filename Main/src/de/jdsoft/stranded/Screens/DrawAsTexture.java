@@ -2,11 +2,13 @@ package de.jdsoft.stranded.Screens;
 
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g3d.*;
 import com.badlogic.gdx.graphics.g3d.lights.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.lights.Lights;
+import com.badlogic.gdx.graphics.g3d.materials.BlendingAttribute;
 import com.badlogic.gdx.graphics.g3d.materials.Material;
 import com.badlogic.gdx.graphics.g3d.materials.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.model.MeshPart;
@@ -21,6 +23,7 @@ import com.marcrh.graph.Point;
 import de.jdsoft.stranded.Entity.Tile;
 import de.jdsoft.stranded.Map.TileManager;
 import de.jdsoft.stranded.Model.SphereBuilder;
+import de.jdsoft.stranded.Utils.BlurUtils;
 
 import java.util.List;
 
@@ -33,15 +36,14 @@ public class DrawAsTexture implements Screen {
     PerspectiveCamera cam;
     CameraInputController camController;
 
-    Pixmap pixmap;
-    Texture texture;
+    private Texture texture;
+    private Pixmap heightmap;
 
     private Lights lights;
-
     public ModelBatch modelBatch;
     public Model model;
-    public ModelInstance instance;
 
+    public ModelInstance instance;
     private TestShader testShader;
     private Renderable planet;
     private RenderContext renderContext;
@@ -86,8 +88,15 @@ public class DrawAsTexture implements Screen {
         // What faces to remove with the face culling.
         Gdx.graphics.getGL20().glCullFace(GL20.GL_FRONT);
 
+
+        // Create new tilemanager and create new random map
+        tileManager = new TileManager(mapWidth, mapHeight);
+
         // Create texture
         computeTexture();
+
+        // Create height map
+        computeHeightMap();
 
         // Test light source
         lights = new Lights();
@@ -103,7 +112,7 @@ public class DrawAsTexture implements Screen {
 //                VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates);
 
         long attr = VertexAttributes.Usage.Position | VertexAttributes.Usage.ColorPacked | VertexAttributes.Usage.TextureCoordinates | VertexAttributes.Usage.Normal;
-        model = SphereBuilder.createNew("0", attr, 10.f, 10.f, 10.f, 50, 50, texture);
+        model = SphereBuilder.createNew(texture, heightmap, "0", attr, 10.f, 10.f, 10.f, 50, 50);
 
 
         NodePart blockPart = model.nodes.get(0).parts.get(0);
@@ -117,18 +126,20 @@ public class DrawAsTexture implements Screen {
         planet.lights = lights;
         planet.worldTransform.idt();
 
-        renderContext = new RenderContext(new DefaultTextureBinder(DefaultTextureBinder.WEIGHTED, 1));
-        shader2 = new DefaultShader(
-                planet.material,
-                planet.mesh.getVertexAttributes(),
-                true, false, 1, 0, 0, 0);
-        shader2.init();
+//        renderContext = new RenderContext(new DefaultTextureBinder(DefaultTextureBinder.WEIGHTED, 1));
+//        shader2 = new DefaultShader(
+//                planet.material,
+//                planet.mesh.getVertexAttributes(),
+//                true, false, 1, 0, 0, 0);
+//        shader2.init();
 
         instance = new ModelInstance(model);
+
 
     }
 
     float angle = 0.f;
+    float rotate = 0.f;
 
     @Override
     public void render(float delta) {
@@ -137,14 +148,34 @@ public class DrawAsTexture implements Screen {
         angle += delta*30;
         angle %= 360;
 
+        rotate /= 2;
 
-        Gdx.graphics.getGL20().glClearColor(0.2f, 0.2f, 0.2f, 0.4f);
+
+        if(Gdx.input.isKeyPressed(Input.Keys.A)) {
+            TextureAttribute tattr = (TextureAttribute)(instance.materials.first().get(TextureAttribute.Diffuse));
+            tattr.textureDescription.set(texture, GL10.GL_LINEAR_MIPMAP_LINEAR, GL10.GL_LINEAR_MIPMAP_LINEAR, GL10.GL_REPEAT, GL10.GL_REPEAT);
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.S)) {
+            Texture texture2 = new Texture(heightmap);
+            TextureAttribute tattr = (TextureAttribute)(instance.materials.first().get(TextureAttribute.Diffuse));
+            tattr.textureDescription.set(texture2, GL10.GL_LINEAR_MIPMAP_LINEAR, GL10.GL_LINEAR_MIPMAP_LINEAR, GL10.GL_REPEAT, GL10.GL_REPEAT);
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            rotate -= 0.1f;
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            rotate += 0.1f;
+        }
+
+
+            Gdx.graphics.getGL20().glClearColor(0.2f, 0.2f, 0.2f, 0.4f);
         Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
-        instance.transform.rotate(Vector3.Y, delta*10);
+        instance.transform.rotate(Vector3.Y, rotate);
         //instance.userData
         modelBatch.begin(cam);
         modelBatch.render(instance, lights);
+//        modelBatch.render(instance);
         modelBatch.end();
 
 
@@ -160,9 +191,7 @@ public class DrawAsTexture implements Screen {
 
     private void computeTexture() {
 
-        // Create new tilemanager and create new random map
-        tileManager = new TileManager(mapWidth, mapHeight);
-
+        Pixmap pixmap;
         pixmap = new Pixmap(mapWidth, mapHeight, Pixmap.Format.RGBA8888); // Pixmap.Format.RGBA8888);
 
         List<Tile> tiles = tileManager.getTiles();
@@ -194,6 +223,49 @@ public class DrawAsTexture implements Screen {
         pixmap.dispose();
     }
 
+    private void computeHeightMap() {
+
+        heightmap = new Pixmap(mapWidth, mapHeight, Pixmap.Format.RGBA8888);
+
+        float maxHeight = tileManager.getMaxHeight();
+
+        List<Tile> tiles = tileManager.getTiles();
+        for( Tile tile : tiles) {
+
+            float height = tile.getHeight() / maxHeight;
+//            heightmap.setColor(0, 0, 0, height);
+            heightmap.setColor(height, height, height, height);
+
+            //pixmap.setColor(tile.getColor(tileManager));
+
+            List<Point> points = tile.getPoints();
+            Point startPoint = points.get(0);
+            for( int i = 1; i < points.size()-1; i++ ) {
+                heightmap.fillTriangle(
+                        (int)startPoint.x,      (int)startPoint.y,
+                        (int)points.get(i).x,   (int)points.get(i).y,
+                        (int)points.get(i+1).x, (int)points.get(i+1).y);
+            }
+        }
+
+        Pixmap blurred = BlurUtils.blur(heightmap, 2, 2, false);
+
+        heightmap = blurred;
+
+//        texture = new Texture(blurred, true);
+
+//        texture.setFilter(Texture.TextureFilter.MipMapLinearLinear, Texture.TextureFilter.MipMapLinearLinear);
+//        texture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
+
+
+//        heightmap = new Texture(pixmap, true);
+
+//        heightmap.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        //heightmap.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
+
+//        pixmap.dispose();
+    }
+
     @Override
     public void resize(int width, int height) {
         cam.viewportHeight = height;
@@ -214,6 +286,8 @@ public class DrawAsTexture implements Screen {
 
     @Override
     public void dispose() {
+        heightmap.dispose();
+        texture.dispose();
     }
 
     public static class MyModelBatch extends ModelBatch {

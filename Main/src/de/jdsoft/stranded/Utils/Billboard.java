@@ -49,7 +49,8 @@ public class Billboard extends Sprite {
 
     public void update(float delta) {
         Vector3 moveAmt = wmove;
-        moveAmt.mul(delta);
+        moveAmt.scl(delta);
+        //moveAmt.mul(delta);
         // Log.out("moveamt:" + moveAmt);
         wpos.add(moveAmt);
         if (wpos.x > 10 || wpos.x<0 ) {

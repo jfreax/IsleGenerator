@@ -38,11 +38,11 @@ void main() {
 
     //vec2 texPosition = (v_texCoords * 2.0f) - 1.0f;
     vec2 texCoord = v_texCoords;
-    texCoord += vec2(time / 360.f);
+    //texCoord += vec2(time); // / 360.f);
 
     color *= texture2D(u_texture, texCoord);
     color *= 1.0 - step(0.5, len);
 
-    gl_FragColor = color;
+    gl_FragColor = v_color;
 
 }

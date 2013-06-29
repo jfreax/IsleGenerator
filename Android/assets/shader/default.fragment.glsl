@@ -65,10 +65,14 @@ uniform vec4 u_fogColor;
 varying float v_fog;
 #endif // fogFlag
 
+uniform float time;
+
+
 void main() {
 	#if defined(normalFlag) 
 		vec3 normal = v_normal;
 	#endif // normalFlag
+
 
 	#if defined(diffuseTextureFlag) && defined(diffuseColorFlag) && defined(colorFlag)
 		vec4 diffuse = texture2D(u_diffuseTexture, v_texCoords0) * u_diffuseColor * v_color;
@@ -117,5 +121,6 @@ void main() {
 				discard;
 		#endif
 	#endif
+
 
 }

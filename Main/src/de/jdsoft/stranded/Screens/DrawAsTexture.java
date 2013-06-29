@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g3d.lights.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.lights.Lights;
 import com.badlogic.gdx.graphics.g3d.materials.Material;
 import com.badlogic.gdx.graphics.g3d.materials.TextureAttribute;
+import com.badlogic.gdx.graphics.g3d.model.MeshPart;
 import com.badlogic.gdx.graphics.g3d.model.NodePart;
 import com.badlogic.gdx.graphics.g3d.shaders.BaseShader;
 import com.badlogic.gdx.graphics.g3d.shaders.DefaultShader;
@@ -19,6 +20,7 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.marcrh.graph.Point;
 import de.jdsoft.stranded.Entity.Tile;
 import de.jdsoft.stranded.Map.TileManager;
+import de.jdsoft.stranded.Model.SphereBuilder;
 
 import java.util.List;
 
@@ -40,7 +42,6 @@ public class DrawAsTexture implements Screen {
     public Model model;
     public ModelInstance instance;
 
-    ShaderProgram shader;
     private TestShader testShader;
     private Renderable planet;
     private RenderContext renderContext;
@@ -49,6 +50,12 @@ public class DrawAsTexture implements Screen {
 
     @Override
     public void show() {
+
+    }
+
+    public DrawAsTexture() {
+        super();
+
         // Set camera
         cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         cam.position.set(3f, 0f, 20f);
@@ -82,7 +89,6 @@ public class DrawAsTexture implements Screen {
         // Create texture
         computeTexture();
 
-
         // Test light source
         lights = new Lights();
         lights.ambientLight.set(0.4f, 0.4f, 0.4f, 1f);
@@ -92,9 +98,12 @@ public class DrawAsTexture implements Screen {
         // Create planet mesh
         modelBatch = new ModelBatch(Gdx.files.internal("shader/default.vertex.glsl"), Gdx.files.internal("shader/default.fragment.glsl"));
         ModelBuilder modelBuilder = new ModelBuilder();
-        model = modelBuilder.createSphere(10.f, 10.f, 10.f, 50, 50,
-                new Material(TextureAttribute.createDiffuse(texture)),
-                VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates);
+//        model = modelBuilder.createSphere(10.f, 10.f, 10.f, 50, 50,
+//                new Material( new TextureAttribute(TextureAttribute.Diffuse, texture)),
+//                VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates);
+
+        long attr = VertexAttributes.Usage.Position | VertexAttributes.Usage.ColorPacked | VertexAttributes.Usage.TextureCoordinates | VertexAttributes.Usage.Normal;
+        model = SphereBuilder.createNew("0", attr, 10.f, 10.f, 10.f, 50, 50, texture);
 
 
         NodePart blockPart = model.nodes.get(0).parts.get(0);
@@ -117,14 +126,13 @@ public class DrawAsTexture implements Screen {
 
         instance = new ModelInstance(model);
 
-
     }
 
     float angle = 0.f;
 
     @Override
     public void render(float delta) {
-        camController.update();
+        //camController.update();
 
         angle += delta*30;
         angle %= 360;
@@ -133,7 +141,8 @@ public class DrawAsTexture implements Screen {
         Gdx.graphics.getGL20().glClearColor(0.2f, 0.2f, 0.2f, 0.4f);
         Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
-        instance.transform.rotate(new Vector3(0, 1, 0), delta*10);
+        instance.transform.rotate(Vector3.Y, delta*10);
+        //instance.userData
         modelBatch.begin(cam);
         modelBatch.render(instance, lights);
         modelBatch.end();
@@ -148,17 +157,6 @@ public class DrawAsTexture implements Screen {
 //        shader2.end();
 //        renderContext.end();
     }
-
-    void SetupShader() {
-        ShaderProgram.pedantic = false;
-        shader = new ShaderProgram(
-                Gdx.files.internal("shader_dev/planet.vert").readString(),
-                Gdx.files.internal("shader_dev/planet_texture.frag").readString());
-        if(!shader.isCompiled()) {
-            Gdx.app.log("Problem loading shader:", shader.getLog());
-        }
-    }
-
 
     private void computeTexture() {
 
@@ -201,7 +199,6 @@ public class DrawAsTexture implements Screen {
         cam.viewportHeight = height;
         cam.viewportWidth = width;
     }
-
 
     @Override
     public void hide() {

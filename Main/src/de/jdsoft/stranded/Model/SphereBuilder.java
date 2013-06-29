@@ -1,0 +1,323 @@
+package de.jdsoft.stranded.Model;
+
+
+import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.g3d.Model;
+import com.badlogic.gdx.graphics.g3d.materials.Material;
+import com.badlogic.gdx.graphics.g3d.materials.TextureAttribute;
+import com.badlogic.gdx.graphics.g3d.model.MeshPart;
+import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
+import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.FloatArray;
+import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.badlogic.gdx.utils.ShortArray;
+
+public class SphereBuilder {
+
+    /** The vertex attributes of the resulting mesh */
+    private VertexAttributes attributes;
+    /** The vertices to construct, no size checking is done */
+    private FloatArray vertices = new FloatArray();
+    /** The indices to construct, no size checking is done */
+    private ShortArray indices = new ShortArray();
+    /** The size (in number of floats) of each vertex */
+    /** The size (in number of floats) of each vertex */
+    private int stride;
+    /** The current vertex index, used for indexing */
+    private short vindex;
+    /** The offset in the indices array when begin() was called, used to define a meshpart. */
+    private int istart;
+    /** The offset within an vertex to position */
+    private int posOffset;
+    /** The size (in number of floats) of the position attribute */
+    private int posSize;
+    /** The offset within an vertex to normal, or -1 if not available */
+    private int norOffset;
+    /** The offset within an vertex to color, or -1 if not available */
+    private int colOffset;
+    /** The size (in number of floats) of the color attribute */
+    private int colSize;
+    /** The offset within an vertex to packed color, or -1 if not available */
+    private int cpOffset;
+    /** The offset within an vertex to texture coordinates, or -1 if not available */
+    private int uvOffset;
+    /** The meshpart currently being created */
+    private MeshPart part;
+    /** The parts created between begin and end */
+    private Array<MeshPart> parts = new Array<MeshPart>();
+    /** The color used if no vertex color is specified. */
+    private final Color color = new Color();
+    /** Whether to apply the default color. */
+    private boolean colorSet;
+
+    private float[] vertex;
+
+    private final MeshPartBuilder.VertexInfo vertTmp3 = new MeshPartBuilder.VertexInfo();
+    private final Vector3 tempV1 = new Vector3();
+    private int primitiveType;
+
+
+    static public Model createNew(String id, long attribute, float width, float height, float depth, int divisionsU, int divisionsV, Texture texture) {
+        SphereBuilder sb = new SphereBuilder();
+        sb.begin(attribute);
+        sb.part(id, GL10.GL_TRIANGLES);
+        sb.sphere(width, height, depth, divisionsU, divisionsV);
+        Mesh mesh = sb.end();
+
+        ModelBuilder modelBuilder = new ModelBuilder();
+
+        modelBuilder.begin();
+        modelBuilder.part(id, mesh, GL10.GL_TRIANGLES,
+                new Material( new TextureAttribute(TextureAttribute.Diffuse, texture)));
+        return modelBuilder.end();
+    }
+
+    static public Mesh createNewMesh(String id, long attribute, float width, float height, float depth, int divisionsU, int divisionsV) {
+        SphereBuilder sb = new SphereBuilder();
+        sb.begin(attribute);
+        sb.part(id, GL10.GL_TRIANGLES);
+        sb.sphere(width, height, depth, divisionsU, divisionsV);
+        return sb.end();
+    }
+
+
+    /** Begin building a mesh.
+     * @param attributes bitwise mask of the {@link com.badlogic.gdx.graphics.VertexAttributes.Usage},
+     * only Position, Color, Normal and TextureCoordinates is supported. */
+    public void begin(final long attributes) {
+        begin(createAttributes(attributes), 0);
+    }
+
+    /** Begin building a mesh */
+    public void begin(final VertexAttributes attributes, int primitiveType) {
+        if (this.attributes != null)
+            throw new RuntimeException("Call end() first");
+        this.attributes = attributes;
+        this.vertices.clear();
+        this.indices.clear();
+        this.parts.clear();
+        this.vindex = 0;
+        this.istart = 0;
+        this.part = null;
+        this.stride = attributes.vertexSize / 4;
+        this.vertex = new float[stride];
+        VertexAttribute a = attributes.findByUsage(VertexAttributes.Usage.Position);
+        if (a == null)
+            throw new GdxRuntimeException("Cannot build mesh without position attribute");
+        posOffset = a.offset / 4;
+        posSize = a.numComponents;
+        a = attributes.findByUsage(VertexAttributes.Usage.Normal);
+        norOffset = a == null ? -1 : a.offset / 4;
+        a = attributes.findByUsage(VertexAttributes.Usage.Color);
+        colOffset = a == null ? -1 : a.offset / 4;
+        colSize = a == null ? 0 : a.numComponents;
+        a = attributes.findByUsage(VertexAttributes.Usage.ColorPacked);
+        cpOffset = a == null ? -1 : a.offset / 4;
+        a = attributes.findByUsage(VertexAttributes.Usage.TextureCoordinates);
+        uvOffset = a == null ? -1 : a.offset / 4;
+        setColor(null);
+        this.primitiveType = primitiveType;
+    }
+
+    /** Starts a new MeshPart. The mesh part is not usable until end() is called */
+    public MeshPart part(final String id, int primitiveType) {
+        if (this.attributes == null)
+            throw new RuntimeException("Call begin() first");
+        endpart();
+
+        part = new MeshPart();
+        part.id = id;
+        this.primitiveType = part.primitiveType = primitiveType;
+        parts.add(part);
+
+        setColor(null);
+
+        return part;
+    }
+
+    private void endpart() {
+        if (part != null) {
+            part.indexOffset = istart;
+            part.numVertices = indices.size - istart;
+            istart = indices.size;
+            part = null;
+        }
+    }
+
+    public Mesh end() {
+        if (this.attributes == null)
+            throw new RuntimeException("Call begin() first");
+        endpart();
+
+        final Mesh mesh = new Mesh(true, vertices.size, indices.size, attributes);
+        mesh.setVertices(vertices.items, 0, vertices.size);
+        mesh.setIndices(indices.items, 0, indices.size);
+
+        for (MeshPart p : parts)
+            p.mesh = mesh;
+        parts.clear();
+
+        attributes = null;
+        vertices.clear();
+        indices.clear();
+
+        return mesh;
+    }
+
+    public void setColor(final Color color) {
+        if ((colorSet = color != null)==true)
+            this.color.set(color);
+    }
+
+
+    /** @param usage bitwise mask of the {@link com.badlogic.gdx.graphics.VertexAttributes.Usage},
+     * only Position, Color, Normal and TextureCoordinates is supported. */
+    public static VertexAttributes createAttributes(long usage) {
+        final Array<VertexAttribute> attrs = new Array<VertexAttribute>();
+        if ((usage & VertexAttributes.Usage.Position) == VertexAttributes.Usage.Position)
+            attrs.add(new VertexAttribute(VertexAttributes.Usage.Position, 3, ShaderProgram.POSITION_ATTRIBUTE));
+        if ((usage & VertexAttributes.Usage.Color) == VertexAttributes.Usage.Color)
+            attrs.add(new VertexAttribute(VertexAttributes.Usage.Color, 4, ShaderProgram.COLOR_ATTRIBUTE));
+        if ((usage & VertexAttributes.Usage.Normal) == VertexAttributes.Usage.Normal)
+            attrs.add(new VertexAttribute(VertexAttributes.Usage.Normal, 3, ShaderProgram.NORMAL_ATTRIBUTE));
+        if ((usage & VertexAttributes.Usage.TextureCoordinates) == VertexAttributes.Usage.TextureCoordinates)
+            attrs.add(new VertexAttribute(VertexAttributes.Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE+"0"));
+        final VertexAttribute attributes[] = new VertexAttribute[attrs.size];
+        for (int i = 0; i < attributes.length; i++)
+            attributes[i] = attrs.get(i);
+        return new VertexAttributes(attributes);
+    }
+
+    public void sphere(float width, float height, float depth, int divisionsU, int divisionsV) {
+        // FIXME create better sphere method (- only one vertex for each pole, - partial sphere, - position)
+        final float hw = width * 0.5f;
+        final float hh = height * 0.5f;
+        final float hd = depth * 0.5f;
+        final float stepU = MathUtils.PI2 / divisionsU;
+        final float stepV = MathUtils.PI / divisionsV;
+        final float us = 1f / divisionsU;
+        final float vs = 1f / divisionsV;
+        float u = 0f;
+        float v = 0f;
+        float angleU = 0f;
+        float angleV = 0f;
+        MeshPartBuilder.VertexInfo curr1 = vertTmp3.set(null, null, null, null);
+        curr1.hasUV = curr1.hasPosition = curr1.hasNormal = true;
+        for (int i = 0; i <= divisionsU; i++) {
+            angleU = stepU * i;
+            u = 1f - us * i;
+            tempV1.set(MathUtils.cos(angleU) * hw, 0f, MathUtils.sin(angleU) * hd);
+            for (int j = 0; j <= divisionsV; j++) {
+                angleV = stepV * j;
+                v = vs * j;
+                final float t = MathUtils.sin(angleV);
+                curr1.position.set(tempV1.x * t, MathUtils.cos(angleV) * hh, tempV1.z * t);
+                curr1.normal.set(curr1.position).nor();
+                curr1.uv.set(u, v);
+                vertex(curr1);
+                if (i == 0 || j == 0)
+                    continue;
+                // FIXME don't duplicate lines and points
+                index((short)(vindex-2), (short)(vindex-1), (short)(vindex-(divisionsV+2)),
+                        (short)(vindex-1), (short)(vindex-(divisionsV+1)), (short)(vindex-(divisionsV+2)));
+            }
+        }
+    }
+
+
+    public short vertex(Vector3 pos, Vector3 nor, Color col, Vector2 uv) {
+        if (col == null && colorSet)
+            col = color;
+        if (pos != null) {
+            vertex[posOffset  ] = pos.x;
+            if (posSize > 1) vertex[posOffset+1] = pos.y;
+            if (posSize > 2) vertex[posOffset+2] = pos.z;
+        }
+        if (nor != null && norOffset >= 0) {
+            vertex[norOffset  ] = nor.x;
+            vertex[norOffset+1] = nor.y;
+            vertex[norOffset+2] = nor.z;
+        }
+        if (col != null) {
+            if (colOffset >= 0) {
+                vertex[colOffset  ] = col.r;
+                vertex[colOffset+1] = col.g;
+                vertex[colOffset+2] = col.b;
+                if (colSize > 3) vertex[colOffset+3] = col.a;
+            } else if (cpOffset > 0)
+                vertex[cpOffset] = col.toFloatBits(); // FIXME cache packed color?
+        }
+        if (uv != null && uvOffset >= 0) {
+            vertex[uvOffset  ] = uv.x;
+            vertex[uvOffset+1] = uv.y;
+        }
+        vertices.addAll(vertex);
+        return (short)(vindex++);
+    }
+
+
+    public short vertex(final MeshPartBuilder.VertexInfo info) {
+        return vertex(info.hasPosition ? info.position : null, info.hasNormal ? info.normal : null,
+                info.hasColor ? info.color : null, info.hasUV ? info.uv : null);
+    }
+
+    public void index(final short value) {
+        indices.add(value);
+    }
+
+    public void index(final short value1, final short value2) {
+        indices.ensureCapacity(2);
+        indices.add(value1);
+        indices.add(value2);
+    }
+
+    public void index(final short value1, final short value2, final short value3) {
+        indices.ensureCapacity(3);
+        indices.add(value1);
+        indices.add(value2);
+        indices.add(value3);
+    }
+
+    public void index(final short value1, final short value2, final short value3, final short value4) {
+        indices.ensureCapacity(4);
+        indices.add(value1);
+        indices.add(value2);
+        indices.add(value3);
+        indices.add(value4);
+    }
+
+    public void index(short value1, short value2, short value3, short value4, short value5, short value6) {
+        indices.ensureCapacity(6);
+        indices.add(value1);
+        indices.add(value2);
+        indices.add(value3);
+        indices.add(value4);
+        indices.add(value5);
+        indices.add(value6);
+    }
+
+    public void index(short value1, short value2, short value3, short value4, short value5, short value6, short value7, short value8) {
+        indices.ensureCapacity(8);
+        indices.add(value1);
+        indices.add(value2);
+        indices.add(value3);
+        indices.add(value4);
+        indices.add(value5);
+        indices.add(value6);
+        indices.add(value7);
+        indices.add(value8);
+    }
+
+    public FloatArray getVertices() {
+        return vertices;
+    }
+
+    public ShortArray getIndices() {
+        return indices;
+    }
+}

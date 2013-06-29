@@ -1,16 +1,24 @@
 package de.jdsoft.stranded.Screens;
 
 
+import android.opengl.Matrix;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g3d.decals.CameraGroupStrategy;
+import com.badlogic.gdx.graphics.g3d.decals.Decal;
+import com.badlogic.gdx.graphics.g3d.decals.DecalBatch;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.marcrh.graph.Point;
 import de.jdsoft.stranded.Entity.Tile;
 import de.jdsoft.stranded.Map.TileManager;
+import de.jdsoft.stranded.Utils.Billboard;
 import de.jdsoft.stranded.Utils.BlurUtils;
 
 import java.util.List;
@@ -28,6 +36,8 @@ public class DrawAsTexture implements Screen {
     Texture texture;
     SpriteBatch batch;
     TextureRegion region;
+    Billboard billboard;
+
 
     ShaderProgram shader;
 
@@ -37,16 +47,17 @@ public class DrawAsTexture implements Screen {
     int verticesCount = (180 / (int)space) * (360 / (int)space) * 4 * 6;
 
     Mesh mesh;
-
+    private DecalBatch decalBatch;
+    private Decal decal;
 
 
     @Override
     public void show() {
         // Set camera
         cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        cam.position.set(0.f, 0.f, 10f);
+        cam.position.set(5.f, 0.f, 10f);
         //cam.lookAt(Gdx.graphics.getWidth() / 2, 0, Gdx.graphics.getHeight() / 2);
-        cam.lookAt(0.f, 0.f, 0);
+        cam.lookAt(5.f, 0.f, 0);
         cam.near = 0.1f;
         cam.far = 300f;
         cam.update();
@@ -96,27 +107,80 @@ public class DrawAsTexture implements Screen {
         camController.update();
         cam.update();
 
-        angle += delta*3;
+        angle += delta*30;
         angle %= 360;
 
         Gdx.graphics.getGL20().glClearColor(0.2f, 0.2f, 0.2f, 0.4f);
         Gdx.graphics.getGL20().glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        Gdx.gl20.glActiveTexture(GL20.GL_TEXTURE0);
-        texture.bind();
+//        Gdx.gl20.glActiveTexture(GL20.GL_TEXTURE0);
+//        texture.bind();
+//
+        float[] resolution = new float[2];
+        resolution[0] = 100.f;
+        resolution[1] = 200.f;
+
+        Vector2 vec = new Vector2(200.f, 100.f);
+
+        Vector3 tmp = new Vector3(0, 0, 10);
+        //cam.view.setToLookAt(cam.position, tmp, cam.up );
+        //cam.lookAt(tmp);
+        //Matrix4.mul(cam.combined.val, cam.view.val);
+        //cam.invProjectionView.set(cam.combined);
+        //Matrix4.inv(cam.invProjectionView.val);
+
+        //billboard.setPosition(0, 0);
+//        billboard.project(cam);
+//
+//
+//        Vector3 viewingDirection = new Vector3(cam.position.cpy().sub(new Vector3(0, 0, 0)).nor());
+//        //batch.setRotation(viewingDirection, cam.up.cpy().nor());
+//
+        Matrix4 matrix4 = new Matrix4(cam.combined);
+        matrix4.setToLookAt(cam.position, cam.up);
+//        matrix4.rotate(viewingDirection, cam.up.cpy().nor());
+//        //cam.rotate(viewingDirection, cam.up.cpy().nor());
+//        //matrix4.setToRotation(viewingDirection, cam.up.cpy().nor());
+//
+//        batch.setProjectionMatrix(matrix4);
+//
+//        batch.setProjectionMatrix(cam.combined);
+
+
+        shader.setUniformf("time", angle);
+        batch.setShader(shader);
+
+        batch.begin();
+//        batch.draw(texture, 0, 0, 10, 10);
+        billboard.draw(batch);
+        batch.end();
+
+        //decal.lookAt(cam.position, cam.up);
+//        decalBatch.add(decal);
+//        decalBatch.flush();
+
 
         shader.begin();
-        shader.setUniformMatrix("u_projTrans", cam.combined.rotate(0,0,1.f, angle));
+
+        shader.setUniformMatrix("u_projTrans", cam.combined.rotate(0, 0, 1.f, angle));
         shader.setUniformi("u_texture", 0);
+        shader.setUniformf("time", angle);
+        //shader.setUniform2fv("resolution", resolution, 0, 0);
+        shader.setUniformf("resolution", vec);
         mesh.render(shader, GL20.GL_TRIANGLE_STRIP);
+
+
         shader.end();
+
+
+
     }
 
     void SetupShader() {
         ShaderProgram.pedantic = false;
         shader = new ShaderProgram(
-                Gdx.files.internal("default.vert").readString(),
-                Gdx.files.internal("default.frag").readString());
+                Gdx.files.internal("shader_dev/planet.vert").readString(),
+                Gdx.files.internal("shader_dev/planet_texture.frag").readString());
         if(!shader.isCompiled()) {
             Gdx.app.log("Problem loading shader:", shader.getLog());
         }
@@ -153,11 +217,19 @@ public class DrawAsTexture implements Screen {
         texture = new Texture(pixmap, true);
 
         texture.setFilter(Texture.TextureFilter.MipMapLinearNearest, Texture.TextureFilter.MipMapLinearNearest);
-        texture.setWrap(Texture.TextureWrap.ClampToEdge, Texture.TextureWrap.ClampToEdge);
+        texture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
 
         // Blit the composited overlay to a texture
         //texture.draw(blurred, 0, 0);
         batch = new SpriteBatch();
+
+        billboard = new Billboard(texture);
+
+        decalBatch = new DecalBatch(new CameraGroupStrategy(cam));
+        region = new TextureRegion(texture);
+        decal = Decal.newDecal(1, 1, region);
+
+        decal.setPosition(0, 0, 0);
 
         //blurred.dispose();
         pixmap.dispose();

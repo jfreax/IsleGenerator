@@ -147,7 +147,7 @@ public class Islands extends Generator {
 
                     nextNexts.addLast(neighbor);
                 }
-            } else { // This is land, so the neighbor should be land to, but its heigher
+            } else if (random.nextInt(100) < 5) { // This is land, so the neighbor should be land to, but its heigher
 
                 // Set new height
                 float maxHeight = 0.f;
@@ -271,7 +271,7 @@ public class Islands extends Generator {
 
             for( Tile neighbor : toVised ) {
 
-                if( visited.contains(neighbor) ) {
+                if( visited.contains(neighbor) || neighbor.getType() == Tile.WATER ) {
                     continue;
                 }
 

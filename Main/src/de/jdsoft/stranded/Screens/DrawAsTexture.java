@@ -140,6 +140,8 @@ public class DrawAsTexture implements Screen {
 
     float angle = 0.f;
     float rotate = 0.f;
+    float rotateY = 0.f;
+
 
     @Override
     public void render(float delta) {
@@ -148,7 +150,8 @@ public class DrawAsTexture implements Screen {
         angle += delta*30;
         angle %= 360;
 
-        rotate /= 2;
+        rotate /= 1.1f;
+        rotateY /= 1.1f;
 
 
         if(Gdx.input.isKeyPressed(Input.Keys.A)) {
@@ -161,17 +164,24 @@ public class DrawAsTexture implements Screen {
             tattr.textureDescription.set(texture2, GL10.GL_LINEAR_MIPMAP_LINEAR, GL10.GL_LINEAR_MIPMAP_LINEAR, GL10.GL_REPEAT, GL10.GL_REPEAT);
         }
         if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            rotate -= 0.1f;
+            rotate -= 0.2f;
         }
         if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            rotate += 0.1f;
+            rotate += 0.2f;
         }
-
+        if(Gdx.input.isKeyPressed(Input.Keys.UP)) {
+            rotateY -= 0.2f;
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+            rotateY += 0.2f;
+        }
 
             Gdx.graphics.getGL20().glClearColor(0.2f, 0.2f, 0.2f, 0.4f);
         Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
         instance.transform.rotate(Vector3.Y, rotate);
+        instance.transform.rotate(Vector3.X, rotateY);
+
         //instance.userData
         modelBatch.begin(cam);
         modelBatch.render(instance, lights);

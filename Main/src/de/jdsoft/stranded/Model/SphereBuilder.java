@@ -227,18 +227,18 @@ public class SphereBuilder {
                 angleV = stepV * j;
                 v = vs * j;
                 final float t = MathUtils.sin(angleV);
-                curr1.position.set(tempV1.x * t, MathUtils.cos(angleV) * hh, tempV1.z * t);
 
-                if( heightmap == null ) {
-                    curr1.normal.set(curr1.position).nor();
-                } else {
-                    Vector2 hmPos = new Vector2(i, j);
+                float sx = 0.f, sy = 0.f, heightP = 0.f;
+                if( heightmap != null ) {
+                    Vector2 hmPos = new Vector2();
 
-                    hmPos.x *= hmw / divisionsU;
-                    hmPos.y *= hmh / divisionsV;
+                    hmPos.x = u * hmw;
+                    hmPos.y = v * hmh;
 
-                    float stepw = (hmw / divisionsU) / 2.f;
-                    float steph = (hmh / divisionsV) / 2.f;
+//                    float stepw = (hmw / divisionsU) / 2.f;
+//                    float steph = (hmh / divisionsV) / 2.f;
+                    float stepw = us;
+                    float steph = vs;
 
                     // Boundaries
                     hmPos.x = Math.max(hmPos.x, stepw);
@@ -251,9 +251,26 @@ public class SphereBuilder {
                     float n3 = (heightmap.getPixel((int)(hmPos.x + stepw), (int)hmPos.y) & 0xff) / 255.f;
                     float n4 = (heightmap.getPixel((int)hmPos.x, (int)(hmPos.y + steph)) & 0xff) / 255.f;
 
-                    float sx = n2 - n3;
-                    float sy = n1 - n4;
+                    sx = n2 - n3;
+                    sy = n1 - n4;
+                    heightP = (heightmap.getPixel((int)hmPos.x, (int)hmPos.y) & 0xff) / 255.f;
 
+                    // f(x) = 5000 * (e^x – 1) / (e^1 – 1)
+                    //heightP = (float)(Math.pow(2.71, heightP) / (2.71 - 1));
+                    heightP = (float)(Math.exp(2.77258872 * heightP) - 1) / 80.f;
+                    //heightP = (float)Math.sqrt(heightP*heightP*heightP) / 10.f;
+                }
+
+                float hw2 = hw * (1+heightP);
+                float hd2 = hd * (1+heightP);
+                float hh2 = hh * (1+heightP);
+
+                tempV1.set(MathUtils.cos(angleU) * hw2, 0f, MathUtils.sin(angleU) * hd2);
+                curr1.position.set(tempV1.x * t, MathUtils.cos(angleV) * hh2, tempV1.z * t);
+
+                if( heightmap == null ) {
+                    curr1.normal.set(curr1.position).nor();
+                } else {
                     Vector3 normVec = curr1.position.cpy();
                     normVec.add(new Vector3(-sx*9, sy*9, 0));
 //                    curr1.normal.set(new Vector3(sx, 0, sy)).nor();

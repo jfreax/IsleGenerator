@@ -188,27 +188,8 @@ public class DrawAsTexture implements Screen {
         modelBatch.end();
 
 
-//        testPlanetEffect.materials.ad
         TimeAttribute tattr = (TimeAttribute)(testPlanetEffect.materials.first().get(TimeAttribute.ID));
         tattr.value = time;
-
-//        Vector3 dir = new Vector3();
-//        Vector3 planetEffectPosition = new Vector3();
-//        testPlanetEffect.transform.getTranslation(planetEffectPosition);
-//
-//        dir.set(cam.position).sub(planetEffectPosition).nor();
-//
-//        Quaternion rotation = new Quaternion();
-//        testPlanetEffect.transform.getRotation(rotation);
-//
-//        Vector3 tmp = new Vector3();
-//        Vector3 tmp2 = new Vector3();
-//        tmp.set(cam.up.cpy()).crs(dir).nor();
-//        tmp2.set(dir).crs(tmp).nor();
-//
-//        rotation.setFromAxes(tmp.x, tmp2.x, dir.x, tmp.y, tmp2.y, dir.y, tmp.z, tmp2.z, dir.z);
-//
-//        testPlanetEffect.transform.set(rotation);
 
 
         modelBatchPlanetEffect.begin(cam);
@@ -238,7 +219,7 @@ public class DrawAsTexture implements Screen {
             }
         }
 
-        //Pixmap blurred = BlurUtils.blur(pixmap, 1, 1, true);
+        pixmap = BlurUtils.blur(pixmap, 1, 1, true);
 
         // Create a texture to contain the pixmap
         //texture = new Texture(mapWidth, mapHeight, Pixmap.Format.RGBA8888); // Pixmap.Format.RGBA8888);
@@ -298,6 +279,8 @@ public class DrawAsTexture implements Screen {
     public void resize(int width, int height) {
         cam.viewportHeight = height;
         cam.viewportWidth = width;
+
+        cam.update();
     }
 
     @Override
@@ -330,7 +313,7 @@ public class DrawAsTexture implements Screen {
             super();
             program = new ShaderProgram(
                     Gdx.files.internal("shader/planet_effect.vertex.glsl").readString(),
-                    Gdx.files.internal("shader/planet_effect.fragment.glsl").readString());
+                    Gdx.files.internal("shader/planet_effect2.fragment.glsl").readString());
             if (!program.isCompiled())
                 throw new GdxRuntimeException("Couldn't compile shader " + program.getLog());
         }
@@ -366,7 +349,7 @@ public class DrawAsTexture implements Screen {
 
         @Override
         public void render (Renderable renderable) {
-            context.setBlending(true, GL10.GL_ONE, GL10.GL_ONE);
+            context.setBlending(true, GL10.GL_ONE, GL10.GL_ONE_MINUS_SRC_COLOR);
 
             // Transform world view to make this a billboard
             renderable.worldTransform.getTranslation(planetEffectPosition);

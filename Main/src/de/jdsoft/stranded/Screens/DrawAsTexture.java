@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.g3d.*;
 import com.badlogic.gdx.graphics.g3d.decals.Decal;
 import com.badlogic.gdx.graphics.g3d.lights.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.lights.Lights;
-import com.badlogic.gdx.graphics.g3d.materials.BlendingAttribute;
 import com.badlogic.gdx.graphics.g3d.materials.Material;
 import com.badlogic.gdx.graphics.g3d.materials.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.shaders.BaseShader;
@@ -117,7 +116,7 @@ public class DrawAsTexture implements Screen {
         modelBatchPlanetEffect = new ModelBatch(new BaseShaderProvider() {
             @Override
             protected Shader createShader (Renderable renderable) {
-                return new TestShader();
+                return new PlanetEffectShader();
             }
         });
         ModelBuilder modelBuilder = new ModelBuilder();
@@ -193,23 +192,23 @@ public class DrawAsTexture implements Screen {
         TimeAttribute tattr = (TimeAttribute)(testPlanetEffect.materials.first().get(TimeAttribute.ID));
         tattr.value = time;
 
-        Vector3 dir = new Vector3();
-        Vector3 planetEffectPosition = new Vector3();
-        testPlanetEffect.transform.getTranslation(planetEffectPosition);
-
-        dir.set(cam.position).sub(planetEffectPosition).nor();
-
-        Quaternion rotation = new Quaternion();
-        testPlanetEffect.transform.getRotation(rotation);
-
-        Vector3 tmp = new Vector3();
-        Vector3 tmp2 = new Vector3();
-        tmp.set(cam.up.cpy()).crs(dir).nor();
-        tmp2.set(dir).crs(tmp).nor();
-
-        rotation.setFromAxes(tmp.x, tmp2.x, dir.x, tmp.y, tmp2.y, dir.y, tmp.z, tmp2.z, dir.z);
-
-        testPlanetEffect.transform.set(rotation);
+//        Vector3 dir = new Vector3();
+//        Vector3 planetEffectPosition = new Vector3();
+//        testPlanetEffect.transform.getTranslation(planetEffectPosition);
+//
+//        dir.set(cam.position).sub(planetEffectPosition).nor();
+//
+//        Quaternion rotation = new Quaternion();
+//        testPlanetEffect.transform.getRotation(rotation);
+//
+//        Vector3 tmp = new Vector3();
+//        Vector3 tmp2 = new Vector3();
+//        tmp.set(cam.up.cpy()).crs(dir).nor();
+//        tmp2.set(dir).crs(tmp).nor();
+//
+//        rotation.setFromAxes(tmp.x, tmp2.x, dir.x, tmp.y, tmp2.y, dir.y, tmp.z, tmp2.z, dir.z);
+//
+//        testPlanetEffect.transform.set(rotation);
 
 
         modelBatchPlanetEffect.begin(cam);
@@ -320,19 +319,18 @@ public class DrawAsTexture implements Screen {
     }
 
 
-    public static class TestShader extends BaseShader {
+    public static class PlanetEffectShader extends BaseShader {
         protected final BaseShader.Input u_projTrans	= register(new Input(GLOBAL_UNIFORM, "u_projTrans"));
         protected final Input u_worldTrans	= register(new Input(GLOBAL_UNIFORM, "u_worldTrans"));
         protected final Input u_time = register(new Input(GLOBAL_UNIFORM, "u_time"));
 
         protected final ShaderProgram program;
 
-        public TestShader () {
+        public PlanetEffectShader() {
             super();
             program = new ShaderProgram(
                     Gdx.files.internal("shader/planet_effect.vertex.glsl").readString(),
                     Gdx.files.internal("shader/planet_effect.fragment.glsl").readString());
-            //program = new ShaderProgram(vertexShader, fragmentShader);
             if (!program.isCompiled())
                 throw new GdxRuntimeException("Couldn't compile shader " + program.getLog());
         }
@@ -358,39 +356,39 @@ public class DrawAsTexture implements Screen {
             this.context = context;
             program.begin();
 
-            camera.view.idt();
-            Matrix4 proj = new Matrix4(camera.projection);
-            Matrix4 view = new Matrix4(camera.view);
-            Vector3 tmp = new Vector3();
-
-            //proj.setToOrtho(0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0, 0, 1);
-//            proj.setToRotation(1.0f, 1.f, 1.f, 0);
-
-            view.setToLookAt(camera.position, tmp.set(camera.position).add(camera.direction), camera.up);
-//            view.setToRotation(0.f, 0.0f, 0.0f, 1.f);
-
-
-
-            Matrix4.mul(proj.val, view.val);
-//            proj.setToRotation(1.0f, 1.0f, 1.0f, 0.f);
-//            proj.setToLookAt(camera.position, camera.up);
-//            proj.setToRotation()
-//            set(u_projTrans, proj);
             set(u_projTrans, camera.combined);
-            Decal decal;
         }
+
+        final Vector3 dir = new Vector3();
+        final Vector3 tmp = new Vector3();
+        final Vector3 tmp2 = new Vector3();
+        final Vector3 planetEffectPosition = new Vector3();
 
         @Override
         public void render (Renderable renderable) {
             context.setBlending(true, GL10.GL_ONE, GL10.GL_ONE);
-            setWorldTransform(renderable.worldTransform);
 
+            // Transform world view to make this a billboard
+            renderable.worldTransform.getTranslation(planetEffectPosition);
+            dir.set(camera.position).sub(planetEffectPosition).nor();
 
-//            set(u_worldTrans, renderable.worldTransform);
-//            renderable.mesh.render(program, renderable.primitiveType, renderable.meshPartOffset, renderable.meshPartSize);
-//            set(u_worldTrans, renderable.worldTransform.setToRotation(1.f, 1.0f, 1.0f, 0.5f));
+            Quaternion rotation = new Quaternion();
+            renderable.worldTransform.getRotation(rotation);
+
+            tmp.set(camera.up.cpy()).crs(dir).nor();
+            tmp2.set(dir).crs(tmp).nor();
+            rotation.setFromAxes(tmp.x, tmp2.x, dir.x, tmp.y, tmp2.y, dir.y, tmp.z, tmp2.z, dir.z);
+
+            renderable.worldTransform.set(rotation);
+
+            // Set world transformation matrix
+            set(u_worldTrans, renderable.worldTransform);
+
+            // Get time attribute
             TimeAttribute attr = (TimeAttribute)renderable.material.get(TimeAttribute.ID);
-            set(u_time, attr == null ? 1f : attr.value);
+            set(u_time, attr == null ? 0.0f : attr.value);
+
+            // Render mesh
             renderable.mesh.render(program, renderable.primitiveType, renderable.meshPartOffset, renderable.meshPartSize);
         }
 
@@ -405,9 +403,6 @@ public class DrawAsTexture implements Screen {
             program.dispose();
         }
 
-        private void setWorldTransform(final Matrix4 value) {
-            set(u_worldTrans, value);
-        }
     }
 
     public static class TimeAttribute extends Material.Attribute {

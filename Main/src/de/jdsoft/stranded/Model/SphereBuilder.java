@@ -229,6 +229,7 @@ public class SphereBuilder {
                 final float t = MathUtils.sin(angleV);
 
                 float sx = 0.f, sy = 0.f, heightP = 0.f;
+                float n1, n2 = 0.f, n3 = 0.f, n4;
                 if( heightmap != null ) {
                     Vector2 hmPos = new Vector2();
 
@@ -237,8 +238,8 @@ public class SphereBuilder {
 
 //                    float stepw = (hmw / divisionsU) / 2.f;
 //                    float steph = (hmh / divisionsV) / 2.f;
-                    float stepw = us;
-                    float steph = vs;
+                    float stepw = us*8.f;
+                    float steph = vs*8.f;
 
                     // Boundaries
                     hmPos.x = Math.max(hmPos.x, stepw);
@@ -246,10 +247,15 @@ public class SphereBuilder {
                     hmPos.y = Math.max(hmPos.y, steph);
                     hmPos.y = Math.min(hmPos.y, hmh - steph);
 
-                    float n1 = (heightmap.getPixel((int)hmPos.x, (int)(hmPos.y - steph)) & 0xff) / 255.f;
-                    float n2 = (heightmap.getPixel((int)(hmPos.x - stepw), (int)hmPos.y) & 0xff) / 255.f;
-                    float n3 = (heightmap.getPixel((int)(hmPos.x + stepw), (int)hmPos.y) & 0xff) / 255.f;
-                    float n4 = (heightmap.getPixel((int)hmPos.x, (int)(hmPos.y + steph)) & 0xff) / 255.f;
+                    n1 = (heightmap.getPixel((int)hmPos.x, (int)(hmPos.y - steph)) & 0xff) / 255.f;
+                    n2 = (heightmap.getPixel((int)(hmPos.x - stepw), (int)hmPos.y) & 0xff) / 255.f;
+                    n3 = (heightmap.getPixel((int)(hmPos.x + stepw), (int)hmPos.y) & 0xff) / 255.f;
+                    n4 = (heightmap.getPixel((int)hmPos.x, (int)(hmPos.y + steph)) & 0xff) / 255.f;
+
+                    n1 = (float)(Math.exp(2.77258872 * n1) - 1) / 70.f;
+                    n2 = (float)(Math.exp(2.77258872 * n2) - 1) / 70.f;
+                    n3 = (float)(Math.exp(2.77258872 * n3) - 1) / 70.f;
+                    n4 = (float)(Math.exp(2.77258872 * n4) - 1) / 70.f;
 
                     sx = n2 - n3;
                     sy = n1 - n4;
@@ -257,7 +263,7 @@ public class SphereBuilder {
 
                     // f(x) = 5000 * (e^x – 1) / (e^1 – 1)
                     //heightP = (float)(Math.pow(2.71, heightP) / (2.71 - 1));
-                    heightP = (float)(Math.exp(2.77258872 * heightP) - 1) / 80.f;
+                    heightP = (float)(Math.exp(2.77258872 * heightP) - 1) / 70.f;
                     //heightP = (float)Math.sqrt(heightP*heightP*heightP) / 10.f;
                 }
 
@@ -271,13 +277,49 @@ public class SphereBuilder {
                 if( heightmap == null ) {
                     curr1.normal.set(curr1.position).nor();
                 } else {
-                    Vector3 normVec = curr1.position.cpy();
-                    normVec.add(new Vector3(-sx*9, sy*9, 0));
-//                    curr1.normal.set(new Vector3(sx, 0, sy)).nor();
+//                    Vector3 normVec = curr1.position.cpy().nor();
+////                    normVec.add(new Vector3(-sx, 0, sy).nor());
+////                    curr1.normal.set(new Vector3(sx, 0, sy)).nor();
+//
+//                    //normVec.add(rand.nextFloat());
+//                    curr1.normal.set(normVec).nor();
+//                    //curr1.normal.set(sx, -sy, 0).nor();
+//
+//                    float n2n = (float)(Math.exp(2.77258872 * n2) - 1) / 80.f;
+//                    float n3n = (float)(Math.exp(2.77258872 * n3) - 1) / 80.f;
+//
+//                    hw2 = hw * (1+n2n);
+//                    hd2 = hd * (1+n2n);
+//                    hh2 = hh * (1+n2n);
+//
+////                    float angleUN = stepU * (i+sx*us);
+////                    float angleVN = stepV * (i+sy*vs);
+//                    Vector3 point1 = new Vector3();
+//                    tempV1.set(MathUtils.cos(angleU) * hw2, 0f, MathUtils.sin(angleU) * hd2);
+//                    point1.set(tempV1.x * t, MathUtils.cos(angleV) * hh2, tempV1.z * t);
+//
+//
+//                    hw2 = hw * (1+n3n);
+//                    hd2 = hd * (1+n3n);
+//                    hh2 = hh * (1+n3n);
+//
+//                    Vector3 point2 = new Vector3();
+//                    tempV1.set(MathUtils.cos(angleU) * hw2, 0f, MathUtils.sin(angleU) * hd2);
+//                    point2.set(tempV1.x * t, MathUtils.cos(angleV) * hh2, tempV1.z * t);
+//
+//                    curr1.normal.set(point1).crs(point2).nor();
+//
+//                    curr1.normal.set(curr1.position).sub(point2).nor();
 
-                    //normVec.add(rand.nextFloat());
-                    curr1.normal.set(normVec).nor();
-                    //curr1.normal.set(sx, -sy, 0).nor();
+                    //curr1.normal.set(new Vector3(1.f, sx, 0.f).nor()).crs(new Vector3(0.f, 1.0f, sy).nor()).crs(curr1.position.cpy().nor());
+
+                    curr1.normal.set(curr1.position).sub(sx*500, 0, sy*500).nor();
+//                    curr1.normal.set(curr1.position);
+                    //curr1.normal.set(tempV1.x * t, MathUtils.cos(angleVN) * hh2, tempV1.z * t).nor();
+//                    blabla.set(tempV1.x * t, MathUtils.cos(angleVN) * hh2, tempV1.z * t).nor();
+
+//                    normVec.add(blabla).nor();
+//                    curr1.normal.set(normVec);
                 }
                 curr1.uv.set(u, v);
                 vertex(curr1);

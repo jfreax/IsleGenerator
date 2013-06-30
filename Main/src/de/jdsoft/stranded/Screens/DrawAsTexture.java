@@ -258,8 +258,7 @@ public class DrawAsTexture implements Screen {
             }
         }
 
-        Pixmap blurred = BlurUtils.blur(heightmap, 2, 2, false);
-
+        Pixmap blurred = BlurUtils.blur(heightmap, 3, 2, false);
         heightmap = blurred;
 
 //        texture = new Texture(blurred, true);

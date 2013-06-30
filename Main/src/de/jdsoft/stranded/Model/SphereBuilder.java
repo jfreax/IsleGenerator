@@ -63,11 +63,7 @@ public class SphereBuilder {
 
 
     static public Model createNew(Texture texture, Pixmap heightmap, String id, long attribute, float width, float height, float depth, int divisionsU, int divisionsV) {
-        SphereBuilder sb = new SphereBuilder();
-        sb.begin(attribute);
-        sb.part(id, GL10.GL_TRIANGLES);
-        sb.sphere(width, height, depth, divisionsU, divisionsV, heightmap);
-        Mesh mesh = sb.end();
+        Mesh mesh = createNewMesh(id, attribute, width, height, depth, divisionsU, divisionsV, heightmap);
 
         ModelBuilder modelBuilder = new ModelBuilder();
 
@@ -77,11 +73,12 @@ public class SphereBuilder {
         return modelBuilder.end();
     }
 
-    static public Mesh createNewMesh(String id, long attribute, float width, float height, float depth, int divisionsU, int divisionsV) {
+
+    static public Mesh createNewMesh(String id, long attribute, float width, float height, float depth, int divisionsU, int divisionsV, Pixmap heightmap) {
         SphereBuilder sb = new SphereBuilder();
         sb.begin(attribute);
         sb.part(id, GL10.GL_TRIANGLES);
-        sb.sphere(width, height, depth, divisionsU, divisionsV);
+        sb.sphere(width, height, depth, divisionsU, divisionsV, heightmap);
         return sb.end();
     }
 
@@ -236,8 +233,8 @@ public class SphereBuilder {
 
 //                    float stepw = (hmw / divisionsU) / 2.f;
 //                    float steph = (hmh / divisionsV) / 2.f;
-                    float stepw = us*8.f;
-                    float steph = vs*8.f;
+                    float stepw = us*38.f;
+                    float steph = vs*38.f;
 
                     // Boundaries
                     hmPos.x = Math.max(hmPos.x, stepw);
@@ -311,7 +308,7 @@ public class SphereBuilder {
 
                     //curr1.normal.set(new Vector3(1.f, sx, 0.f).nor()).crs(new Vector3(0.f, 1.0f, sy).nor()).crs(curr1.position.cpy().nor());
 
-                    curr1.normal.set(curr1.position).sub(sx*500, 0, sy*500).nor();
+                    curr1.normal.set(curr1.position).sub(sx*200, 0, sy*200).nor();
 //                    curr1.normal.set(curr1.position);
 //                    curr1.normal.set(tempV1.x * t, MathUtils.cos(angleVN) * hh2, tempV1.z * t).nor();
 //                    blabla.set(tempV1.x * t, MathUtils.cos(angleVN) * hh2, tempV1.z * t).nor();

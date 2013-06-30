@@ -6,13 +6,16 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g3d.*;
+import com.badlogic.gdx.graphics.g3d.decals.Decal;
 import com.badlogic.gdx.graphics.g3d.lights.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.lights.Lights;
+import com.badlogic.gdx.graphics.g3d.materials.BlendingAttribute;
+import com.badlogic.gdx.graphics.g3d.materials.Material;
 import com.badlogic.gdx.graphics.g3d.materials.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.shaders.BaseShader;
-import com.badlogic.gdx.graphics.g3d.shaders.DefaultShader;
 import com.badlogic.gdx.graphics.g3d.utils.*;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.marcrh.graph.Point;
@@ -25,6 +28,8 @@ import java.util.List;
 
 public class DrawAsTexture implements Screen {
 
+    private final ModelInstance testPlanetEffect;
+    private final ModelBatch modelBatchPlanetEffect;
     TileManager tileManager;
     int mapWidth = 512;
     int mapHeight = 512;
@@ -64,9 +69,9 @@ public class DrawAsTexture implements Screen {
 
         // Enable opengl features
         Gdx.graphics.getGL20().glEnable(GL20.GL_TEXTURE_2D);
-        Gdx.graphics.getGL20().glEnable(GL20.GL_BLEND);
-        Gdx.graphics.getGL20().glBlendFunc(GL20.GL_SRC_COLOR, GL20.GL_ONE);
-        //Gdx.graphics.getGL20().glEnable(GL20.GL_DEPTH_TEST);
+//        Gdx.graphics.getGL20().glEnable(GL20.GL_BLEND);
+        Gdx.graphics.getGL20().glBlendFunc(GL20.GL_ZERO, GL20.GL_ONE);
+        Gdx.graphics.getGL20().glEnable(GL20.GL_DEPTH_TEST);
 //
 //        Gdx.graphics.getGL20().glDisable(GL20.GL_DEPTH_TEST);
 
@@ -97,24 +102,49 @@ public class DrawAsTexture implements Screen {
 
 
         // Create planet mesh
-        long attr = VertexAttributes.Usage.Position | VertexAttributes.Usage.ColorPacked | VertexAttributes.Usage.TextureCoordinates | VertexAttributes.Usage.Normal;
-        planetModel = SphereBuilder.createNew(texture, heightmap, "0", attr, 10.f, 10.f, 10.f, 50, 50);
+        Vector3 planetModelSize = new Vector3(10.f, 10.f, 10.f);
+        long attr = VertexAttributes.Usage.Position
+                  | VertexAttributes.Usage.ColorPacked
+                  | VertexAttributes.Usage.TextureCoordinates
+                  | VertexAttributes.Usage.Normal;
+
+        planetModel = SphereBuilder.createNew(texture, heightmap, "0", attr, planetModelSize.x, planetModelSize.y, planetModelSize.z, 50, 50);
 
 
         // Create mesh for planet effect
         modelBatch = new ModelBatch(Gdx.files.internal("shader/default.vertex.glsl"), Gdx.files.internal("shader/default.fragment.glsl"));
+        modelBatchPlanetEffect = new ModelBatch(new BaseShaderProvider() {
+            @Override
+            protected Shader createShader (Renderable renderable) {
+                return new TestShader();
+            }
+        });
         ModelBuilder modelBuilder = new ModelBuilder();
+        Model planetEffectModel = modelBuilder.createRect(
+                -planetModelSize.x, -planetModelSize.y, 0.f,
+                 planetModelSize.x, -planetModelSize.y, 0.f,
+                 planetModelSize.x,  planetModelSize.y, 0.f,
+                -planetModelSize.x,  planetModelSize.y, 0.f,
+                0.f, 0.f, 1.f,
+                new Material(new TimeAttribute(0.5f)),
+                attr
+        );
 //        planetModel = modelBuilder.createSphere(10.f, 10.f, 10.f, 50, 50,
 //                new Material( new TextureAttribute(TextureAttribute.Diffuse, texture)),
 //                VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates);
 
         testPlanet = new ModelInstance(planetModel);
+        testPlanetEffect = new ModelInstance(planetEffectModel);
+
+
+//        testPlanet.materials.add(new Material(new TimeAttribute(0.8f)));
+//        testPlanet.materials.add(new Material(new BlendingAttribute(GL10.GL_ZERO, GL10.GL_ZERO)));
 
     }
 
-    float angle = 0.f;
     float rotate = 0.f;
     float rotateY = 0.f;
+    float time = 0.f;
 
 
     @Override
@@ -122,6 +152,7 @@ public class DrawAsTexture implements Screen {
         rotate /= 1.1f;
         rotateY /= 1.1f;
 
+        time += delta;
 
         if(Gdx.input.isKeyPressed(Input.Keys.A)) {
             TextureAttribute tattr = (TextureAttribute)(testPlanet.materials.first().get(TextureAttribute.Diffuse));
@@ -145,8 +176,8 @@ public class DrawAsTexture implements Screen {
             rotateY += 0.2f;
         }
 
-        Gdx.graphics.getGL20().glClearColor(0.2f, 0.2f, 0.2f, 0.4f);
         Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+        Gdx.graphics.getGL20().glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 
         testPlanet.transform.rotate(Vector3.Y, rotate);
         testPlanet.transform.rotate(Vector3.X, rotateY);
@@ -155,6 +186,16 @@ public class DrawAsTexture implements Screen {
         modelBatch.begin(cam);
         modelBatch.render(testPlanet, lights);
         modelBatch.end();
+
+
+//        testPlanetEffect.materials.ad
+        TimeAttribute tattr = (TimeAttribute)(testPlanetEffect.materials.first().get(TimeAttribute.ID));
+        tattr.value = time;
+
+        modelBatchPlanetEffect.begin(cam);
+        modelBatchPlanetEffect.render(testPlanetEffect);
+        modelBatchPlanetEffect.end();
+
 
     }
 
@@ -261,15 +302,15 @@ public class DrawAsTexture implements Screen {
     public static class TestShader extends BaseShader {
         protected final BaseShader.Input u_projTrans	= register(new Input(GLOBAL_UNIFORM, "u_projTrans"));
         protected final Input u_worldTrans	= register(new Input(GLOBAL_UNIFORM, "u_worldTrans"));
-        protected final Input u_test			= register(new Input(GLOBAL_UNIFORM, "u_test"));
+        protected final Input u_time = register(new Input(GLOBAL_UNIFORM, "u_time"));
 
         protected final ShaderProgram program;
 
         public TestShader () {
             super();
             program = new ShaderProgram(
-                    Gdx.files.internal("shader/default.vertex.glsl").readString(),
-                    Gdx.files.internal("shader/default.fragment.glsl").readString());
+                    Gdx.files.internal("shader/planet_effect.vertex.glsl").readString(),
+                    Gdx.files.internal("shader/planet_effect.fragment.glsl").readString());
             //program = new ShaderProgram(vertexShader, fragmentShader);
             if (!program.isCompiled())
                 throw new GdxRuntimeException("Couldn't compile shader " + program.getLog());
@@ -292,13 +333,29 @@ public class DrawAsTexture implements Screen {
 
         @Override
         public void begin (Camera camera, RenderContext context) {
+            this.camera = camera;
+            this.context = context;
             program.begin();
-            set(u_projTrans, camera.combined);
+
+            camera.view.idt();
+            Matrix4 proj = camera.combined.cpy();
+//            proj.setToRotation(1.0f, 1.0f, 1.0f, 0.f);
+//            proj.setToLookAt(camera.position, camera.up);
+//            proj.setToRotation()
+            set(u_projTrans, proj);
+            Decal decal;
         }
 
         @Override
         public void render (Renderable renderable) {
-            set(u_worldTrans, renderable.worldTransform);
+            context.setBlending(true, GL10.GL_ONE, GL10.GL_ONE);
+
+
+//            set(u_worldTrans, renderable.worldTransform);
+//            renderable.mesh.render(program, renderable.primitiveType, renderable.meshPartOffset, renderable.meshPartSize);
+//            set(u_worldTrans, renderable.worldTransform.setToRotation(1.f, 1.0f, 1.0f, 0.5f));
+            TimeAttribute attr = (TimeAttribute)renderable.material.get(TimeAttribute.ID);
+            set(u_time, attr == null ? 1f : attr.value);
             renderable.mesh.render(program, renderable.primitiveType, renderable.meshPartOffset, renderable.meshPartSize);
         }
 
@@ -312,6 +369,29 @@ public class DrawAsTexture implements Screen {
             super.dispose();
             program.dispose();
         }
+    }
+
+    public static class TimeAttribute extends Material.Attribute {
+        public final static String Alias = "Time";
+        public final static long ID = register(Alias);
+
+        public float value;
+
+        protected TimeAttribute(final float value) {
+            super(ID);
+            this.value = value;
+        }
+
+        @Override
+        public Material.Attribute copy () {
+            return new TimeAttribute(value);
+        }
+
+        @Override
+        protected boolean equals(Material.Attribute other) {
+            return false;
+        }
+
     }
 
 

@@ -65,7 +65,8 @@ uniform vec4 u_fogColor;
 varying float v_fog;
 #endif // fogFlag
 
-uniform float time;
+uniform float u_time;
+
 
 
 void main() {
@@ -121,6 +122,4 @@ void main() {
 				discard;
 		#endif
 	#endif
-
-
 }

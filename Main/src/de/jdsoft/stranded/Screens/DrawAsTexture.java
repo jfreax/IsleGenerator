@@ -8,11 +8,7 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g3d.*;
 import com.badlogic.gdx.graphics.g3d.lights.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.lights.Lights;
-import com.badlogic.gdx.graphics.g3d.materials.BlendingAttribute;
-import com.badlogic.gdx.graphics.g3d.materials.Material;
 import com.badlogic.gdx.graphics.g3d.materials.TextureAttribute;
-import com.badlogic.gdx.graphics.g3d.model.MeshPart;
-import com.badlogic.gdx.graphics.g3d.model.NodePart;
 import com.badlogic.gdx.graphics.g3d.shaders.BaseShader;
 import com.badlogic.gdx.graphics.g3d.shaders.DefaultShader;
 import com.badlogic.gdx.graphics.g3d.utils.*;
@@ -41,13 +37,9 @@ public class DrawAsTexture implements Screen {
 
     private Lights lights;
     public ModelBatch modelBatch;
-    public Model model;
+    public Model planetModel;
 
-    public ModelInstance instance;
-    private TestShader testShader;
-    private Renderable planet;
-    private RenderContext renderContext;
-    private DefaultShader shader2;
+    public ModelInstance testPlanet;
 
 
     @Override
@@ -105,36 +97,18 @@ public class DrawAsTexture implements Screen {
 
 
         // Create planet mesh
+        long attr = VertexAttributes.Usage.Position | VertexAttributes.Usage.ColorPacked | VertexAttributes.Usage.TextureCoordinates | VertexAttributes.Usage.Normal;
+        planetModel = SphereBuilder.createNew(texture, heightmap, "0", attr, 10.f, 10.f, 10.f, 50, 50);
+
+
+        // Create mesh for planet effect
         modelBatch = new ModelBatch(Gdx.files.internal("shader/default.vertex.glsl"), Gdx.files.internal("shader/default.fragment.glsl"));
         ModelBuilder modelBuilder = new ModelBuilder();
-//        model = modelBuilder.createSphere(10.f, 10.f, 10.f, 50, 50,
+//        planetModel = modelBuilder.createSphere(10.f, 10.f, 10.f, 50, 50,
 //                new Material( new TextureAttribute(TextureAttribute.Diffuse, texture)),
 //                VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates);
 
-        long attr = VertexAttributes.Usage.Position | VertexAttributes.Usage.ColorPacked | VertexAttributes.Usage.TextureCoordinates | VertexAttributes.Usage.Normal;
-        model = SphereBuilder.createNew(texture, heightmap, "0", attr, 10.f, 10.f, 10.f, 50, 50);
-
-
-        NodePart blockPart = model.nodes.get(0).parts.get(0);
-
-        planet = new Renderable();
-        planet.mesh = blockPart.meshPart.mesh;
-        planet.meshPartOffset = blockPart.meshPart.indexOffset;
-        planet.meshPartSize = blockPart.meshPart.numVertices;
-        planet.primitiveType = blockPart.meshPart.primitiveType;
-        planet.material = blockPart.material;
-        planet.lights = lights;
-        planet.worldTransform.idt();
-
-//        renderContext = new RenderContext(new DefaultTextureBinder(DefaultTextureBinder.WEIGHTED, 1));
-//        shader2 = new DefaultShader(
-//                planet.material,
-//                planet.mesh.getVertexAttributes(),
-//                true, false, 1, 0, 0, 0);
-//        shader2.init();
-
-        instance = new ModelInstance(model);
-
+        testPlanet = new ModelInstance(planetModel);
 
     }
 
@@ -145,22 +119,17 @@ public class DrawAsTexture implements Screen {
 
     @Override
     public void render(float delta) {
-        //camController.update();
-
-        angle += delta*30;
-        angle %= 360;
-
         rotate /= 1.1f;
         rotateY /= 1.1f;
 
 
         if(Gdx.input.isKeyPressed(Input.Keys.A)) {
-            TextureAttribute tattr = (TextureAttribute)(instance.materials.first().get(TextureAttribute.Diffuse));
+            TextureAttribute tattr = (TextureAttribute)(testPlanet.materials.first().get(TextureAttribute.Diffuse));
             tattr.textureDescription.set(texture, GL10.GL_LINEAR_MIPMAP_LINEAR, GL10.GL_LINEAR_MIPMAP_LINEAR, GL10.GL_REPEAT, GL10.GL_REPEAT);
         }
         if(Gdx.input.isKeyPressed(Input.Keys.S)) {
             Texture texture2 = new Texture(heightmap);
-            TextureAttribute tattr = (TextureAttribute)(instance.materials.first().get(TextureAttribute.Diffuse));
+            TextureAttribute tattr = (TextureAttribute)(testPlanet.materials.first().get(TextureAttribute.Diffuse));
             tattr.textureDescription.set(texture2, GL10.GL_LINEAR_MIPMAP_LINEAR, GL10.GL_LINEAR_MIPMAP_LINEAR, GL10.GL_REPEAT, GL10.GL_REPEAT);
         }
         if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
@@ -176,33 +145,23 @@ public class DrawAsTexture implements Screen {
             rotateY += 0.2f;
         }
 
-            Gdx.graphics.getGL20().glClearColor(0.2f, 0.2f, 0.2f, 0.4f);
+        Gdx.graphics.getGL20().glClearColor(0.2f, 0.2f, 0.2f, 0.4f);
         Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
-        instance.transform.rotate(Vector3.Y, rotate);
-        instance.transform.rotate(Vector3.X, rotateY);
+        testPlanet.transform.rotate(Vector3.Y, rotate);
+        testPlanet.transform.rotate(Vector3.X, rotateY);
 
         //instance.userData
         modelBatch.begin(cam);
-        modelBatch.render(instance, lights);
-//        modelBatch.render(instance);
+        modelBatch.render(testPlanet, lights);
         modelBatch.end();
 
-
-//        planet.worldTransform.rotate(new Vector3(0, 1, 0), delta*10);
-//
-//        renderContext.begin();
-//        shader2.begin(cam, renderContext);
-//        shader2.set((new BaseShader.Input(BaseShader.GLOBAL_UNIFORM, "time")), 30.0f);
-//        shader2.render(planet);
-//        shader2.end();
-//        renderContext.end();
     }
 
     private void computeTexture() {
 
         Pixmap pixmap;
-        pixmap = new Pixmap(mapWidth, mapHeight, Pixmap.Format.RGBA8888); // Pixmap.Format.RGBA8888);
+        pixmap = new Pixmap(mapWidth, mapHeight, Pixmap.Format.RGBA8888);
 
         List<Tile> tiles = tileManager.getTiles();
         for( Tile tile : tiles) {
@@ -258,8 +217,7 @@ public class DrawAsTexture implements Screen {
             }
         }
 
-        Pixmap blurred = BlurUtils.blur(heightmap, 3, 2, false);
-        heightmap = blurred;
+        heightmap = BlurUtils.blur(heightmap, 3, 2, true);
 
 //        texture = new Texture(blurred, true);
 
@@ -297,12 +255,6 @@ public class DrawAsTexture implements Screen {
     public void dispose() {
         heightmap.dispose();
         texture.dispose();
-    }
-
-    public static class MyModelBatch extends ModelBatch {
-        ShaderProvider getShaderProvider() {
-            return shaderProvider;
-        }
     }
 
 

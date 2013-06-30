@@ -28,8 +28,6 @@ public class SphereBuilder {
     /** The indices to construct, no size checking is done */
     private ShortArray indices = new ShortArray();
     /** The size (in number of floats) of each vertex */
-    /** The size (in number of floats) of each vertex */
-    private int stride;
     /** The current vertex index, used for indexing */
     private short vindex;
     /** The offset in the indices array when begin() was called, used to define a meshpart. */
@@ -106,7 +104,8 @@ public class SphereBuilder {
         this.vindex = 0;
         this.istart = 0;
         this.part = null;
-        this.stride = attributes.vertexSize / 4;
+        /* The size (in number of floats) of each vertex */
+        int stride = attributes.vertexSize / 4;
         this.vertex = new float[stride];
         VertexAttribute a = attributes.findByUsage(VertexAttributes.Usage.Position);
         if (a == null)
@@ -201,7 +200,6 @@ public class SphereBuilder {
 
 
     public void sphere(float width, float height, float depth, int divisionsU, int divisionsV, Pixmap heightmap) {
-        Random rand = new Random();
 
         float hmw = 0.f, hmh = 0.f;
         if( heightmap != null ) {
@@ -229,7 +227,7 @@ public class SphereBuilder {
                 final float t = MathUtils.sin(angleV);
 
                 float sx = 0.f, sy = 0.f, heightP = 0.f;
-                float n1, n2 = 0.f, n3 = 0.f, n4;
+                float n1, n2, n3, n4;
                 if( heightmap != null ) {
                     Vector2 hmPos = new Vector2();
 
@@ -315,7 +313,7 @@ public class SphereBuilder {
 
                     curr1.normal.set(curr1.position).sub(sx*500, 0, sy*500).nor();
 //                    curr1.normal.set(curr1.position);
-                    //curr1.normal.set(tempV1.x * t, MathUtils.cos(angleVN) * hh2, tempV1.z * t).nor();
+//                    curr1.normal.set(tempV1.x * t, MathUtils.cos(angleVN) * hh2, tempV1.z * t).nor();
 //                    blabla.set(tempV1.x * t, MathUtils.cos(angleVN) * hh2, tempV1.z * t).nor();
 
 //                    normVec.add(blabla).nor();
@@ -334,8 +332,9 @@ public class SphereBuilder {
 
 
     public short vertex(Vector3 pos, Vector3 nor, Color col, Vector2 uv) {
-        if (col == null && colorSet)
+        if (col == null && colorSet) {
             col = color;
+        }
         if (pos != null) {
             vertex[posOffset  ] = pos.x;
             if (posSize > 1) vertex[posOffset+1] = pos.y;
@@ -360,7 +359,7 @@ public class SphereBuilder {
             vertex[uvOffset+1] = uv.y;
         }
         vertices.addAll(vertex);
-        return (short)(vindex++);
+        return (vindex++);
     }
 
 
@@ -369,30 +368,6 @@ public class SphereBuilder {
                 info.hasColor ? info.color : null, info.hasUV ? info.uv : null);
     }
 
-    public void index(final short value) {
-        indices.add(value);
-    }
-
-    public void index(final short value1, final short value2) {
-        indices.ensureCapacity(2);
-        indices.add(value1);
-        indices.add(value2);
-    }
-
-    public void index(final short value1, final short value2, final short value3) {
-        indices.ensureCapacity(3);
-        indices.add(value1);
-        indices.add(value2);
-        indices.add(value3);
-    }
-
-    public void index(final short value1, final short value2, final short value3, final short value4) {
-        indices.ensureCapacity(4);
-        indices.add(value1);
-        indices.add(value2);
-        indices.add(value3);
-        indices.add(value4);
-    }
 
     public void index(short value1, short value2, short value3, short value4, short value5, short value6) {
         indices.ensureCapacity(6);
@@ -402,25 +377,5 @@ public class SphereBuilder {
         indices.add(value4);
         indices.add(value5);
         indices.add(value6);
-    }
-
-    public void index(short value1, short value2, short value3, short value4, short value5, short value6, short value7, short value8) {
-        indices.ensureCapacity(8);
-        indices.add(value1);
-        indices.add(value2);
-        indices.add(value3);
-        indices.add(value4);
-        indices.add(value5);
-        indices.add(value6);
-        indices.add(value7);
-        indices.add(value8);
-    }
-
-    public FloatArray getVertices() {
-        return vertices;
-    }
-
-    public ShortArray getIndices() {
-        return indices;
     }
 }

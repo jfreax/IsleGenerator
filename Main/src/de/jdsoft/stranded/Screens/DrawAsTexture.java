@@ -16,6 +16,7 @@ import com.badlogic.gdx.graphics.g3d.shaders.BaseShader;
 import com.badlogic.gdx.graphics.g3d.utils.*;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.marcrh.graph.Point;
@@ -192,6 +193,25 @@ public class DrawAsTexture implements Screen {
         TimeAttribute tattr = (TimeAttribute)(testPlanetEffect.materials.first().get(TimeAttribute.ID));
         tattr.value = time;
 
+        Vector3 dir = new Vector3();
+        Vector3 planetEffectPosition = new Vector3();
+        testPlanetEffect.transform.getTranslation(planetEffectPosition);
+
+        dir.set(cam.position).sub(planetEffectPosition).nor();
+
+        Quaternion rotation = new Quaternion();
+        testPlanetEffect.transform.getRotation(rotation);
+
+        Vector3 tmp = new Vector3();
+        Vector3 tmp2 = new Vector3();
+        tmp.set(cam.up.cpy()).crs(dir).nor();
+        tmp2.set(dir).crs(tmp).nor();
+
+        rotation.setFromAxes(tmp.x, tmp2.x, dir.x, tmp.y, tmp2.y, dir.y, tmp.z, tmp2.z, dir.z);
+
+        testPlanetEffect.transform.set(rotation);
+
+
         modelBatchPlanetEffect.begin(cam);
         modelBatchPlanetEffect.render(testPlanetEffect);
         modelBatchPlanetEffect.end();
@@ -231,6 +251,7 @@ public class DrawAsTexture implements Screen {
 
         //blurred.dispose();
         pixmap.dispose();
+
     }
 
     private void computeHeightMap() {
@@ -338,17 +359,31 @@ public class DrawAsTexture implements Screen {
             program.begin();
 
             camera.view.idt();
-            Matrix4 proj = camera.combined.cpy();
+            Matrix4 proj = new Matrix4(camera.projection);
+            Matrix4 view = new Matrix4(camera.view);
+            Vector3 tmp = new Vector3();
+
+            //proj.setToOrtho(0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0, 0, 1);
+//            proj.setToRotation(1.0f, 1.f, 1.f, 0);
+
+            view.setToLookAt(camera.position, tmp.set(camera.position).add(camera.direction), camera.up);
+//            view.setToRotation(0.f, 0.0f, 0.0f, 1.f);
+
+
+
+            Matrix4.mul(proj.val, view.val);
 //            proj.setToRotation(1.0f, 1.0f, 1.0f, 0.f);
 //            proj.setToLookAt(camera.position, camera.up);
 //            proj.setToRotation()
-            set(u_projTrans, proj);
+//            set(u_projTrans, proj);
+            set(u_projTrans, camera.combined);
             Decal decal;
         }
 
         @Override
         public void render (Renderable renderable) {
             context.setBlending(true, GL10.GL_ONE, GL10.GL_ONE);
+            setWorldTransform(renderable.worldTransform);
 
 
 //            set(u_worldTrans, renderable.worldTransform);
@@ -368,6 +403,10 @@ public class DrawAsTexture implements Screen {
         public void dispose () {
             super.dispose();
             program.dispose();
+        }
+
+        private void setWorldTransform(final Matrix4 value) {
+            set(u_worldTrans, value);
         }
     }
 

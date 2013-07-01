@@ -10,7 +10,7 @@ import de.jdsoft.stranded.map.generator.Rivers;
 import de.jdsoft.stranded.map.entity.River;
 import de.jdsoft.stranded.map.entity.Tile;
 import de.jdsoft.stranded.map.generator.Biome;
-import de.jdsoft.stranded.map.generator.Islands;
+import de.jdsoft.stranded.map.generator.World;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -97,7 +97,7 @@ public class TileManager {
             }
         }
 
-        Islands generator = new Islands(width, height);
+        World generator = new World(width, height);
         generator.Compute(tiles);
         landTiles = generator.getLandTiles();
         maxHeight = generator.getAbsoluteMaxHeight();

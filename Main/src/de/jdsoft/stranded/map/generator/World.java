@@ -7,7 +7,7 @@ import de.jdsoft.stranded.map.entity.Tile;
 import java.util.*;
 
 
-public class Islands extends Generator {
+public class World extends Generator {
 
     private float absoluteMaxHeight = 0;
 
@@ -15,7 +15,7 @@ public class Islands extends Generator {
     private ArrayList<Tile> landTiles;
     private Random randomHeight = new Random();
 
-    public Islands(int width, int height) {
+    public World(int width, int height) {
         super(width, height);
 
         landTiles = new ArrayList<Tile>();

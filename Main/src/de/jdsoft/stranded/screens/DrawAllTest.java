@@ -8,8 +8,8 @@ import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.marcrh.graph.Point;
-import de.jdsoft.stranded.map.entity.Tile;
-import de.jdsoft.stranded.map.TileManager;
+import de.jdsoft.stranded.map.planet.entity.Tile;
+import de.jdsoft.stranded.map.planet.TileManager;
 
 import java.util.List;
 

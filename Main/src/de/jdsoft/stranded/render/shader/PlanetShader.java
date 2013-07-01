@@ -62,12 +62,14 @@ public class PlanetShader extends BaseShader {
     final Vector3 tmp = new Vector3();
     final Vector3 tmp2 = new Vector3();
     final Vector3 planetEffectPosition = new Vector3();
+    final Vector3 translation = new Vector3();
 
     @Override
     public void render (Renderable renderable) {
         context.setBlending(true, GL10.GL_ONE, GL10.GL_ONE);
 
         // Transform world view to make this a billboard
+        renderable.worldTransform.getTranslation(translation);
         renderable.worldTransform.getTranslation(planetEffectPosition);
         dir.set(camera.position).sub(planetEffectPosition).nor();
 
@@ -79,6 +81,7 @@ public class PlanetShader extends BaseShader {
         rotation.setFromAxes(tmp.x, tmp2.x, dir.x, tmp.y, tmp2.y, dir.y, tmp.z, tmp2.z, dir.z);
 
         renderable.worldTransform.set(rotation);
+        renderable.worldTransform.setTranslation(translation);
 
         // Set world transformation matrix
         set(u_worldTrans, renderable.worldTransform);

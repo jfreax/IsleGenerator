@@ -16,7 +16,7 @@ import de.jdsoft.stranded.map.planet.Map;
 import de.jdsoft.stranded.model.PlanetModel;
 import de.jdsoft.stranded.render.shader.PlanetShaderProvider;
 
-public class DrawAsTexture implements Screen {
+public class Universe implements Screen {
 
     private final Map map;
     PerspectiveCamera cam;
@@ -27,12 +27,12 @@ public class DrawAsTexture implements Screen {
 
     }
 
-    public DrawAsTexture() {
+    public Universe() {
         super();
 
         // Set camera
         cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        cam.position.set(3f, 0f, 20f);
+        cam.position.set(3f, 0f, 100f);
         cam.lookAt(0,0,0);
         cam.near = 0.1f;
         cam.far = 300f;
@@ -63,7 +63,7 @@ public class DrawAsTexture implements Screen {
 
         // Create new map
         map = new Map();
-        map.createPlanet();
+        map.createPlanet( new Vector3(3.0f, 0.f, 0.f) );
     }
 
     float rotate = 0.f;
@@ -109,8 +109,6 @@ public class DrawAsTexture implements Screen {
 
         map.render(delta, cam);
     }
-
-
 
     @Override
     public void resize(int width, int height) {

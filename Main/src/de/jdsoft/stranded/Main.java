@@ -1,7 +1,7 @@
 package de.jdsoft.stranded;
 
 import com.badlogic.gdx.Game;
-import de.jdsoft.stranded.screens.DrawAsTexture;
+import de.jdsoft.stranded.screens.Universe;
 
 
 public class Main extends Game {
@@ -9,7 +9,7 @@ public class Main extends Game {
     @Override
     public void create() {
         //this.setScreen(new DrawAllTest());
-        this.setScreen(new DrawAsTexture());
+        this.setScreen(new Universe());
         //this.setScreen(new ShaderMultitextureTest());
 
     }

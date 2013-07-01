@@ -1,12 +1,11 @@
-package de.jdsoft.stranded.Entity;
+package de.jdsoft.stranded.map.entity;
 
 
-import com.badlogic.gdx.graphics.Color;
 import com.marcrh.graph.Point;
 import com.marcrh.graph.delaunay.Region;
-import de.jdsoft.stranded.Generator.Biome;
-import de.jdsoft.stranded.Map.TileManager;
-import de.jdsoft.stranded.Constants;
+import de.jdsoft.stranded.map.generator.Biome;
+import de.jdsoft.stranded.map.TileManager;
+import de.jdsoft.stranded.map.Constants;
 
 import java.util.*;
 

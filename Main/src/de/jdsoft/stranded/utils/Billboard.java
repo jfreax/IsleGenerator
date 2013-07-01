@@ -1,4 +1,4 @@
-package de.jdsoft.stranded.Utils;
+package de.jdsoft.stranded.utils;
 
 /*
  * Billboard is a 2d sprite that renders its location on screen

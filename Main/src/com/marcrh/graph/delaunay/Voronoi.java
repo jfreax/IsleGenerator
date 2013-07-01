@@ -289,7 +289,7 @@ public class Voronoi {
 			i++;
 			if(i>50){
 				System.out.println("Error 2");
-				//Utils.printPoints(points);
+				//utils.printPoints(points);
 				//findFirstTriad(triad, pivot);
 				throw new RuntimeException("Error searching first triad");				
 			}

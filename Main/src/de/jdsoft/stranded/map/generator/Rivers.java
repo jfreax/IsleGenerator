@@ -1,9 +1,9 @@
-package de.jdsoft.stranded.Generator;
+package de.jdsoft.stranded.map.generator;
 
 
 import com.marcrh.graph.Point;
-import de.jdsoft.stranded.Entity.River;
-import de.jdsoft.stranded.Entity.Tile;
+import de.jdsoft.stranded.map.entity.River;
+import de.jdsoft.stranded.map.entity.Tile;
 
 import java.util.*;
 

@@ -1,4 +1,4 @@
-package de.jdsoft.stranded;
+package de.jdsoft.stranded.map;
 
 
 import android.graphics.Color;

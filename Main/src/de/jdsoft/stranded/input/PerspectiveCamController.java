@@ -1,4 +1,4 @@
-package de.jdsoft.stranded.Input;
+package de.jdsoft.stranded.input;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;

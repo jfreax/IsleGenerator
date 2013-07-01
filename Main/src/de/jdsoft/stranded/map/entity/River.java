@@ -1,8 +1,8 @@
-package de.jdsoft.stranded.Entity;
+package de.jdsoft.stranded.map.entity;
 
 
 import com.marcrh.graph.Point;
-import de.jdsoft.stranded.Constants;
+import de.jdsoft.stranded.map.Constants;
 
 import java.util.List;
 

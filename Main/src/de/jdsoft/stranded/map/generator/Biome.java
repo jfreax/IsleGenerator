@@ -1,8 +1,8 @@
-package de.jdsoft.stranded.Generator;
+package de.jdsoft.stranded.map.generator;
 
 
-import de.jdsoft.stranded.Constants;
-import de.jdsoft.stranded.Entity.Tile;
+import de.jdsoft.stranded.map.Constants;
+import de.jdsoft.stranded.map.entity.Tile;
 
 import java.util.ArrayList;
 import java.util.HashSet;

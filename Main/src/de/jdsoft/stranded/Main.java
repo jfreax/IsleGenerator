@@ -1,9 +1,7 @@
 package de.jdsoft.stranded;
 
 import com.badlogic.gdx.Game;
-import de.jdsoft.stranded.Screens.DrawAllTest;
-import de.jdsoft.stranded.Screens.DrawAsTexture;
-import de.jdsoft.stranded.Screens.ShaderMultitextureTest;
+import de.jdsoft.stranded.screens.DrawAsTexture;
 
 
 public class Main extends Game {

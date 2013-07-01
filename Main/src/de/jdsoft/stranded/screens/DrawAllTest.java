@@ -1,4 +1,4 @@
-package de.jdsoft.stranded.Screens;
+package de.jdsoft.stranded.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -8,8 +8,8 @@ import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.marcrh.graph.Point;
-import de.jdsoft.stranded.Entity.Tile;
-import de.jdsoft.stranded.Map.TileManager;
+import de.jdsoft.stranded.map.entity.Tile;
+import de.jdsoft.stranded.map.TileManager;
 
 import java.util.List;
 

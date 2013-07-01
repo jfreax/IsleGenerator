@@ -1,4 +1,4 @@
-package de.jdsoft.stranded.Utils;
+package de.jdsoft.stranded.utils;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL10;

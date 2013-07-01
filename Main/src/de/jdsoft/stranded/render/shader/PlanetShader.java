@@ -3,9 +3,12 @@ package de.jdsoft.stranded.render.shader;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g3d.Renderable;
 import com.badlogic.gdx.graphics.g3d.Shader;
+import com.badlogic.gdx.graphics.g3d.materials.*;
 import com.badlogic.gdx.graphics.g3d.shaders.BaseShader;
+import com.badlogic.gdx.graphics.g3d.shaders.DefaultShader;
 import com.badlogic.gdx.graphics.g3d.utils.RenderContext;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Quaternion;
@@ -17,20 +20,21 @@ public class PlanetShader extends BaseShader {
     protected final Input u_worldTrans	= register(new Input(GLOBAL_UNIFORM, "u_worldTrans"));
     protected final Input u_time = register(new Input(GLOBAL_UNIFORM, "u_time"));
 
-    protected final ShaderProgram program;
+    protected Camera camera;
 
     public PlanetShader() {
         super();
-        program = new ShaderProgram(
-                Gdx.files.internal("shader/planet_effect.vertex.glsl").readString(),
-                Gdx.files.internal("shader/planet_effect.fragment.glsl").readString());
-        if (!program.isCompiled())
-            throw new GdxRuntimeException("Couldn't compile shader " + program.getLog());
     }
 
     @Override
     public void init () {
-        super.init(program, 0, 0, 0);
+        ShaderProgram newShader = new ShaderProgram(
+                Gdx.files.internal("shader/planet_effect.vertex.glsl").readString(),
+                Gdx.files.internal("shader/planet_effect.fragment.glsl").readString());
+        if (!newShader.isCompiled())
+            throw new GdxRuntimeException("Couldn't compile shader " + newShader.getLog());
+
+        super.init(newShader, 0, 0, 0);
     }
 
     @Override
@@ -44,7 +48,9 @@ public class PlanetShader extends BaseShader {
     }
 
     @Override
-    public void begin (Camera camera, RenderContext context) {
+    public void begin( final Camera camera, final RenderContext context) {
+        super.begin(camera, context);
+
         this.camera = camera;
         this.context = context;
         program.begin();
@@ -85,6 +91,43 @@ public class PlanetShader extends BaseShader {
         renderable.mesh.render(program, renderable.primitiveType, renderable.meshPartOffset, renderable.meshPartSize);
     }
 
+
+    private static String createPrefix(final long mask, final long attributes, boolean lighting, boolean fog, int numDirectional, int numPoint, int numSpot) {
+        String prefix = "";
+        if (((attributes & VertexAttributes.Usage.Color) == VertexAttributes.Usage.Color) || ((attributes & VertexAttributes.Usage.ColorPacked) == VertexAttributes.Usage.ColorPacked))
+            prefix += "#define colorFlag\n";
+        if ((attributes & VertexAttributes.Usage.Normal) == VertexAttributes.Usage.Normal) {
+            prefix += "#define normalFlag\n";
+            if (lighting) {
+                prefix += "#define lightingFlag\n";
+                prefix += "#define ambientCubemapFlag\n";
+                prefix += "#define numDirectionalLights "+numDirectional+"\n";
+                prefix += "#define numPointLights "+numPoint+"\n";
+
+                if (fog) {
+                    prefix += "#define fogFlag\n";
+                }
+            }
+        }
+
+        if ((mask & BlendingAttribute.Type) == BlendingAttribute.Type)
+            prefix += "#define "+BlendingAttribute.Alias+"Flag\n";
+        if ((mask & TextureAttribute.Diffuse) == TextureAttribute.Diffuse)
+            prefix += "#define "+TextureAttribute.DiffuseAlias+"Flag\n";
+        if ((mask & TextureAttribute.Normal) == TextureAttribute.Normal)
+            prefix += "#define "+TextureAttribute.NormalAlias+"Flag\n";
+        if ((mask & ColorAttribute.Diffuse) == ColorAttribute.Diffuse)
+            prefix += "#define "+ColorAttribute.DiffuseAlias+"Flag\n";
+        if ((mask & ColorAttribute.Specular) == ColorAttribute.Specular)
+            prefix += "#define "+ColorAttribute.SpecularAlias+"Flag\n";
+        if ((mask & FloatAttribute.Shininess) == FloatAttribute.Shininess)
+            prefix += "#define "+FloatAttribute.ShininessAlias+"Flag\n";
+        if ((mask & FloatAttribute.AlphaTest) == FloatAttribute.AlphaTest)
+            prefix += "#define "+FloatAttribute.AlphaTestAlias+"Flag\n";
+
+        return prefix;
+    }
+
     @Override
     public void end () {
         program.end();
@@ -95,5 +138,4 @@ public class PlanetShader extends BaseShader {
         super.dispose();
         program.dispose();
     }
-
 }

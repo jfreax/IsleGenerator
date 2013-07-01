@@ -46,7 +46,6 @@ public class Map implements Disposable {
     public void render( float delta, Camera cam ) {
         time += delta;
 
-//        cam.rotateAround();
 
         // Render all suns
         // TODO
@@ -54,12 +53,8 @@ public class Map implements Disposable {
         // Render all planets
         boolean first = true;
         for( Planet planet : planets ) {
-            if( first ) {
-                planet.update(delta);
-                first = false;
-            }
+            planet.update(delta);
 
-//            modelBatch.
 
             modelBatch.begin(cam);
             modelBatch.render(planet.planetModel, lights);

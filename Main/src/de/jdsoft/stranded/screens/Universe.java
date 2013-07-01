@@ -2,17 +2,21 @@ package de.jdsoft.stranded.screens;
 
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g3d.utils.*;
 import com.badlogic.gdx.math.Vector3;
+import de.jdsoft.stranded.input.GlobalInput;
 import de.jdsoft.stranded.map.Map;
 
 public class Universe implements Screen {
 
     private final Map map;
-    PerspectiveCamera cam;
-    CameraInputController camController;
+    final PerspectiveCamera cam;
+
+    final GlobalInput globalInput;
 
     @Override
     public void show() {
@@ -24,15 +28,17 @@ public class Universe implements Screen {
 
         // Set camera
         cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        cam.position.set(3f, 0f, 100f);
+        cam.position.set(3f, 0f, 5f);
         cam.lookAt(0,0,0);
         cam.near = 0.1f;
         cam.far = 300f;
         cam.update();
 
         // Initialize camera controler
-        camController = new CameraInputController(cam);
-        Gdx.input.setInputProcessor(camController);
+
+
+        globalInput = new GlobalInput(cam);
+
 
         // Enable opengl features
         Gdx.graphics.getGL20().glEnable(GL20.GL_TEXTURE_2D);

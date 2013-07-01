@@ -21,6 +21,8 @@ import com.marcrh.graph.Point;
 import de.jdsoft.stranded.map.entity.Tile;
 import de.jdsoft.stranded.map.TileManager;
 import de.jdsoft.stranded.model.SphereBuilder;
+import de.jdsoft.stranded.render.material.TimeAttribute;
+import de.jdsoft.stranded.render.shader.PlanetShader;
 import de.jdsoft.stranded.utils.BlurUtils;
 
 import java.util.List;
@@ -107,15 +109,15 @@ public class DrawAsTexture implements Screen {
                   | VertexAttributes.Usage.TextureCoordinates
                   | VertexAttributes.Usage.Normal;
 
-        planetModel = SphereBuilder.createNew(texture, heightmap, "0", attr, planetModelSize.x, planetModelSize.y, planetModelSize.z, 50, 50);
+        planetModel = SphereBuilder.createNew(texture, heightmap, "0", attr, planetModelSize.x, planetModelSize.y, planetModelSize.z, 100, 50);
 
 
         // Create mesh for planet effect
-        modelBatch = new ModelBatch(Gdx.files.internal("shader/default.vertex.glsl"), Gdx.files.internal("shader/planet_effect2.fragment.glsl"));
+        modelBatch = new ModelBatch(Gdx.files.internal("shader/default.vertex.glsl"), Gdx.files.internal("shader/planet.fragment.glsl"));
         modelBatchPlanetEffect = new ModelBatch(new BaseShaderProvider() {
             @Override
             protected Shader createShader (Renderable renderable) {
-                return new PlanetEffectShader();
+                return new PlanetShader();
             }
         });
         ModelBuilder modelBuilder = new ModelBuilder();
@@ -305,116 +307,5 @@ public class DrawAsTexture implements Screen {
         heightmap.dispose();
         texture.dispose();
     }
-
-
-    public static class PlanetEffectShader extends BaseShader {
-        protected final BaseShader.Input u_projTrans	= register(new Input(GLOBAL_UNIFORM, "u_projTrans"));
-        protected final Input u_worldTrans	= register(new Input(GLOBAL_UNIFORM, "u_worldTrans"));
-        protected final Input u_time = register(new Input(GLOBAL_UNIFORM, "u_time"));
-
-        protected final ShaderProgram program;
-
-        public PlanetEffectShader() {
-            super();
-            program = new ShaderProgram(
-                    Gdx.files.internal("shader/planet_effect.vertex.glsl").readString(),
-                    Gdx.files.internal("shader/planet_effect.fragment.glsl").readString());
-            if (!program.isCompiled())
-                throw new GdxRuntimeException("Couldn't compile shader " + program.getLog());
-        }
-
-        @Override
-        public void init () {
-            super.init(program, 0, 0, 0);
-        }
-
-        @Override
-        public int compareTo (Shader other) {
-            return 0;
-        }
-
-        @Override
-        public boolean canRender (Renderable instance) {
-            return true;
-        }
-
-        @Override
-        public void begin (Camera camera, RenderContext context) {
-            this.camera = camera;
-            this.context = context;
-            program.begin();
-
-            set(u_projTrans, camera.combined);
-        }
-
-        final Vector3 dir = new Vector3();
-        final Vector3 tmp = new Vector3();
-        final Vector3 tmp2 = new Vector3();
-        final Vector3 planetEffectPosition = new Vector3();
-
-        @Override
-        public void render (Renderable renderable) {
-            context.setBlending(true, GL10.GL_ONE, GL10.GL_ONE);
-
-            // Transform world view to make this a billboard
-            renderable.worldTransform.getTranslation(planetEffectPosition);
-            dir.set(camera.position).sub(planetEffectPosition).nor();
-
-            Quaternion rotation = new Quaternion();
-            renderable.worldTransform.getRotation(rotation);
-
-            tmp.set(camera.up.cpy()).crs(dir).nor();
-            tmp2.set(dir).crs(tmp).nor();
-            rotation.setFromAxes(tmp.x, tmp2.x, dir.x, tmp.y, tmp2.y, dir.y, tmp.z, tmp2.z, dir.z);
-
-            renderable.worldTransform.set(rotation);
-
-            // Set world transformation matrix
-            set(u_worldTrans, renderable.worldTransform);
-
-            // Get time attribute
-            TimeAttribute attr = (TimeAttribute)renderable.material.get(TimeAttribute.ID);
-            set(u_time, attr == null ? 0.0f : attr.value);
-
-            // Render mesh
-            renderable.mesh.render(program, renderable.primitiveType, renderable.meshPartOffset, renderable.meshPartSize);
-        }
-
-        @Override
-        public void end () {
-            program.end();
-        }
-
-        @Override
-        public void dispose () {
-            super.dispose();
-            program.dispose();
-        }
-
-    }
-
-    public static class TimeAttribute extends Material.Attribute {
-        public final static String Alias = "Time";
-        public final static long ID = register(Alias);
-
-        public float value;
-
-        protected TimeAttribute(final float value) {
-            super(ID);
-            this.value = value;
-        }
-
-        @Override
-        public Material.Attribute copy () {
-            return new TimeAttribute(value);
-        }
-
-        @Override
-        protected boolean equals(Material.Attribute other) {
-            return false;
-        }
-
-    }
-
 
 }

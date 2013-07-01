@@ -28,7 +28,7 @@ public class TileManager {
     private ArrayList<River> rivers;
     private float maxHeight;
 
-    public float maxHeightDifference;
+    //public float maxHeightDifference;
 
     public TileManager(int width, int height) {
         this.width = width;
@@ -101,7 +101,7 @@ public class TileManager {
         generator.Compute(tiles);
         landTiles = generator.getLandTiles();
         maxHeight = generator.getAbsoluteMaxHeight();
-        maxHeightDifference = generator.maxHeightDifference;
+        //maxHeightDifference = generator.maxHeightDifference;
 
         Rivers riverMaker = new Rivers(width, height);
         riverMaker.Compute(landTiles);

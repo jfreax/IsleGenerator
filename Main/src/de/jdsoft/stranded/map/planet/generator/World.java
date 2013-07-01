@@ -1,8 +1,8 @@
-package de.jdsoft.stranded.map.generator;
+package de.jdsoft.stranded.map.planet.generator;
 
 
 import com.marcrh.graph.Point;
-import de.jdsoft.stranded.map.entity.Tile;
+import de.jdsoft.stranded.map.planet.entity.Tile;
 
 import java.util.*;
 

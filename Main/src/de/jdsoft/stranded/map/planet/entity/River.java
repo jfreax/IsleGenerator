@@ -1,4 +1,4 @@
-package de.jdsoft.stranded.map.entity;
+package de.jdsoft.stranded.map.planet.entity;
 
 
 import com.marcrh.graph.Point;

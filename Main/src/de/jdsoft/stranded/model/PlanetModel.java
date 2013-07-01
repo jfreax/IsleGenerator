@@ -1,4 +1,4 @@
-package de.jdsoft.stranded.render;
+package de.jdsoft.stranded.model;
 
 
 import com.badlogic.gdx.graphics.*;
@@ -9,18 +9,16 @@ import com.badlogic.gdx.graphics.g3d.materials.Material;
 import com.badlogic.gdx.graphics.g3d.materials.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.MeshBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
-import com.badlogic.gdx.graphics.g3d.utils.TextureDescriptor;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Disposable;
 import com.marcrh.graph.Point;
-import de.jdsoft.stranded.map.TileManager;
-import de.jdsoft.stranded.map.entity.Tile;
-import de.jdsoft.stranded.model.SphereBuilder;
+import de.jdsoft.stranded.map.planet.TileManager;
+import de.jdsoft.stranded.map.planet.entity.Tile;
 import de.jdsoft.stranded.utils.BlurUtils;
 
 import java.util.List;
 
-public class Planet implements Disposable {
+public class PlanetModel implements Disposable {
     TileManager tileManager;
     final int mapWidth = 512;
     final int mapHeight = 512;
@@ -29,18 +27,22 @@ public class Planet implements Disposable {
     private Pixmap heightmap;
     private Model planetModel;
 
-    private static Planet planet = null;
+    private static PlanetModel planet = null;
 
     static public ModelInstance create() {
         if( planet == null ) {
-            planet = new Planet();
+            planet = new PlanetModel();
         }
 
         return new ModelInstance(planet.planetModel);
     }
 
+    static public void disposeAll() {
+        planet.dispose();
+    }
 
-    private Planet() {
+
+    private PlanetModel() {
 
         // Create new tilemanager and create new random map
         tileManager = new TileManager(mapWidth, mapHeight);
@@ -88,7 +90,7 @@ public class Planet implements Disposable {
         // Build model
         modelBuilder.begin();
         modelBuilder.part("main", mesh, GL10.GL_TRIANGLES, planetMaterial);
-        modelBuilder.part("effect", effectMesh, GL10.GL_TRIANGLES, new Material() );
+        modelBuilder.part("atmosphere", effectMesh, GL10.GL_TRIANGLES, new Material() );
         planetModel = modelBuilder.end();
 
     }

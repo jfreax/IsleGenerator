@@ -1,4 +1,4 @@
-package de.jdsoft.stranded.map;
+package de.jdsoft.stranded.map.planet;
 
 
 import com.marcrh.graph.Point;
@@ -6,11 +6,11 @@ import com.marcrh.graph.Range;
 import com.marcrh.graph.Utils;
 import com.marcrh.graph.delaunay.Region;
 import com.marcrh.graph.delaunay.Voronoi;
-import de.jdsoft.stranded.map.generator.Rivers;
-import de.jdsoft.stranded.map.entity.River;
-import de.jdsoft.stranded.map.entity.Tile;
-import de.jdsoft.stranded.map.generator.Biome;
-import de.jdsoft.stranded.map.generator.World;
+import de.jdsoft.stranded.map.planet.generator.Rivers;
+import de.jdsoft.stranded.map.planet.entity.River;
+import de.jdsoft.stranded.map.planet.entity.Tile;
+import de.jdsoft.stranded.map.planet.generator.Biome;
+import de.jdsoft.stranded.map.planet.generator.World;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -4,6 +4,7 @@ package de.jdsoft.stranded.model;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.graphics.g3d.materials.BlendingAttribute;
 import com.badlogic.gdx.graphics.g3d.materials.FloatAttribute;
 import com.badlogic.gdx.graphics.g3d.materials.Material;
 import com.badlogic.gdx.graphics.g3d.materials.TextureAttribute;
@@ -66,7 +67,7 @@ public class PlanetModel implements Disposable {
         final Material planetMaterial = new Material(
                 new TextureAttribute(TextureAttribute.Diffuse, texture)
                 , new FloatAttribute(FloatAttribute.Shininess, 0.f)
-                //, new BlendingAttribute(GL10.GL_ONE, GL10.GL_ONE)
+                , new BlendingAttribute(GL10.GL_ONE, GL10.GL_ONE)
         );
 
         // Planet mesh

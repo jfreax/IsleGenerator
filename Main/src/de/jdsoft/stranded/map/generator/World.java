@@ -46,8 +46,6 @@ public class World extends Generator {
 
         generateBonusLakes(tiles);
 
-        //computeShadowHeight(tiles);
-
         HashMap<Point, List<Tile> > nei = new HashMap<Point, List<Tile> >();
         for( Tile tile : tiles ) {
             for( Point p : tile.getPoints()) {
@@ -196,44 +194,6 @@ public class World extends Generator {
         }
 
         return true;
-    }
-
-
-    public float maxHeightDifference = 0.f;
-    private void computeShadowHeight(ArrayList<Tile> tiles) {
-        HashSet<Tile> visited = new HashSet<Tile>();
-
-        for( Tile tile : tiles ) {
-            for( Tile neighbor : tile.neighbors ) {
-                if( visited.contains(neighbor) ) {
-                    continue;
-                }
-
-                // Mark as visited
-                visited.add(neighbor);
-
-                if( neighbor.getType() == Tile.WATER) {
-                    continue;
-                }
-
-                // goes down
-                if( neighbor.getHeight() < tile.getHeight()*1.1f ) {
-                    if( neighbor.getPosition().x > tile.getPosition().x) {
-                        if( neighbor.getPosition().y > tile.getPosition().y ) {
-                            neighbor.goesDownFrom = tile.getHeight();
-
-                        }
-                    }
-                }
-                if ( tile.goesUpTo > neighbor.goesUpTo ) {
-                    neighbor.goesUpTo = tile.goesUpTo;
-                }
-                float diff = Math.abs(tile.getHeight() - neighbor.getHeight());
-                if( diff > maxHeightDifference ) {
-                    maxHeightDifference = diff;
-                }
-            }
-        }
     }
 
 

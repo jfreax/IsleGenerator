@@ -41,7 +41,7 @@ public class Islands extends Generator {
         FillRecursive(nexts);
 
         for( int i = random.nextInt(12)+5; i >= 0; i-- ) {
-            generateBonusMountain(tiles, random.nextInt(7)+3, 0.3f);
+            generateBonusMountain(tiles, random.nextInt(5)+3, 0.2f);
         }
 
         generateBonusLakes(tiles);

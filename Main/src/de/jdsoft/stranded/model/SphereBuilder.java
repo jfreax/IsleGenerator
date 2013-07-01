@@ -236,8 +236,8 @@ public class SphereBuilder {
 
 //                    float stepw = (hmw / divisionsU) / 2.f;
 //                    float steph = (hmh / divisionsV) / 2.f;
-                    float stepw = us*14.f;
-                    float steph = vs*14.f;
+                    float stepw = us*24.f;
+                    float steph = vs*24.f;
 
                     // Boundaries
                     hmPos.x = Math.max(hmPos.x, stepw);
@@ -276,7 +276,7 @@ public class SphereBuilder {
                     curr1.normal.set(curr1.position).nor();
                 } else {
 
-                    curr1.normal.set(curr1.position).sub(-sx*150, -sy*150, 0).nor();
+                    curr1.normal.set(curr1.position).sub(-sx*20, -sy*20, 0).nor();
 //                    curr1.normal.set(curr1.position);
                 }
                 curr1.uv.set(u, v);

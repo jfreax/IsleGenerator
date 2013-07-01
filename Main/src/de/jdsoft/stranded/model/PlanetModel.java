@@ -56,7 +56,7 @@ public class PlanetModel implements Disposable {
 
 
         // Create planet mesh
-        Vector3 planetModelSize = new Vector3(10.f, 10.f, 10.f);
+        final Vector3 planetModelSize = new Vector3(1.f, 1.f, 1.f);
         final long attr = VertexAttributes.Usage.Position
                 | VertexAttributes.Usage.ColorPacked
                 | VertexAttributes.Usage.TextureCoordinates

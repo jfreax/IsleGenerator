@@ -1,12 +1,17 @@
 package de.jdsoft.stranded.map;
 
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.lights.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.lights.Lights;
+import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.utils.Disposable;
 import de.jdsoft.stranded.input.GlobalInput;
 import de.jdsoft.stranded.map.planet.Planet;
@@ -20,11 +25,13 @@ public class Map implements InputProcessor, Disposable {
 
     private final ModelBatch modelBatch;
     private final Lights lights;
+    private final PerspectiveCamera cam;
     private List<Planet> planets;
     private float time = 0.0f;
 
 
-    public Map(GlobalInput globalInput) {
+    public Map(GlobalInput globalInput, PerspectiveCamera cam) {
+        this.cam = cam;
         globalInput.addProcessor(this);
 
         planets = new LinkedList<Planet>();
@@ -91,19 +98,74 @@ public class Map implements InputProcessor, Disposable {
         return false;
     }
 
+    // Temp vector
+    Vector3 intersectPosition = new Vector3();
+    Vector3 intersection = new Vector3();
+    Vector3 unprojected = new Vector3();
+    Vector3 delta = new Vector3();
+    Object intersectedWith = null;
+
+    // Position of mouse when object was clicked/dragged/unclicked
+    Vector3 lastIntersectionActionPos = new Vector3();
+
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        Ray pickRay = cam.getPickRay(screenX, screenY);
+        intersectedWith = null;
+
+        for( Planet planet : planets ) {
+            planet.getPosition(intersectPosition);
+            if( Intersector.intersectRaySphere(pickRay, intersectPosition, planet.getRadius(), intersection) ) {
+                System.out.println("Intersect!");
+                lastIntersectionActionPos = intersectPosition;
+                intersectedWith = planet;
+                return true;
+            }
+        }
+
+
         return false;
     }
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        oldDragged.set(-1, -1);
         return false;
     }
 
+
+    Vector2 oldDragged = new Vector2(-1.f, 1.f);
+
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
-        return false;
+        if( oldDragged.x == -1) {
+            oldDragged.set( screenX, screenY );
+        }
+
+        boolean ret = false;
+
+        if( intersectedWith != null ) {
+            if ( intersectedWith instanceof Planet) {
+                Planet planet = (Planet)intersectedWith;
+
+                planet.getPosition(intersectPosition);
+                Ray pickRay = cam.getPickRay(screenX, screenY);
+                // TODO maybe use a simple camera facing plane
+                if( Intersector.intersectRaySphere(pickRay, intersectPosition, planet.getRadius(), intersection) ) {
+                    Ray pickRayLast = cam.getPickRay(oldDragged.x, oldDragged.y);
+                    if( Intersector.intersectRaySphere(pickRayLast, intersectPosition, planet.getRadius(), delta) ) {
+                        delta.sub(intersection);
+
+                        planet.planetModel.transform.translate(-delta.x, -delta.y, -delta.z);
+                        ret = true;
+                    }
+                }
+
+            }
+        }
+
+        oldDragged.set( screenX, screenY );
+        return ret;
     }
 
     @Override

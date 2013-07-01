@@ -53,7 +53,7 @@ public class Universe implements Screen {
 
 
         // Create new map
-        map = new Map(globalInput);
+        map = new Map(globalInput, cam);
         map.createPlanet( new Vector3(-18.0f, 0.f, 0.f) );
         map.createPlanet( new Vector3(0.0f, 0.f, 0.f) );
 
@@ -71,6 +71,7 @@ public class Universe implements Screen {
     public void render(float delta) {
         rotate /= 1.1f;
         rotateY /= 1.1f;
+
 
         time += delta;
 

@@ -236,8 +236,8 @@ public class SphereBuilder {
 
 //                    float stepw = (hmw / divisionsU) / 2.f;
 //                    float steph = (hmh / divisionsV) / 2.f;
-                    float stepw = us*28.f;
-                    float steph = vs*28.f;
+                    float stepw = us*14.f;
+                    float steph = vs*14.f;
 
                     // Boundaries
                     hmPos.x = Math.max(hmPos.x, stepw);

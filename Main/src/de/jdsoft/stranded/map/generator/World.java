@@ -40,18 +40,22 @@ public class World extends Generator {
 
         FillRecursive(nexts);
 
+        // More mountain
         for( int i = random.nextInt(12)+5; i >= 0; i-- ) {
             generateBonusMountain(tiles, random.nextInt(5)+3, 0.2f);
         }
 
+        // Lakes!
         generateBonusLakes(tiles);
 
+
+        // Compute height for every _point_
         HashMap<Point, List<Tile> > nei = new HashMap<Point, List<Tile> >();
         for( Tile tile : tiles ) {
             for( Point p : tile.getPoints()) {
-                //if( tile.getType() != Tile.WATER && tile.getSpecificType() != Tile.BEACH ) {
-                //    p.z = tile.getHeight() / getAbsoluteMaxHeight();
-                //}
+//                if( tile.getType() != Tile.WATER && tile.getSpecificType() != Tile.BEACH ) {
+//                    p.z = tile.getHeight() / getAbsoluteMaxHeight();
+//                }
                 if( nei.containsKey(p)) {
                     nei.get(p).add(tile);
                 } else {
@@ -92,7 +96,6 @@ public class World extends Generator {
             meanHeight /= getAbsoluteMaxHeight();
 
             entry.getKey().z = meanHeight;
-
         }
 
 

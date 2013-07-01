@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g3d.*;
 import com.badlogic.gdx.graphics.g3d.decals.Decal;
 import com.badlogic.gdx.graphics.g3d.lights.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.lights.Lights;
+import com.badlogic.gdx.graphics.g3d.materials.FloatAttribute;
 import com.badlogic.gdx.graphics.g3d.materials.Material;
 import com.badlogic.gdx.graphics.g3d.materials.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.shaders.BaseShader;
@@ -97,8 +98,8 @@ public class DrawAsTexture implements Screen {
 
         // Test light source
         lights = new Lights();
-        lights.ambientLight.set(0.4f, 0.4f, 0.4f, 1f);
-        lights.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
+        lights.ambientLight.set(0.1f, 0.1f, 0.1f, 1f);
+        lights.add(new DirectionalLight().set(1.f, 1.f, 1.f, -1f, -0.8f, -0.2f));
 
 
         // Create planet mesh
@@ -112,7 +113,7 @@ public class DrawAsTexture implements Screen {
 
 
         // Create mesh for planet effect
-        modelBatch = new ModelBatch(Gdx.files.internal("shader/default.vertex.glsl"), Gdx.files.internal("shader/default.fragment.glsl"));
+        modelBatch = new ModelBatch(Gdx.files.internal("shader/default.vertex.glsl"), Gdx.files.internal("shader/planet_effect2.fragment.glsl"));
         modelBatchPlanetEffect = new ModelBatch(new BaseShaderProvider() {
             @Override
             protected Shader createShader (Renderable renderable) {
@@ -177,16 +178,13 @@ public class DrawAsTexture implements Screen {
         }
 
         Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-        Gdx.graphics.getGL20().glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+        Gdx.graphics.getGL20().glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
         testPlanet.transform.rotate(Vector3.Y, rotate);
         testPlanet.transform.rotate(Vector3.X, rotateY);
 
-        //instance.userData
-        modelBatch.begin(cam);
-        modelBatch.render(testPlanet, lights);
-        modelBatch.end();
-
+        FloatAttribute flattr = (FloatAttribute)(testPlanet.materials.first().get(FloatAttribute.Shininess));
+        flattr.value = time;
 
         TimeAttribute tattr = (TimeAttribute)(testPlanetEffect.materials.first().get(TimeAttribute.ID));
         tattr.value = time;
@@ -195,6 +193,15 @@ public class DrawAsTexture implements Screen {
         modelBatchPlanetEffect.begin(cam);
         modelBatchPlanetEffect.render(testPlanetEffect);
         modelBatchPlanetEffect.end();
+
+
+        //instance.userData
+        modelBatch.begin(cam);
+        modelBatch.render(testPlanet, lights);
+        modelBatch.end();
+
+
+
 
 
     }
@@ -313,7 +320,7 @@ public class DrawAsTexture implements Screen {
             super();
             program = new ShaderProgram(
                     Gdx.files.internal("shader/planet_effect.vertex.glsl").readString(),
-                    Gdx.files.internal("shader/planet_effect2.fragment.glsl").readString());
+                    Gdx.files.internal("shader/planet_effect.fragment.glsl").readString());
             if (!program.isCompiled())
                 throw new GdxRuntimeException("Couldn't compile shader " + program.getLog());
         }
@@ -349,7 +356,7 @@ public class DrawAsTexture implements Screen {
 
         @Override
         public void render (Renderable renderable) {
-            context.setBlending(true, GL10.GL_ONE, GL10.GL_ONE_MINUS_SRC_COLOR);
+            context.setBlending(true, GL10.GL_ONE, GL10.GL_ONE);
 
             // Transform world view to make this a billboard
             renderable.worldTransform.getTranslation(planetEffectPosition);

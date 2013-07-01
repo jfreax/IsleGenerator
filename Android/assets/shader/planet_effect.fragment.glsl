@@ -64,17 +64,22 @@ void main() {
     p += 0.1f * vec3((u_time / 16.f));
     //p += 0.1 * vec3(sin(u_time / 16.), sin(u_time / 12.),  sin(u_time / 128.));
 
-    float circleDiameter = field(p) / 40.f;
-    float r = 0.5;
-    float softness = 0.3f;
+    //float circleDiameter = field(p) / 40.f;
+    float circleDiameter = 0.01f;
+    float r = 0.55;
+    float softness = 0.15f;
 
 
-    float t = pow(field(p), .2);
-    color = vec4( t/4.f, t/3.f, t/2.f, t/2.f);
+    //float t = pow(field(p), .2);
+    //float t = 2.f;
+    //color = vec4( t/4.f, t/3.f, t/2.f, t/2.f);
+    color = vec4( 0.14, 0.18, 0.31, 0.0f);
 
     //color *= vec4( vec3( smoothstep(r, r+softness, len) ), 1.0f );
-    color *= vec4( vec3( smoothstep(r, r+0.02f, len) ), 1.0f );
+    //color *= vec4( vec3( smoothstep(r, r+0.02f, len) ), 1.0f );
     color *= vec4( vec3( 1.0f - smoothstep(r+circleDiameter, r+circleDiameter+softness, len) ), 1.0f );
+
+    color *= smoothstep( r-0.09, r, len);
     //color *= vec4( vec3( 1.0f - smoothstep(r-softness, r+softness, len) ), 1.0f );
 
     gl_FragColor = color;

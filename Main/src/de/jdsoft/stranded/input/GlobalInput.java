@@ -4,21 +4,21 @@ package de.jdsoft.stranded.input;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.PerspectiveCamera;
-import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 
 public class GlobalInput implements InputProcessor {
 
-    private final InputMultiplexer cameraInput;
+    private final InputMultiplexer inputMulti;
 
-    public GlobalInput(Camera cam) {
+    public GlobalInput() {
         super();
 
-        cameraInput = new InputMultiplexer();
-        cameraInput.addProcessor(this);
-        cameraInput.addProcessor(new CameraInputController(cam));
-        Gdx.input.setInputProcessor(cameraInput);
+        inputMulti = new InputMultiplexer();
+        inputMulti.addProcessor(this);
+        Gdx.input.setInputProcessor(inputMulti);
+    }
+
+    public void addProcessor(InputProcessor processor) {
+        inputMulti.addProcessor(processor);
     }
 
     @Override

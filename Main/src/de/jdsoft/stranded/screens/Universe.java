@@ -34,23 +34,16 @@ public class Universe implements Screen {
         cam.far = 300f;
         cam.update();
 
-        // Initialize camera controler
-
-
-        globalInput = new GlobalInput(cam);
+        // Initialize input controller
+        globalInput = new GlobalInput();
 
 
         // Enable opengl features
         Gdx.graphics.getGL20().glEnable(GL20.GL_TEXTURE_2D);
-//        Gdx.graphics.getGL20().glEnable(GL20.GL_BLEND);
+        Gdx.graphics.getGL20().glEnable(GL20.GL_BLEND);
         Gdx.graphics.getGL20().glBlendFunc(GL20.GL_ZERO, GL20.GL_ONE);
         Gdx.graphics.getGL20().glEnable(GL20.GL_DEPTH_TEST);
-//
 //        Gdx.graphics.getGL20().glDisable(GL20.GL_DEPTH_TEST);
-
-        //Gdx.gl.glDepthMask(false);
-        //Gdx.graphics.getGL20().glDisable(GL10.GL_BLEND);
-
 
         // Enable face culling- be careful with spriteBatch, might cull sprites as well!
         Gdx.graphics.getGL20().glEnable(GL20.GL_CULL_FACE);
@@ -60,9 +53,13 @@ public class Universe implements Screen {
 
 
         // Create new map
-        map = new Map();
+        map = new Map(globalInput);
         map.createPlanet( new Vector3(-18.0f, 0.f, 0.f) );
         map.createPlanet( new Vector3(0.0f, 0.f, 0.f) );
+
+
+        // Add camera controller as last controller!
+        globalInput.addProcessor(new CameraInputController(cam));
     }
 
     float rotate = 0.f;

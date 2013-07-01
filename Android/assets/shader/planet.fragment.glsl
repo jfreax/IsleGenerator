@@ -12,10 +12,6 @@ varying vec3 v_normal;
 varying vec4 v_color;
 
 varying vec3 v_lightDiffuse;
-//varying vec3 v_lightSpecular;
-
-
-
 //uniform float u_time;
 
 

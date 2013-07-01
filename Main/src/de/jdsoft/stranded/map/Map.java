@@ -1,4 +1,4 @@
-package de.jdsoft.stranded.map.planet;
+package de.jdsoft.stranded.map;
 
 
 import com.badlogic.gdx.graphics.Camera;
@@ -6,7 +6,9 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.lights.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.lights.Lights;
 import com.badlogic.gdx.graphics.g3d.materials.FloatAttribute;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Disposable;
+import de.jdsoft.stranded.map.planet.Planet;
 import de.jdsoft.stranded.model.PlanetModel;
 import de.jdsoft.stranded.render.shader.PlanetShaderProvider;
 
@@ -32,8 +34,10 @@ public class Map implements Disposable {
 
     }
 
-    public Planet createPlanet() {
+    public Planet createPlanet( Vector3 position ) {
         Planet planet = new Planet();
+        planet.setPosition(position);
+
         planets.add(planet);
 
         return planet;
@@ -42,12 +46,20 @@ public class Map implements Disposable {
     public void render( float delta, Camera cam ) {
         time += delta;
 
+//        cam.rotateAround();
+
         // Render all suns
         // TODO
 
         // Render all planets
+        boolean first = true;
         for( Planet planet : planets ) {
-            planet.setTime(time);
+            if( first ) {
+                planet.update(delta);
+                first = false;
+            }
+
+//            modelBatch.
 
             modelBatch.begin(cam);
             modelBatch.render(planet.planetModel, lights);

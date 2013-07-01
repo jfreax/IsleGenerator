@@ -2,19 +2,11 @@ package de.jdsoft.stranded.screens;
 
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.graphics.g3d.*;
-import com.badlogic.gdx.graphics.g3d.lights.DirectionalLight;
-import com.badlogic.gdx.graphics.g3d.lights.Lights;
-import com.badlogic.gdx.graphics.g3d.materials.FloatAttribute;
-import com.badlogic.gdx.graphics.g3d.materials.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.*;
 import com.badlogic.gdx.math.Vector3;
-import de.jdsoft.stranded.map.planet.Map;
-import de.jdsoft.stranded.model.PlanetModel;
-import de.jdsoft.stranded.render.shader.PlanetShaderProvider;
+import de.jdsoft.stranded.map.Map;
 
 public class Universe implements Screen {
 
@@ -63,7 +55,8 @@ public class Universe implements Screen {
 
         // Create new map
         map = new Map();
-        map.createPlanet( new Vector3(3.0f, 0.f, 0.f) );
+        map.createPlanet( new Vector3(-18.0f, 0.f, 0.f) );
+        map.createPlanet( new Vector3(0.0f, 0.f, 0.f) );
     }
 
     float rotate = 0.f;

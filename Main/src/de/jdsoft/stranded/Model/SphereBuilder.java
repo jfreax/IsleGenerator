@@ -3,6 +3,8 @@ package de.jdsoft.stranded.Model;
 
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g3d.Model;
+import com.badlogic.gdx.graphics.g3d.materials.BlendingAttribute;
+import com.badlogic.gdx.graphics.g3d.materials.FloatAttribute;
 import com.badlogic.gdx.graphics.g3d.materials.Material;
 import com.badlogic.gdx.graphics.g3d.materials.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.model.MeshPart;
@@ -69,7 +71,11 @@ public class SphereBuilder {
 
         modelBuilder.begin();
         modelBuilder.part(id, mesh, GL10.GL_TRIANGLES,
-                new Material( new TextureAttribute(TextureAttribute.Diffuse, texture)));
+                new Material(
+                          new TextureAttribute(TextureAttribute.Diffuse, texture)
+                        , new FloatAttribute(FloatAttribute.Shininess, 0.f)
+                      //, new BlendingAttribute(GL10.GL_ONE, GL10.GL_ONE)
+                ));
         return modelBuilder.end();
     }
 
@@ -233,8 +239,8 @@ public class SphereBuilder {
 
 //                    float stepw = (hmw / divisionsU) / 2.f;
 //                    float steph = (hmh / divisionsV) / 2.f;
-                    float stepw = us*38.f;
-                    float steph = vs*38.f;
+                    float stepw = us*28.f;
+                    float steph = vs*28.f;
 
                     // Boundaries
                     hmPos.x = Math.max(hmPos.x, stepw);
@@ -258,7 +264,7 @@ public class SphereBuilder {
 
                     // f(x) = 5000 * (e^x – 1) / (e^1 – 1)
                     //heightP = (float)(Math.pow(2.71, heightP) / (2.71 - 1));
-                    heightP = (float)(Math.exp(2.77258872 * heightP) - 1) / 70.f;
+                    heightP = (float)(Math.exp(2.77258872 * heightP) - 1) / 140.f;
                     //heightP = (float)Math.sqrt(heightP*heightP*heightP) / 10.f;
                 }
 
@@ -272,49 +278,9 @@ public class SphereBuilder {
                 if( heightmap == null ) {
                     curr1.normal.set(curr1.position).nor();
                 } else {
-//                    Vector3 normVec = curr1.position.cpy().nor();
-////                    normVec.add(new Vector3(-sx, 0, sy).nor());
-////                    curr1.normal.set(new Vector3(sx, 0, sy)).nor();
-//
-//                    //normVec.add(rand.nextFloat());
-//                    curr1.normal.set(normVec).nor();
-//                    //curr1.normal.set(sx, -sy, 0).nor();
-//
-//                    float n2n = (float)(Math.exp(2.77258872 * n2) - 1) / 80.f;
-//                    float n3n = (float)(Math.exp(2.77258872 * n3) - 1) / 80.f;
-//
-//                    hw2 = hw * (1+n2n);
-//                    hd2 = hd * (1+n2n);
-//                    hh2 = hh * (1+n2n);
-//
-////                    float angleUN = stepU * (i+sx*us);
-////                    float angleVN = stepV * (i+sy*vs);
-//                    Vector3 point1 = new Vector3();
-//                    tempV1.set(MathUtils.cos(angleU) * hw2, 0f, MathUtils.sin(angleU) * hd2);
-//                    point1.set(tempV1.x * t, MathUtils.cos(angleV) * hh2, tempV1.z * t);
-//
-//
-//                    hw2 = hw * (1+n3n);
-//                    hd2 = hd * (1+n3n);
-//                    hh2 = hh * (1+n3n);
-//
-//                    Vector3 point2 = new Vector3();
-//                    tempV1.set(MathUtils.cos(angleU) * hw2, 0f, MathUtils.sin(angleU) * hd2);
-//                    point2.set(tempV1.x * t, MathUtils.cos(angleV) * hh2, tempV1.z * t);
-//
-//                    curr1.normal.set(point1).crs(point2).nor();
-//
-//                    curr1.normal.set(curr1.position).sub(point2).nor();
 
-                    //curr1.normal.set(new Vector3(1.f, sx, 0.f).nor()).crs(new Vector3(0.f, 1.0f, sy).nor()).crs(curr1.position.cpy().nor());
-
-                    curr1.normal.set(curr1.position).sub(sx*200, 0, sy*200).nor();
+                    curr1.normal.set(curr1.position).sub(-sx*150, -sy*150, 0).nor();
 //                    curr1.normal.set(curr1.position);
-//                    curr1.normal.set(tempV1.x * t, MathUtils.cos(angleVN) * hh2, tempV1.z * t).nor();
-//                    blabla.set(tempV1.x * t, MathUtils.cos(angleVN) * hh2, tempV1.z * t).nor();
-
-//                    normVec.add(blabla).nor();
-//                    curr1.normal.set(normVec);
                 }
                 curr1.uv.set(u, v);
                 vertex(curr1);

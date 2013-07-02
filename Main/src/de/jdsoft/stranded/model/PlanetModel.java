@@ -2,6 +2,7 @@ package de.jdsoft.stranded.model;
 
 
 import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.materials.BlendingAttribute;
@@ -18,6 +19,7 @@ import de.jdsoft.stranded.map.planet.TileManager;
 import de.jdsoft.stranded.map.planet.entity.Tile;
 import de.jdsoft.stranded.utils.BlurUtils;
 
+import javax.microedition.khronos.opengles.*;
 import java.util.List;
 
 public class PlanetModel implements Disposable {
@@ -27,8 +29,8 @@ public class PlanetModel implements Disposable {
     final int mapHeight = 512;
 
     public Texture texture;
-    public Pixmap heightmap;
     public Texture heightmapTexture;
+    public Pixmap heightmap;
     private Model planetModel;
 
     private static PlanetModel planet = null;
@@ -184,5 +186,15 @@ public class PlanetModel implements Disposable {
         //heightmap.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
 
 //        pixmap.dispose();
+    }
+
+    public void setRenderHeightMap() {
+        TextureAttribute textureAttribute = (TextureAttribute)planet.planetModel.materials.first().get(TextureAttribute.Diffuse);
+        textureAttribute.textureDescription.set(heightmapTexture, javax.microedition.khronos.opengles.GL10.GL_LINEAR, javax.microedition.khronos.opengles.GL10.GL_LINEAR, javax.microedition.khronos.opengles.GL10.GL_TEXTURE_WRAP_S, javax.microedition.khronos.opengles.GL10.GL_TEXTURE_WRAP_S);
+    }
+
+    public void setRenderTexture() {
+        TextureAttribute textureAttribute = (TextureAttribute)planet.planetModel.materials.first().get(TextureAttribute.Diffuse);
+        textureAttribute.textureDescription.set(texture, javax.microedition.khronos.opengles.GL10.GL_LINEAR, javax.microedition.khronos.opengles.GL10.GL_LINEAR, javax.microedition.khronos.opengles.GL10.GL_TEXTURE_WRAP_S, javax.microedition.khronos.opengles.GL10.GL_TEXTURE_WRAP_S);
     }
 }

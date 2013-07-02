@@ -107,9 +107,7 @@ public class Map implements InputProcessor, Disposable {
             case Input.Keys.H:
                 for( Planet planet : planets ) {
                     PlanetModel model = (PlanetModel)planet.planetModel.userData;
-
-                    TextureAttribute texture = (TextureAttribute)planet.planetModel.materials.first().get(TextureAttribute.Diffuse);
-                    texture.textureDescription.set(model.heightmapTexture, GL10.GL_LINEAR, GL10.GL_LINEAR, GL10.GL_TEXTURE_WRAP_S, GL10.GL_TEXTURE_WRAP_S);
+                    model.setRenderHeightMap();
                 }
                 break;
         }
@@ -123,9 +121,7 @@ public class Map implements InputProcessor, Disposable {
             case Input.Keys.H:
                 for( Planet planet : planets ) {
                     PlanetModel model = (PlanetModel)planet.planetModel.userData;
-
-                    TextureAttribute texture = (TextureAttribute)planet.planetModel.materials.first().get(TextureAttribute.Diffuse);
-                    texture.textureDescription.set(model.texture, GL10.GL_LINEAR, GL10.GL_LINEAR, GL10.GL_TEXTURE_WRAP_S, GL10.GL_TEXTURE_WRAP_S);
+                    model.setRenderTexture();
                 }
                 break;
         }

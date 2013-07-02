@@ -147,8 +147,9 @@ public class Map implements InputProcessor, Disposable {
 
         for( Planet planet : planets ) {
             planet.getPosition(intersectPosition);
+            System.out.println("Test for planet " + planet + " at " + intersectPosition);
             if( Intersector.intersectRaySphere(pickRay, intersectPosition, planet.getRadius(), intersection) ) {
-                System.out.println("Intersect!");
+                System.out.println("Intersect! " + planet + " at " + intersectPosition);
                 lastIntersectionActionPos = intersectPosition;
                 intersectedWith = planet;
                 return true;
@@ -190,11 +191,13 @@ public class Map implements InputProcessor, Disposable {
 
                         if( buttonClickedLast == Input.Buttons.RIGHT ) {
                             delta.sub(intersection);
-                            planet.planetModel.transform.translate(-delta.x, -delta.y, -delta.z);
+                            planet.translate(-delta.x, -delta.y, -delta.z);
+//                            planet.planetModel.transform.translate(-delta.x, -delta.y, -delta.z);
                         } else {
                             delta.sub(intersection);
-                            System.out.println(delta);
-                            planet.planetModel.transform.rotate(Vector3.X, 0.1f);
+                            System.out.println("Halloooo "  + planet);
+                            planet.rotate(Vector3.X, 0.51f);
+//                            planet.planetModel.transform.rotate(Vector3.X, 0.1f);
 
                         }
                         ret = true;

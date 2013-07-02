@@ -18,6 +18,8 @@ import com.badlogic.gdx.utils.FloatArray;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.ShortArray;
 
+import java.util.Random;
+
 public class SphereBuilder {
 
     /** The vertex attributes of the resulting mesh */
@@ -58,7 +60,9 @@ public class SphereBuilder {
 
     private final MeshPartBuilder.VertexInfo vertTmp3 = new MeshPartBuilder.VertexInfo();
     private final Vector3 tempV1 = new Vector3();
+    private final Vector3 tempV2 = new Vector3();
     private int primitiveType;
+
 
 
     static public Model createNew(Texture texture, Pixmap heightmap, String id, long attribute, float width, float height, float depth, int divisionsU, int divisionsV) {
@@ -171,7 +175,7 @@ public class SphereBuilder {
     }
 
     public void setColor(final Color color) {
-        if ((colorSet = color != null)==true)
+        if ((colorSet = color != null))
             this.color.set(color);
     }
 
@@ -200,13 +204,6 @@ public class SphereBuilder {
 
 
     public void sphere(float width, float height, float depth, int divisionsU, int divisionsV, Pixmap heightmap) {
-
-        float hmw = 0.f, hmh = 0.f;
-        if( heightmap != null ) {
-            hmw = heightmap.getWidth();
-            hmh = heightmap.getHeight();
-        }
-
         final float hw = width * 0.5f;
         final float hh = height * 0.5f;
         final float hd = depth * 0.5f;
@@ -224,61 +221,58 @@ public class SphereBuilder {
             for (int j = 0; j <= divisionsV; j++) {
                 angleV = stepV * j;
                 v = vs * j;
-                final float t = MathUtils.sin(angleV);
 
-                float sx = 0.f, sy = 0.f, heightP = 0.f;
-                float n1, n2, n3, n4;
+                Vector3 middle = new Vector3();
+                Vector3 bottom = new Vector3();
+                Vector3 left = new Vector3();
+                Vector3 right = new Vector3();
+                Vector3 top = new Vector3();
+                float hMiddle = 0.f;
                 if( heightmap != null ) {
-                    Vector2 hmPos = new Vector2();
+                    final float stepw = us;
+                    final float steph = vs;
 
-                    hmPos.x = u * hmw;
-                    hmPos.y = v * hmh;
+                    getHeightFromHeightMap(heightmap, angleU, angleV);
+                    hMiddle = getHeightFromHeightMap(heightmap, angleU, angleV);
+                    float hBottom = getHeightFromHeightMap(heightmap, angleU, angleV - steph);
+                    float hLeft = getHeightFromHeightMap(heightmap, angleU - stepw, angleV);
+                    float hRight = getHeightFromHeightMap(heightmap, angleU + stepw, angleV);
+                    float hTop = getHeightFromHeightMap(heightmap, angleU, angleV + steph);
 
-//                    float stepw = (hmw / divisionsU) / 2.f;
-//                    float steph = (hmh / divisionsV) / 2.f;
-                    float stepw = us*24.f;
-                    float steph = vs*24.f;
+                    hMiddle = normalizeHeight(hMiddle);
+                    hBottom = normalizeHeight(hBottom);
+                    hLeft = normalizeHeight(hLeft);
+                    hRight = normalizeHeight(hRight);
+                    hTop = normalizeHeight(hTop);
 
-                    // Boundaries
-                    hmPos.x = Math.max(hmPos.x, stepw);
-                    hmPos.x = Math.min(hmPos.x, hmw - stepw);
-                    hmPos.y = Math.max(hmPos.y, steph);
-                    hmPos.y = Math.min(hmPos.y, hmh - steph);
+                    polarToCarth(angleU, angleV, hw, hd, hh, hMiddle, middle ); // middle point
+                    polarToCarth(angleU-stepw, angleV, hw, hd, hh, hLeft, left );
+                    polarToCarth(angleU+stepw, angleV, hw, hd, hh, hRight, right );
+                    polarToCarth(angleU, angleV-steph, hw, hd, hh, hBottom, bottom );
+                    polarToCarth(angleU, angleV+steph, hw, hd, hh, hTop, top );
 
-                    n1 = (heightmap.getPixel((int)hmPos.x, (int)(hmPos.y - steph)) & 0xff) / 255.f;
-                    n2 = (heightmap.getPixel((int)(hmPos.x - stepw), (int)hmPos.y) & 0xff) / 255.f;
-                    n3 = (heightmap.getPixel((int)(hmPos.x + stepw), (int)hmPos.y) & 0xff) / 255.f;
-                    n4 = (heightmap.getPixel((int)hmPos.x, (int)(hmPos.y + steph)) & 0xff) / 255.f;
+                    //
+                    right.sub(middle);
+                    left.sub(middle);
+                    top.sub(middle);
+                    bottom.sub(middle);
 
-                    n1 = (float)(Math.exp(2.77258872 * n1) - 1) / 70.f;
-                    n2 = (float)(Math.exp(2.77258872 * n2) - 1) / 70.f;
-                    n3 = (float)(Math.exp(2.77258872 * n3) - 1) / 70.f;
-                    n4 = (float)(Math.exp(2.77258872 * n4) - 1) / 70.f;
+                    tempV1.set(right).crs(top).nor();
+                    tempV1.add(tempV2.set(top).crs(left).nor());
+                    tempV1.add(tempV2.set(left).crs(bottom).nor());
+                    tempV1.add(tempV2.set(bottom).crs(right).nor());
 
-                    sx = n2 - n3;
-                    sy = n1 - n4;
-                    heightP = (heightmap.getPixel((int)hmPos.x, (int)hmPos.y) & 0xff) / 255.f;
+                    tempV1.nor();
 
-                    // f(x) = 5000 * (e^x – 1) / (e^1 – 1)
-                    //heightP = (float)(Math.pow(2.71, heightP) / (2.71 - 1));
-                    heightP = (float)(Math.exp(2.77258872 * heightP) - 1) / 140.f;
-                    //heightP = (float)Math.sqrt(heightP*heightP*heightP) / 10.f;
-                }
+                    // Set normal vector
+                    curr1.normal.set(tempV1);
 
-                float hw2 = hw * (1+heightP);
-                float hd2 = hd * (1+heightP);
-                float hh2 = hh * (1+heightP);
-
-                tempV1.set(MathUtils.cos(angleU) * hw2, 0f, MathUtils.sin(angleU) * hd2);
-                curr1.position.set(tempV1.x * t, MathUtils.cos(angleV) * hh2, tempV1.z * t);
-
-                if( heightmap == null ) {
+                } else { // Without height map
                     curr1.normal.set(curr1.position).nor();
-                } else {
-
-                    curr1.normal.set(curr1.position).sub(-sx*20, -sy*20, 0).nor();
-//                    curr1.normal.set(curr1.position);
                 }
+
+                polarToCarth(angleU, angleV, hw, hd, hh, hMiddle, curr1.position );
+
                 curr1.uv.set(u, v);
                 vertex(curr1);
                 if (i == 0 || j == 0)
@@ -288,6 +282,22 @@ public class SphereBuilder {
                         (short)(vindex-1), (short)(vindex-(divisionsV+1)), (short)(vindex-(divisionsV+2)));
             }
         }
+    }
+
+    private float getHeightFromHeightMap(Pixmap heightmap, float angleU, float angleV) {
+        return (heightmap.getPixel((int) (((MathUtils.PI2-angleU)  * heightmap.getWidth()) / MathUtils.PI2),
+                (int) ((angleV * heightmap.getHeight()) / MathUtils.PI)) & 0xff) / 255.f;
+    }
+
+    private float normalizeHeight(float height) {
+
+        return (float)(Math.exp(2.77258872 * height) - 1) / 100.f;
+    }
+
+    private void polarToCarth(float angleU, float angleV, float hw, float hd, float hh, float heightOffset, Vector3 out) {
+        float t = MathUtils.sin(angleV);
+        tempV1.set(MathUtils.cos(angleU) * (hw+heightOffset), 0f, MathUtils.sin(angleU) * (hd+heightOffset));
+        out.set(tempV1.x * t, MathUtils.cos(angleV) * (hh+heightOffset), tempV1.z * t);
     }
 
 

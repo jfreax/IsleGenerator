@@ -1,12 +1,10 @@
 package de.jdsoft.stranded.map.planet;
 
 
-import android.renderscript.Matrix4f;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.materials.FloatAttribute;
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Disposable;
 import de.jdsoft.stranded.model.PlanetModel;
@@ -17,7 +15,7 @@ public class Planet implements Disposable {
     private float time = 0.f;
     private Matrix4 transform = new Matrix4();
 
-    // update manually!
+    // temp. update manually!
     private Vector3 position = new Vector3(0.f, 0.f, 0.f);
 
     private float angle = 0.1f;
@@ -25,6 +23,7 @@ public class Planet implements Disposable {
 
     // Temp
     Vector3 tmpVec = new Vector3();
+    private float orbitAngle = 0.f;
 
     public Planet() {
         planetModel = PlanetModel.create();
@@ -34,11 +33,11 @@ public class Planet implements Disposable {
 
 
     public void setPosition( Vector3 position ) {
-        planetModel.transform.setToTranslation(position);
+        this.position = position;
     }
 
     public void getPosition(Vector3 position) {
-        planetModel.transform.getTranslation(position);
+        position = this.position;
     }
 
     public float getRadius() {
@@ -48,55 +47,23 @@ public class Planet implements Disposable {
 
     public void update(float delta) {
         time += delta;
+        orbitAngle += delta*70;
 
         FloatAttribute flattr = (FloatAttribute)(planetModel.materials.first().get(FloatAttribute.Shininess));
         flattr.value = time;
 
-        // Rotate around own axes
-//        planetModel.transform.rotate(Vector3.Y, 0.1f);
-
 
         // Rotate around given center
         Vector3 axis = new Vector3(0.0f, 0.0f, 1.0f);
-        Quaternion quaternion = new Quaternion();
-//        planetModel.transform.getRotation(quaternion);
-
-
-        planetModel.transform.getTranslation(position);
-
-        tmpVec.set(orbit).sub(position);
-
-        planetModel.transform.translate(tmpVec.x, tmpVec.y, tmpVec.z); //.inv();
-//        planetModel.transform.setToTranslation(orbit);
 //        planetModel.transform.getTranslation(position);
 
-        planetModel.transform.rotate(axis, angle * delta * 120.f);
-//        planetModel.transform.getTranslation(position);
 
-//        tmpVec.rotate(axis, angle * delta * 120.f);
-        planetModel.transform.translate(-tmpVec.x, -tmpVec.y, -tmpVec.z);
-//        planetModel.transform.setToTranslation(position);
+        planetModel.transform.setToTranslation(orbit);
+        planetModel.transform.rotate(axis, orbitAngle);
+        planetModel.transform.translate(position);
 
-//        val[M03] = vector.x;
-//        val[M13] = vector.y;
-//        val[M23] = vector.z;
-//
-//        planetModel.transform.rotate(Vector3.Y, 1.5f);
-////        planetModel.calculateTransforms();
-        planetModel.transform.getTranslation(position);
-
-//        planetModel.transform.set(quaternion);
-/*        planetModel.transform.rotate(Vector3.Y, 1.5f);
-        planetModel.calculateTransforms();
-
-        planetModel.transform.rotate(axis, angle * delta * 120.f);
-        planetModel.transform.getTranslation(position);
-        tmpVec.set(position).sub(orbit);
-        planetModel.transform.translate(-tmpVec.x, -tmpVec.y, -tmpVec.z);
-        planetModel.transform.rotate(axis, -angle * delta * 120.f);
-        planetModel.transform.translate(-tmpVec.x, -tmpVec.y, -tmpVec.z).inv();*/
-
-
+        // Rotate around own axes
+        planetModel.transform.rotate(axis, orbitAngle *0.3f);
 
 
     }

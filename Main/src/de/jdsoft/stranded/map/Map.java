@@ -5,9 +5,11 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.lights.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.lights.Lights;
+import com.badlogic.gdx.graphics.g3d.materials.TextureAttribute;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -18,6 +20,7 @@ import de.jdsoft.stranded.map.planet.Planet;
 import de.jdsoft.stranded.model.PlanetModel;
 import de.jdsoft.stranded.render.shader.PlanetShaderProvider;
 
+import javax.microedition.khronos.opengles.GL10;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -99,11 +102,23 @@ public class Map implements InputProcessor, Disposable {
 
     @Override
     public boolean keyDown(int keycode) {
+        for( Planet planet : planets ) {
+            PlanetModel model = (PlanetModel)planet.planetModel.userData;
+
+            TextureAttribute texture = (TextureAttribute)planet.planetModel.materials.first().get(TextureAttribute.Diffuse);
+            texture.textureDescription.set(model.texture, GL10.GL_LINEAR, GL10.GL_LINEAR, GL10.GL_TEXTURE_WRAP_S, GL10.GL_TEXTURE_WRAP_S);
+        }
         return false;
     }
 
     @Override
     public boolean keyUp(int keycode) {
+        for( Planet planet : planets ) {
+            PlanetModel model = (PlanetModel)planet.planetModel.userData;
+
+            TextureAttribute texture = (TextureAttribute)planet.planetModel.materials.first().get(TextureAttribute.Diffuse);
+            texture.textureDescription.set(model.heightmapTexture, GL10.GL_LINEAR, GL10.GL_LINEAR, GL10.GL_TEXTURE_WRAP_S, GL10.GL_TEXTURE_WRAP_S);
+        }
         return false;
     }
 

@@ -179,7 +179,7 @@ public class DrawAllTest implements Screen {
                 "}";
 
         shaderProgram = new ShaderProgram(verticesShader, fragmentShader);
-        if (shaderProgram.isCompiled() == false) {
+        if ( !shaderProgram.isCompiled()) {
             Gdx.app.log("ShaderError", shaderProgram.getLog());
             System.exit(0);
         }

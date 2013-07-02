@@ -28,7 +28,7 @@ public class Universe implements Screen {
 
         // Set camera
         cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        cam.position.set(3f, 0f, 5f);
+        cam.position.set(0f, 0f, 5f);
         cam.lookAt(0,0,0);
         cam.near = 0.1f;
         cam.far = 300f;

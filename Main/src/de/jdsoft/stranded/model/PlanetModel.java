@@ -21,12 +21,14 @@ import de.jdsoft.stranded.utils.BlurUtils;
 import java.util.List;
 
 public class PlanetModel implements Disposable {
+//    private final Texture textureHeightmap;
     TileManager tileManager;
     final int mapWidth = 512;
     final int mapHeight = 512;
 
-    private Texture texture;
-    private Pixmap heightmap;
+    public Texture texture;
+    public Pixmap heightmap;
+    public Texture heightmapTexture;
     private Model planetModel;
 
     private static PlanetModel planet = null;
@@ -36,8 +38,12 @@ public class PlanetModel implements Disposable {
             planet = new PlanetModel();
         }
 
-        return new ModelInstance(planet.planetModel);
+        ModelInstance ret = new ModelInstance(planet.planetModel);
+        ret.userData = planet;
+
+        return ret;
     }
+
 
     static public void disposeAll() {
         planet.dispose();
@@ -65,6 +71,7 @@ public class PlanetModel implements Disposable {
 
         //planetModel = SphereBuilder.createNew(texture, heightmap, "0", attr, planetModelSize.x, planetModelSize.y, planetModelSize.z, 100, 50);
 
+//        textureHeightmap = new Texture(heightmap);
         final Material planetMaterial = new Material(
                   new TextureAttribute(TextureAttribute.Diffuse, texture)
                 , new FloatAttribute(FloatAttribute.Shininess, 0.f)
@@ -165,7 +172,7 @@ public class PlanetModel implements Disposable {
 
         heightmap = BlurUtils.blur(heightmap, 3, 2, true);
 
-//        texture = new Texture(blurred, true);
+        heightmapTexture = new Texture(heightmap, true);
 
 //        texture.setFilter(Texture.TextureFilter.MipMapLinearLinear, Texture.TextureFilter.MipMapLinearLinear);
 //        texture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);

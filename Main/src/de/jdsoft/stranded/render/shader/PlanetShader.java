@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g3d.shaders.BaseShader;
 import com.badlogic.gdx.graphics.g3d.shaders.DefaultShader;
 import com.badlogic.gdx.graphics.g3d.utils.RenderContext;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.GdxRuntimeException;
@@ -64,16 +65,17 @@ public class PlanetShader extends BaseShader {
     final Vector3 planetEffectPosition = new Vector3();
     final Vector3 translation = new Vector3();
 
+    Quaternion rotation = new Quaternion();
+
     @Override
     public void render (Renderable renderable) {
-        context.setBlending(true, GL10.GL_ONE, GL10.GL_ONE);
+        context.setBlending(true, GL10.GL_ONE, GL10.GL_ONE_MINUS_SRC_ALPHA);
 
         // Transform world view to make this a billboard
         renderable.worldTransform.getTranslation(translation);
         renderable.worldTransform.getTranslation(planetEffectPosition);
         dir.set(camera.position).sub(planetEffectPosition).nor();
 
-        Quaternion rotation = new Quaternion();
         renderable.worldTransform.getRotation(rotation);
 
         tmp.set(camera.up.cpy()).crs(dir).nor();
@@ -83,8 +85,14 @@ public class PlanetShader extends BaseShader {
         renderable.worldTransform.set(rotation);
         renderable.worldTransform.setTranslation(translation);
 
+//        Matrix4 bla = (Matrix4)renderable.userData;
+//        if( bla != null) {
+//            renderable.worldTransform.set(bla);
+//        }
+
         // Set world transformation matrix
         set(u_worldTrans, renderable.worldTransform);
+
 
         // Get time attribute
         //TimeAttribute attr = (TimeAttribute)renderable.material.get(TimeAttribute.ID);

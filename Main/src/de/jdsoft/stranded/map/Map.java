@@ -1,7 +1,7 @@
 package de.jdsoft.stranded.map;
 
 
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
@@ -53,6 +53,19 @@ public class Map implements InputProcessor, Disposable {
         return planet;
     }
 
+    /**
+     * Creates new planet orbiting 'orbit' position
+     * @param position
+     * @param orbit
+     * @return
+     */
+    public Planet createPlanet( Vector3 position, Vector3 orbit) {
+        Planet planet = createPlanet(position);
+        planet.setOrbit(orbit);
+
+        return planet;
+    }
+
     public void render( float delta, Camera cam ) {
         time += delta;
 
@@ -65,6 +78,7 @@ public class Map implements InputProcessor, Disposable {
         for( Planet planet : planets ) {
             planet.update(delta);
 
+//            planet.planetModel.transform.rotate(Vector3.X, 1.7f);
 
             modelBatch.begin(cam);
             modelBatch.render(planet.planetModel, lights);
@@ -104,12 +118,15 @@ public class Map implements InputProcessor, Disposable {
     Vector3 unprojected = new Vector3();
     Vector3 delta = new Vector3();
     Object intersectedWith = null;
+    int buttonClickedLast = 0;
 
     // Position of mouse when object was clicked/dragged/unclicked
     Vector3 lastIntersectionActionPos = new Vector3();
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        buttonClickedLast = button;
+
         Ray pickRay = cam.getPickRay(screenX, screenY);
         intersectedWith = null;
 
@@ -154,9 +171,17 @@ public class Map implements InputProcessor, Disposable {
                 if( Intersector.intersectRaySphere(pickRay, intersectPosition, planet.getRadius(), intersection) ) {
                     Ray pickRayLast = cam.getPickRay(oldDragged.x, oldDragged.y);
                     if( Intersector.intersectRaySphere(pickRayLast, intersectPosition, planet.getRadius(), delta) ) {
-                        delta.sub(intersection);
 
-                        planet.planetModel.transform.translate(-delta.x, -delta.y, -delta.z);
+
+                        if( buttonClickedLast == Input.Buttons.RIGHT ) {
+                            delta.sub(intersection);
+                            planet.planetModel.transform.translate(-delta.x, -delta.y, -delta.z);
+                        } else {
+                            delta.sub(intersection);
+                            System.out.println(delta);
+                            planet.planetModel.transform.rotate(Vector3.X, 0.1f);
+
+                        }
                         ret = true;
                     }
                 }

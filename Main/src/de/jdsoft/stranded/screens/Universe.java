@@ -54,8 +54,8 @@ public class Universe implements Screen {
 
         // Create new map
         map = new Map(globalInput, cam);
-        map.createPlanet( new Vector3(-18.0f, 0.f, 0.f) );
-        map.createPlanet( new Vector3(0.0f, 0.f, 0.f) );
+        map.createPlanet( new Vector3(-8.0f, 0.f, 0.f) );
+        map.createPlanet( new Vector3(0.0f, 0.f, 0.f), new Vector3(0.0f, 0, 0) );
 
 
         // Add camera controller as last controller!

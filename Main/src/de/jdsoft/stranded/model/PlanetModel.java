@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g3d.materials.Material;
 import com.badlogic.gdx.graphics.g3d.materials.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.MeshBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Disposable;
 import com.marcrh.graph.Point;
@@ -65,9 +66,9 @@ public class PlanetModel implements Disposable {
         //planetModel = SphereBuilder.createNew(texture, heightmap, "0", attr, planetModelSize.x, planetModelSize.y, planetModelSize.z, 100, 50);
 
         final Material planetMaterial = new Material(
-                new TextureAttribute(TextureAttribute.Diffuse, texture)
+                  new TextureAttribute(TextureAttribute.Diffuse, texture)
                 , new FloatAttribute(FloatAttribute.Shininess, 0.f)
-                , new BlendingAttribute(GL10.GL_ONE, GL10.GL_ONE)
+                , new BlendingAttribute(GL10.GL_ONE, GL10.GL_ZERO)
         );
 
         // Planet mesh

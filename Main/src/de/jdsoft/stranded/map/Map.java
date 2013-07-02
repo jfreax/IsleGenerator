@@ -102,23 +102,34 @@ public class Map implements InputProcessor, Disposable {
 
     @Override
     public boolean keyDown(int keycode) {
-        for( Planet planet : planets ) {
-            PlanetModel model = (PlanetModel)planet.planetModel.userData;
 
-            TextureAttribute texture = (TextureAttribute)planet.planetModel.materials.first().get(TextureAttribute.Diffuse);
-            texture.textureDescription.set(model.texture, GL10.GL_LINEAR, GL10.GL_LINEAR, GL10.GL_TEXTURE_WRAP_S, GL10.GL_TEXTURE_WRAP_S);
+        switch ( keycode ) {
+            case Input.Keys.H:
+                for( Planet planet : planets ) {
+                    PlanetModel model = (PlanetModel)planet.planetModel.userData;
+
+                    TextureAttribute texture = (TextureAttribute)planet.planetModel.materials.first().get(TextureAttribute.Diffuse);
+                    texture.textureDescription.set(model.heightmapTexture, GL10.GL_LINEAR, GL10.GL_LINEAR, GL10.GL_TEXTURE_WRAP_S, GL10.GL_TEXTURE_WRAP_S);
+                }
+                break;
         }
         return false;
     }
 
     @Override
     public boolean keyUp(int keycode) {
-        for( Planet planet : planets ) {
-            PlanetModel model = (PlanetModel)planet.planetModel.userData;
 
-            TextureAttribute texture = (TextureAttribute)planet.planetModel.materials.first().get(TextureAttribute.Diffuse);
-            texture.textureDescription.set(model.heightmapTexture, GL10.GL_LINEAR, GL10.GL_LINEAR, GL10.GL_TEXTURE_WRAP_S, GL10.GL_TEXTURE_WRAP_S);
+        switch ( keycode ) {
+            case Input.Keys.H:
+                for( Planet planet : planets ) {
+                    PlanetModel model = (PlanetModel)planet.planetModel.userData;
+
+                    TextureAttribute texture = (TextureAttribute)planet.planetModel.materials.first().get(TextureAttribute.Diffuse);
+                    texture.textureDescription.set(model.texture, GL10.GL_LINEAR, GL10.GL_LINEAR, GL10.GL_TEXTURE_WRAP_S, GL10.GL_TEXTURE_WRAP_S);
+                }
+                break;
         }
+
         return false;
     }
 
@@ -147,7 +158,6 @@ public class Map implements InputProcessor, Disposable {
 
         for( Planet planet : planets ) {
             planet.getPosition(intersectPosition);
-            System.out.println("Test for planet " + planet + " at " + intersectPosition);
             if( Intersector.intersectRaySphere(pickRay, intersectPosition, planet.getRadius(), intersection) ) {
                 System.out.println("Intersect! " + planet + " at " + intersectPosition);
                 lastIntersectionActionPos = intersectPosition;
@@ -188,17 +198,12 @@ public class Map implements InputProcessor, Disposable {
                     Ray pickRayLast = cam.getPickRay(oldDragged.x, oldDragged.y);
                     if( Intersector.intersectRaySphere(pickRayLast, intersectPosition, planet.getRadius(), delta) ) {
 
-
                         if( buttonClickedLast == Input.Buttons.RIGHT ) {
                             delta.sub(intersection);
                             planet.translate(-delta.x, -delta.y, -delta.z);
-//                            planet.planetModel.transform.translate(-delta.x, -delta.y, -delta.z);
                         } else {
                             delta.sub(intersection);
-                            System.out.println("Halloooo "  + planet);
                             planet.rotate(Vector3.X, 0.51f);
-//                            planet.planetModel.transform.rotate(Vector3.X, 0.1f);
-
                         }
                         ret = true;
                     }

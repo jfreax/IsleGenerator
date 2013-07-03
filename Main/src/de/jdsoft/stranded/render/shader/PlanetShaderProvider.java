@@ -26,7 +26,7 @@ public class PlanetShaderProvider extends BaseShaderProvider {
             }
             return new GLES10Shader();
         } else { // Return effect shader
-            return new PlanetShader();
+            return new PlanetShader("shader/planet_effect.vertex.glsl", "shader/planet_effect.fragment.glsl");
         }
     }
 }

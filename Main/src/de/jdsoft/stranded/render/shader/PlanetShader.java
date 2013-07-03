@@ -8,10 +8,8 @@ import com.badlogic.gdx.graphics.g3d.Renderable;
 import com.badlogic.gdx.graphics.g3d.Shader;
 import com.badlogic.gdx.graphics.g3d.materials.*;
 import com.badlogic.gdx.graphics.g3d.shaders.BaseShader;
-import com.badlogic.gdx.graphics.g3d.shaders.DefaultShader;
 import com.badlogic.gdx.graphics.g3d.utils.RenderContext;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.GdxRuntimeException;
@@ -21,17 +19,23 @@ public class PlanetShader extends BaseShader {
     protected final Input u_worldTrans	= register(new Input(GLOBAL_UNIFORM, "u_worldTrans"));
     protected final Input u_time = register(new Input(GLOBAL_UNIFORM, "u_time"));
 
+    private final String vertexFilePath;
+    private final String fragmentFilePath;
+
     protected Camera camera;
 
-    public PlanetShader() {
+    public PlanetShader(String vertexFilePath, String fragmentFilePath) {
         super();
+
+        this.vertexFilePath = vertexFilePath;
+        this.fragmentFilePath = fragmentFilePath;
     }
 
     @Override
     public void init () {
         ShaderProgram newShader = new ShaderProgram(
-                Gdx.files.internal("shader/planet_effect.vertex.glsl").readString(),
-                Gdx.files.internal("shader/planet_effect.fragment.glsl").readString());
+                Gdx.files.internal(vertexFilePath).readString(),
+                Gdx.files.internal(fragmentFilePath).readString());
         if (!newShader.isCompiled())
             throw new GdxRuntimeException("Couldn't compile shader " + newShader.getLog());
 
@@ -78,7 +82,6 @@ public class PlanetShader extends BaseShader {
 
         renderable.worldTransform.getRotation(rotation);
 
-
         tmp.set(camera.up.cpy()).crs(dir).nor();
         tmp2.set(dir).crs(tmp).nor();
         rotation.setFromAxes(tmp.x, tmp2.x, dir.x, tmp.y, tmp2.y, dir.y, tmp.z, tmp2.z, dir.z);
@@ -86,18 +89,8 @@ public class PlanetShader extends BaseShader {
         renderable.worldTransform.set(rotation);
         renderable.worldTransform.setTranslation(translation);
 
-//        Matrix4 bla = (Matrix4)renderable.userData;
-//        if( bla != null) {
-//            renderable.worldTransform.set(bla);
-//        }
-
         // Set world transformation matrix
         set(u_worldTrans, renderable.worldTransform);
-
-
-        // Get time attribute
-        //TimeAttribute attr = (TimeAttribute)renderable.material.get(TimeAttribute.ID);
-        //set(u_time, attr == null ? 0.0f : attr.value);
 
         // Render mesh
         renderable.mesh.render(program, renderable.primitiveType, renderable.meshPartOffset, renderable.meshPartSize);

@@ -74,7 +74,7 @@ public class PlanetModel implements Disposable {
         //planetModel = SphereBuilder.createNew(texture, heightmap, "0", attr, planetModelSize.x, planetModelSize.y, planetModelSize.z, 100, 50);
 
 //        textureHeightmap = new Texture(heightmap);
-        final Material planetMaterial = new Material(
+        final Material planetMaterial = new Material( "planet",
                   new TextureAttribute(TextureAttribute.Diffuse, texture)
                 , new FloatAttribute(FloatAttribute.Shininess, 0.f)
                 , new BlendingAttribute(GL10.GL_ONE, GL10.GL_ZERO)
@@ -100,8 +100,8 @@ public class PlanetModel implements Disposable {
 
         // Build model
         modelBuilder.begin();
-        modelBuilder.part("main", mesh, GL10.GL_TRIANGLES, planetMaterial);
-        modelBuilder.part("atmosphere", effectMesh, GL10.GL_TRIANGLES, new Material() );
+        modelBuilder.part("planet", mesh, GL10.GL_TRIANGLES, planetMaterial);
+        modelBuilder.part("atmosphere", effectMesh, GL10.GL_TRIANGLES, new Material("atmosphere") );
         planetModel = modelBuilder.end();
 
     }
@@ -173,28 +173,20 @@ public class PlanetModel implements Disposable {
         }
 
         heightmap = BlurUtils.blur(heightmap, 3, 2, true);
-
         heightmapTexture = new Texture(heightmap, true);
-
-//        texture.setFilter(Texture.TextureFilter.MipMapLinearLinear, Texture.TextureFilter.MipMapLinearLinear);
-//        texture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
-
-
-//        heightmap = new Texture(pixmap, true);
-
-//        heightmap.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        //heightmap.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
-
-//        pixmap.dispose();
     }
 
     public void setRenderHeightMap() {
-        TextureAttribute textureAttribute = (TextureAttribute)planet.planetModel.materials.first().get(TextureAttribute.Diffuse);
-        textureAttribute.textureDescription.set(heightmapTexture, javax.microedition.khronos.opengles.GL10.GL_LINEAR, javax.microedition.khronos.opengles.GL10.GL_LINEAR, javax.microedition.khronos.opengles.GL10.GL_TEXTURE_WRAP_S, javax.microedition.khronos.opengles.GL10.GL_TEXTURE_WRAP_S);
+        TextureAttribute textureAttribute = (TextureAttribute)planet.planetModel.getMaterial("planet").get(TextureAttribute.Diffuse);
+        textureAttribute.textureDescription.set(heightmapTexture,
+                GL10.GL_LINEAR, GL10.GL_LINEAR,
+                GL10.GL_REPEAT, GL10.GL_REPEAT);
     }
 
     public void setRenderTexture() {
-        TextureAttribute textureAttribute = (TextureAttribute)planet.planetModel.materials.first().get(TextureAttribute.Diffuse);
-        textureAttribute.textureDescription.set(texture, javax.microedition.khronos.opengles.GL10.GL_LINEAR, javax.microedition.khronos.opengles.GL10.GL_LINEAR, javax.microedition.khronos.opengles.GL10.GL_TEXTURE_WRAP_S, javax.microedition.khronos.opengles.GL10.GL_TEXTURE_WRAP_S);
+        TextureAttribute textureAttribute = (TextureAttribute)planet.planetModel.getMaterial("planet").get(TextureAttribute.Diffuse);
+        textureAttribute.textureDescription.set(texture,
+                GL10.GL_LINEAR, GL10.GL_LINEAR,
+                GL10.GL_REPEAT, GL10.GL_REPEAT);
     }
 }

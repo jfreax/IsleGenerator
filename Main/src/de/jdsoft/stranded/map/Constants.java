@@ -1,8 +1,6 @@
 package de.jdsoft.stranded.map;
 
 
-import android.graphics.Color;
-
 public interface Constants {
     static final public int RIVER_COLOR = 0x313A5Cff; //Color.rgb(49, 58, 92);
 

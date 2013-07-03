@@ -48,7 +48,7 @@ public class Biome extends Generator implements Constants {
                 continue;
             }
 
-            random.setSeed(System.nanoTime());
+            //random.setSeed(System.nanoTime());
 
             // Set start wet
             float currentWet = 3.5f;

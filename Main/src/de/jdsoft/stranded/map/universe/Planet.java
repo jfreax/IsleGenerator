@@ -24,10 +24,12 @@ public class Planet implements Disposable, CelestialBody {
     Vector3 tmpVec1 = new Vector3();
     private float orbitAngle = 0.f;
     private Quaternion quat;
-    private Planet orbitObject = null;
+    private CelestialBody orbitObject = null;
     public boolean isDragged = false;
 
     public Planet() {
+        super();
+
         planetModel = PlanetModel.create();
 
         position = new Vector3(0.f, 0.f, 0.f);
@@ -35,25 +37,29 @@ public class Planet implements Disposable, CelestialBody {
         quat = new Quaternion();
     }
 
-
+    @Override
     public void setPosition( Vector3 position ) {
         this.position = position;
     }
 
+    @Override
     public void getPosition(Vector3 out) {
 
         planetModel.transform.getTranslation(out);
 //        out.set(position);
     }
 
+    @Override
     public void translate( Vector3 vector ) {
         this.position.add(vector);
     }
 
+    @Override
     public void translate( float x, float y, float z ) {
         this.position.add(x, y, z);
     }
 
+    @Override
     public void rotate( Vector3 axis, float angle ) {
         rotation.rotate(axis, angle);
     }
@@ -63,6 +69,7 @@ public class Planet implements Disposable, CelestialBody {
     }
 
 
+    @Override
     public void update(float delta) {
         time += delta;
         orbitAngle += delta*30;
@@ -80,7 +87,7 @@ public class Planet implements Disposable, CelestialBody {
         } else {
             planetModel.transform.setToTranslation(orbit);
         }
-        planetModel.transform.rotate(axis, orbitAngle);
+        planetModel.transform.rotate(axis, orbitAngle); // == rotate to
         planetModel.transform.translate(position);
 
         // Rotate around own axes
@@ -96,7 +103,7 @@ public class Planet implements Disposable, CelestialBody {
         this.orbit = orbit;
     }
 
-    public void setOrbit(Planet orbit) {
+    public void setOrbit(CelestialBody orbit) {
         this.orbitObject = orbit;
     }
 }

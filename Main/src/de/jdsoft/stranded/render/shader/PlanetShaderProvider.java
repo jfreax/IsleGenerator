@@ -13,7 +13,7 @@ public class PlanetShaderProvider extends BaseShaderProvider {
 
     @Override
     protected Shader createShader (Renderable renderable) {
-        if(renderable.material.has(TextureAttribute.Diffuse)) {
+        if(renderable.material.id.equals("planet")) {
             if (Gdx.graphics.isGL20Available()) {
                 return new DefaultShader(
                           Gdx.files.internal("shader/default.vertex.glsl").readString()
@@ -25,8 +25,10 @@ public class PlanetShaderProvider extends BaseShaderProvider {
                         , renderable.bones == null ? 0 : 12);
             }
             return new GLES10Shader();
-        } else { // Return effect shader
+        } else if(renderable.material.id.equals("atmosphere")) { // Return effect shader
             return new PlanetShader("shader/planet_effect.vertex.glsl", "shader/planet_effect.fragment.glsl");
+        } else {
+            return null;
         }
     }
 }

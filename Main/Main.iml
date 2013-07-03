@@ -8,6 +8,62 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="Main libs" level="project" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../GWT/libs/gwt-dev.jar!/" />
+          <root url="jar://$MODULE_DIR$/../GWT/libs/gwt-user.jar!/" />
+          <root url="jar://$MODULE_DIR$/../GWT/libs/gwt-servlet.jar!/" />
+          <root url="jar://$MODULE_DIR$/../GWT/libs/gwt-soyc-vis.jar!/" />
+          <root url="jar://$MODULE_DIR$/../GWT/libs/gwt-elemental.jar!/" />
+          <root url="jar://$MODULE_DIR$/../GWT/libs/gwt-codeserver.jar!/" />
+          <root url="jar://$MODULE_DIR$/../GWT/libs/gdx-backend-gwt.jar!/" />
+          <root url="jar://$MODULE_DIR$/../GWT/libs/gwt-api-checker.jar!/" />
+          <root url="jar://$MODULE_DIR$/../GWT/libs/gwt-servlet-deps.jar!/" />
+          <root url="jar://$MODULE_DIR$/../GWT/libs/requestfactory-apt.jar!/" />
+          <root url="jar://$MODULE_DIR$/../GWT/libs/requestfactory-client.jar!/" />
+          <root url="jar://$MODULE_DIR$/../GWT/libs/requestfactory-server.jar!/" />
+          <root url="jar://$MODULE_DIR$/../GWT/libs/requestfactory-apt-src.jar!/" />
+          <root url="jar://$MODULE_DIR$/../GWT/libs/validation-api-1.0.0.GA.jar!/" />
+          <root url="jar://$MODULE_DIR$/../GWT/libs/requestfactory-client+src.jar!/" />
+          <root url="jar://$MODULE_DIR$/../GWT/libs/requestfactory-client-src.jar!/" />
+          <root url="jar://$MODULE_DIR$/../GWT/libs/requestfactory-server+src.jar!/" />
+          <root url="jar://$MODULE_DIR$/../GWT/libs/requestfactory-server-src.jar!/" />
+          <root url="jar://$MODULE_DIR$/../GWT/libs/validation-api-1.0.0.GA-sources.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/../GWT/libs/gwt-dev.jar!/" />
+          <root url="jar://$MODULE_DIR$/../GWT/libs/gwt-user.jar!/" />
+          <root url="jar://$MODULE_DIR$/../GWT/libs/gwt-servlet.jar!/" />
+          <root url="jar://$MODULE_DIR$/../GWT/libs/gwt-soyc-vis.jar!/" />
+          <root url="jar://$MODULE_DIR$/../GWT/libs/gwt-elemental.jar!/" />
+          <root url="jar://$MODULE_DIR$/../GWT/libs/gwt-codeserver.jar!/" />
+          <root url="jar://$MODULE_DIR$/../GWT/libs/gdx-backend-gwt.jar!/" />
+          <root url="jar://$MODULE_DIR$/../GWT/libs/gwt-api-checker.jar!/" />
+          <root url="jar://$MODULE_DIR$/../GWT/libs/gwt-servlet-deps.jar!/" />
+          <root url="jar://$MODULE_DIR$/../GWT/libs/requestfactory-apt.jar!/" />
+          <root url="jar://$MODULE_DIR$/../GWT/libs/requestfactory-client.jar!/" />
+          <root url="jar://$MODULE_DIR$/../GWT/libs/requestfactory-server.jar!/" />
+          <root url="jar://$MODULE_DIR$/../GWT/libs/requestfactory-apt-src.jar!/" />
+          <root url="jar://$MODULE_DIR$/../GWT/libs/validation-api-1.0.0.GA.jar!/" />
+          <root url="jar://$MODULE_DIR$/../GWT/libs/requestfactory-client+src.jar!/" />
+          <root url="jar://$MODULE_DIR$/../GWT/libs/requestfactory-client-src.jar!/" />
+          <root url="jar://$MODULE_DIR$/../GWT/libs/requestfactory-server+src.jar!/" />
+          <root url="jar://$MODULE_DIR$/../GWT/libs/requestfactory-server-src.jar!/" />
+          <root url="jar://$MODULE_DIR$/../GWT/libs/validation-api-1.0.0.GA-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../GWT/war/WEB-INF/classes" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>
 

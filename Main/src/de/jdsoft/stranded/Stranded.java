@@ -4,7 +4,7 @@ import com.badlogic.gdx.Game;
 import de.jdsoft.stranded.screens.Universe;
 
 
-public class Main extends Game {
+public class Stranded extends Game {
 
     @Override
     public void create() {

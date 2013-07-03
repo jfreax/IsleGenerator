@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g3d.utils.*;
 import com.badlogic.gdx.math.Vector3;
 import de.jdsoft.stranded.input.GlobalInput;
 import de.jdsoft.stranded.map.Map;
+import de.jdsoft.stranded.map.universe.Planet;
 
 public class Universe implements Screen {
 
@@ -54,8 +55,12 @@ public class Universe implements Screen {
 
         // Create new map
         map = new Map(globalInput, cam);
-        map.createPlanet( new Vector3(-2.0f, 0.f, 0.f) );
-        map.createPlanet( new Vector3(0.0f, 0.f, 0.f), new Vector3(0.0f, 0, 0), Vector3.X );
+        Planet planet1 = map.createPlanet( new Vector3(0.0f, 0.f, 0.f), null, 0.f );
+        Planet planet2 = map.createPlanet( new Vector3(-4.0f, 0.f, 0.f), planet1, 30 );
+        Planet planet4 = map.createPlanet( new Vector3(-2.0f, 0.f, 0.f), planet2, 160 );
+        Planet planet3 = map.createPlanet( new Vector3(-2.0f, 1.f, 0.f), planet4, 200 );
+
+//        planet1.setOrbit(planet2);
 
 
         // Add camera controller as last controller!

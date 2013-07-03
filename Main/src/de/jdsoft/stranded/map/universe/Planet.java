@@ -3,6 +3,7 @@ package de.jdsoft.stranded.map.universe;
 
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.materials.FloatAttribute;
+import com.badlogic.gdx.graphics.g3d.model.Node;
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
@@ -26,6 +27,7 @@ public class Planet implements Disposable, CelestialBody {
     private Quaternion quat;
     private CelestialBody orbitObject = null;
     public boolean isDragged = false;
+    private float speed = 10.0f;
 
     public Planet() {
         super();
@@ -40,6 +42,7 @@ public class Planet implements Disposable, CelestialBody {
     @Override
     public void setPosition( Vector3 position ) {
         this.position = position;
+//        planetModel.transform.setTranslation(position);
     }
 
     @Override
@@ -72,27 +75,34 @@ public class Planet implements Disposable, CelestialBody {
     @Override
     public void update(float delta) {
         time += delta;
-        orbitAngle += delta*30;
+        orbitAngle += delta*speed;
 
         // Set time attribute for shader
         FloatAttribute flattr = (FloatAttribute)(planetModel.materials.first().get(FloatAttribute.Shininess));
         flattr.value = time;
 
         // Rotate around given center
-        Vector3 axis = new Vector3(0.0f, 0.0f, 1.0f);
+        Vector3 axis = new Vector3(0.0f, 0.2f, 0.5f);
+        System.out.println(this + ": " + position);
+
+
+        Vector3 bla = new Vector3(position);
 
         if( this.orbitObject != null ) {
             orbitObject.getPosition(tmpVec1);
             planetModel.transform.setToTranslation(tmpVec1);
+//            bla.add(tmpVec1);
         } else {
             planetModel.transform.setToTranslation(orbit);
+//            bla.add(orbit);
         }
         planetModel.transform.rotate(axis, orbitAngle); // == rotate to
-        planetModel.transform.translate(position);
+//        position.rotate(axis, delta*speed);
+        planetModel.transform.translate(bla);
 
         // Rotate around own axes
-        rotation.getRotation(quat);
-        planetModel.transform.rotate(quat);
+//        rotation.getRotation(quat);
+//        planetModel.transform.rotate(quat);
     }
 
     public void dispose() {
@@ -105,5 +115,9 @@ public class Planet implements Disposable, CelestialBody {
 
     public void setOrbit(CelestialBody orbit) {
         this.orbitObject = orbit;
+    }
+
+    public void setSpeed(float speed) {
+        this.speed = speed;
     }
 }

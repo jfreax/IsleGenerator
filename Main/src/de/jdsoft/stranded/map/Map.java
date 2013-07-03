@@ -5,22 +5,20 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.lights.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.lights.Lights;
-import com.badlogic.gdx.graphics.g3d.materials.TextureAttribute;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.utils.Disposable;
 import de.jdsoft.stranded.input.GlobalInput;
-import de.jdsoft.stranded.map.planet.Planet;
+import de.jdsoft.stranded.map.universe.CelestialBody;
+import de.jdsoft.stranded.map.universe.Planet;
 import de.jdsoft.stranded.model.PlanetModel;
 import de.jdsoft.stranded.render.shader.PlanetShaderProvider;
 
-import javax.microedition.khronos.opengles.GL10;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -62,9 +60,11 @@ public class Map implements InputProcessor, Disposable {
      * @param orbit
      * @return
      */
-    public Planet createPlanet( Vector3 position, Vector3 orbit, Vector3 orbitAxis) {
+    public Planet createPlanet( Vector3 position, Vector3 orbit, Vector3 orbitAxis, float speed) {
         Planet planet = createPlanet(position);
         planet.setOrbit(orbit);
+        planet.setSpeed(speed);
+
 
         return planet;
     }
@@ -75,9 +75,10 @@ public class Map implements InputProcessor, Disposable {
      * @param orbit
      * @return
      */
-    public Planet createPlanet( Vector3 position, Planet orbit) {
+    public Planet createPlanet( Vector3 position, CelestialBody orbit, float speed) {
         Planet planet = createPlanet(position);
         planet.setOrbit(orbit);
+        planet.setSpeed(speed);
 
         return planet;
     }
@@ -90,6 +91,13 @@ public class Map implements InputProcessor, Disposable {
         // TODO
 
         // Render all planets
+//        for( int i = planets.size()-1; i >= 0; i--) {
+//            planets.get(i).update(delta);
+//
+//            modelBatch.begin(cam);
+//            modelBatch.render(planets.get(i).planetModel, lights);
+//            modelBatch.end();
+//        }
         for( Planet planet : planets ) {
             planet.update(delta);
 
@@ -169,12 +177,13 @@ public class Map implements InputProcessor, Disposable {
                 lastIntersectionActionPos = intersectPosition;
                 intersectedWith = planet;
                 planet.isDragged = true;
+                planet.translate(1.0f, 0, 0);
                 return true;
             }
         }
 
 
-        return true;
+        return false;
     }
 
     @Override

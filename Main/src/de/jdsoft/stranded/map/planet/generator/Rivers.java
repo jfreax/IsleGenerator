@@ -43,7 +43,7 @@ public class Rivers extends Generator {
         }
 
         // But some rivers are from lower land parts
-        Collections.shuffle(tiles);
+        //Collections.shuffle(tiles); // TODO not available for gwt
         maxI = Math.min( random.nextInt(30)+30, tiles.size()-1 );
         for( int i = 0; i < maxI; i++ ) {
             beginNewRiver(tiles.get(i));

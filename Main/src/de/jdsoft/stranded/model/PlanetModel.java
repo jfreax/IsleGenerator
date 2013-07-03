@@ -9,18 +9,14 @@ import com.badlogic.gdx.graphics.g3d.materials.BlendingAttribute;
 import com.badlogic.gdx.graphics.g3d.materials.FloatAttribute;
 import com.badlogic.gdx.graphics.g3d.materials.Material;
 import com.badlogic.gdx.graphics.g3d.materials.TextureAttribute;
-import com.badlogic.gdx.graphics.g3d.model.Node;
 import com.badlogic.gdx.graphics.g3d.utils.MeshBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
-import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Disposable;
 import com.marcrh.graph.Point;
 import de.jdsoft.stranded.map.planet.TileManager;
 import de.jdsoft.stranded.map.planet.entity.Tile;
-import de.jdsoft.stranded.utils.BlurUtils;
 
-import javax.microedition.khronos.opengles.*;
 import java.util.List;
 
 public class PlanetModel implements Disposable {
@@ -133,7 +129,7 @@ public class PlanetModel implements Disposable {
             }
         }
 
-        pixmap = BlurUtils.blur(pixmap, 1, 1, true);
+        //pixmap = BlurUtils.blur(pixmap, 1, 1, true);
 
         // Create a texture to contain the pixmap
         //texture = new Texture(mapWidth, mapHeight, Pixmap.Format.RGBA8888); // Pixmap.Format.RGBA8888);
@@ -173,7 +169,7 @@ public class PlanetModel implements Disposable {
             }
         }
 
-        heightmap = BlurUtils.blur(heightmap, 3, 2, true);
+        //heightmap = BlurUtils.blur(heightmap, 3, 2, true);
         heightmapTexture = new Texture(heightmap, true);
     }
 

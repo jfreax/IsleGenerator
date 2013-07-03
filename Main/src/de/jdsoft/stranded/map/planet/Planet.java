@@ -14,23 +14,21 @@ public class Planet implements Disposable {
 
     final public ModelInstance planetModel;
     private float time = 0.f;
-    private Matrix4 transform = new Matrix4();
 
     private Vector3 position;
     private Matrix4 rotation;
 
-    private float angle = 0.1f;
     private Vector3 orbit = new Vector3(0, 0, 0);
 
     // Temp
-    Vector3 tmpVec = new Vector3();
+    Vector3 tmpVec1 = new Vector3();
     private float orbitAngle = 0.f;
     private Quaternion quat;
+    private Planet orbitObject = null;
+    public boolean isDragged = false;
 
     public Planet() {
         planetModel = PlanetModel.create();
-//        planetModel.calculateTransforms();
-
 
         position = new Vector3(0.f, 0.f, 0.f);
         rotation = new Matrix4();
@@ -43,7 +41,9 @@ public class Planet implements Disposable {
     }
 
     public void getPosition(Vector3 out) {
-        out.set(this.position);
+
+        planetModel.transform.getTranslation(out);
+//        out.set(position);
     }
 
     public void translate( Vector3 vector ) {
@@ -65,36 +65,27 @@ public class Planet implements Disposable {
 
     public void update(float delta) {
         time += delta;
-        orbitAngle += delta*70;
-//        orbitAngle = 0;
+        orbitAngle += delta*30;
 
+        // Set time attribute for shader
         FloatAttribute flattr = (FloatAttribute)(planetModel.materials.first().get(FloatAttribute.Shininess));
         flattr.value = time;
 
-//        rotate(Vector3.X, 0.51f);
-
-
         // Rotate around given center
         Vector3 axis = new Vector3(0.0f, 0.0f, 1.0f);
-//        planetModel.transform.getTranslation(position);
 
-
-
-        planetModel.transform.setToTranslation(orbit);
-        planetModel.transform.rotate(axis, 0.f);
+        if( this.orbitObject != null ) {
+            orbitObject.getPosition(tmpVec1);
+            planetModel.transform.setToTranslation(tmpVec1);
+        } else {
+            planetModel.transform.setToTranslation(orbit);
+        }
+        planetModel.transform.rotate(axis, orbitAngle);
         planetModel.transform.translate(position);
 
         // Rotate around own axes
-//        planetModel.transform.rotate(axis, orbitAngle * 0.1f);
-
-
-
         rotation.getRotation(quat);
-//        System.out.println("Quat: " + quat);
-//        quat.set(Vector3.X, orbitAngle*0.1f);
         planetModel.transform.rotate(quat);
-
-
     }
 
     public void dispose() {
@@ -103,5 +94,9 @@ public class Planet implements Disposable {
 
     public void setOrbit(Vector3 orbit) {
         this.orbit = orbit;
+    }
+
+    public void setOrbit(Planet orbit) {
+        this.orbitObject = orbit;
     }
 }

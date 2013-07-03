@@ -62,7 +62,20 @@ public class Map implements InputProcessor, Disposable {
      * @param orbit
      * @return
      */
-    public Planet createPlanet( Vector3 position, Vector3 orbit) {
+    public Planet createPlanet( Vector3 position, Vector3 orbit, Vector3 orbitAxis) {
+        Planet planet = createPlanet(position);
+        planet.setOrbit(orbit);
+
+        return planet;
+    }
+
+    /**
+     * Create a new planet that orbits another celestial body
+     * @param position
+     * @param orbit
+     * @return
+     */
+    public Planet createPlanet( Vector3 position, Planet orbit) {
         Planet planet = createPlanet(position);
         planet.setOrbit(orbit);
 
@@ -77,11 +90,8 @@ public class Map implements InputProcessor, Disposable {
         // TODO
 
         // Render all planets
-        boolean first = true;
         for( Planet planet : planets ) {
             planet.update(delta);
-
-//            planet.planetModel.transform.rotate(Vector3.X, 1.7f);
 
             modelBatch.begin(cam);
             modelBatch.render(planet.planetModel, lights);
@@ -158,17 +168,22 @@ public class Map implements InputProcessor, Disposable {
                 System.out.println("Intersect! " + planet + " at " + intersectPosition);
                 lastIntersectionActionPos = intersectPosition;
                 intersectedWith = planet;
+                planet.isDragged = true;
                 return true;
             }
         }
 
 
-        return false;
+        return true;
     }
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         oldDragged.set(-1, -1);
+
+        if( intersectedWith instanceof Planet ) {
+            ((Planet)intersectedWith).isDragged = false;
+        }
         return false;
     }
 
@@ -196,7 +211,7 @@ public class Map implements InputProcessor, Disposable {
 
                         if( buttonClickedLast == Input.Buttons.RIGHT ) {
                             delta.sub(intersection);
-                            planet.translate(-delta.x, -delta.y, -delta.z);
+                            planet.translate(delta.x, delta.y, delta.z);
                         } else {
                             delta.sub(intersection);
                             planet.rotate(Vector3.X, 0.51f);

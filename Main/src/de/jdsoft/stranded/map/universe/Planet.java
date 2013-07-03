@@ -1,4 +1,4 @@
-package de.jdsoft.stranded.map.planet;
+package de.jdsoft.stranded.map.universe;
 
 
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Disposable;
 import de.jdsoft.stranded.model.PlanetModel;
 
-public class Planet implements Disposable {
+public class Planet implements Disposable, CelestialBody {
 
     final public ModelInstance planetModel;
     private float time = 0.f;
